@@ -494,7 +494,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		startActivity(archiveData);
 	}
 
-	public void plotMenu(View plotMe) {
+	public void plotButton(View plotMe) {
 		
 		mDataset = new XYMultipleSeriesDataset();
 		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
@@ -686,6 +686,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setXLabels(20);
 		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
+		myRenderer.setMargins(new int[] {35, 50, 15, 30});
 		return myRenderer;
 	}
 	
@@ -741,39 +742,13 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setXLabels(20);
 		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
+		myRenderer.setMargins(new int[] {35, 50, 15, 30});
+		myRenderer.setXAxisMin(0);
+		myRenderer.setXAxisMax(444);
+		myRenderer.setYAxisMin(-9000);
+		myRenderer.setYAxisMax(9000);
+
 		return myRenderer;
-	/*	mRenderer = new XYMultipleSeriesRenderer();
-		XYSeriesRenderer renderer = new XYSeriesRenderer();
-//		XYSeriesRenderer renderer1 = new XYSeriesRenderer();
-//		XYSeriesRenderer renderer2 = new XYSeriesRenderer();
-//		if (ren2 == false) {
-//			renderer = renderer2;
-//			mRenderer.setXTitle("Frequency (kHz)");
-//			mRenderer.setYTitle("Power (dB)");
-//		}
-//		else{
-//			renderer = renderer1;
-//		}
-		
-		renderer.setColor(Color.BLUE);
-		renderer.setLineWidth(2);
-		renderer.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
-		renderer.setFillPoints(true); // not for point or x don't know how to set point size or point color
-		
-//		renderer2.setColor(Color.RED);
-//		renderer2.setLineWidth(2);
-//		renderer2.setPointStyle(PointStyle.SQUARE);
-		mRenderer.setXTitle("Samples");
-		mRenderer.setYTitle("Amplitude");
-		mRenderer.setAxisTitleTextSize(20);
-		mRenderer.addSeriesRenderer(renderer);
-		mRenderer.setXLabels(20);
-		mRenderer.setYLabels(9);
-		
-	    mRenderer.setXAxisMin(0);
-	    mRenderer.setXAxisMax(5);
-	    mRenderer.setYAxisMin(0);
-	    mRenderer.setYAxisMax(250);*/
 	}
 	
 	
@@ -827,49 +802,13 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setXLabels(20);
 		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
+		myRenderer.setMargins(new int[] {35, 50, 15, 30});
+		myRenderer.setXAxisMin(0);
+		myRenderer.setXAxisMax(256);
+		myRenderer.setYAxisMin(0);
+		myRenderer.setYAxisMax(115);
 		return myRenderer;
 	}
-	// FFT CALLED
-//	XYSeriesRenderer r2 = new XYSeriesRenderer();
-//	renderer.setColor(Color.RED);
-//	renderer.setLineWidth(2);
-//	renderer.setPointStyle(PointStyle.SQUARE);
-
-/*		mRenderer.setPanEnabled(true, true);
-	mRenderer.setZoomEnabled(true, true);
-	mRenderer.setZoomButtonsVisible(true);
-	mRenderer.setLegendTextSize(20);
-
-	mRenderer.setZoomRate(10);
-
-	mRenderer.setAxesColor(Color.BLACK);
-	mRenderer.getXLabelsAlign();
-	mRenderer.setXLabelsColor(Color.BLACK);
-	mRenderer.setYLabelsColor(0, Color.BLACK);
-	mRenderer.setShowAxes(true);
-	mRenderer.setLabelsColor(Color.BLACK);
-
-	mRenderer.setXTitle("Frequency (kHz)");
-	mRenderer.setYTitle("Power (dB)");
-	mRenderer.setAxisTitleTextSize(20);
-
-	// background color of the PLOT ONLY
-	mRenderer.setApplyBackgroundColor(true);
-	// Color.TRANSPARENT would show the background of the app (MainActivity)
-	mRenderer.setBackgroundColor(Color.LTGRAY); 
-
-	// sets the background area of the object itself
-	// does not change the plots background
-	mRenderer.setMarginsColor(Color.WHITE); 
-
-
-	mRenderer.setGridColor(Color.DKGRAY);
-	mRenderer.setXLabels(20);
-	mRenderer.setYLabels(9);
-	mRenderer.setShowGrid(true);
-	
-	mRenderer.setMargins(new int[] {20, 50, 15, 30});*/
-//	myRenderer.setChartTitle("FMCW Radar Data");
 	
 		private void setChartSettings(XYMultipleSeriesRenderer renderer) {
 			
@@ -906,7 +845,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 			renderer.setYLabels(9);
 			renderer.setShowGrid(true);
 			
-			renderer.setMargins(new int[] {20, 50, 15, 30});
+			renderer.setMargins(new int[] {35, 50, 15, 30});
 	  } 
 
 } //END OF MAINACTIVITY CODE!

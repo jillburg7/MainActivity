@@ -139,7 +139,7 @@
             android:layout_width="200sp"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:onClick="plotMenu"
+            android:onClick="plotButton"
             android:text="@string/plot_data"
             android:textSize="28sp" />
 
