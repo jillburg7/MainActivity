@@ -27,9 +27,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
-import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.RelativeLayout;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
@@ -133,7 +132,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 				mChartView.repaint();
 			}
 	    }
-	 
 	 
 
 	@Override
@@ -390,57 +388,15 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
             return true;
         }
         return false;
-    /*switch (item.getItemId()) {
-		case R.id.text_file:
-			if (item.isChecked()) {
-				// item.setChecked(false);
-				Toast.makeText(this, "Was true, set False", Toast.LENGTH_SHORT)
-						.show();
-			} else {
-				item.setChecked(true);
-				Toast.makeText(this, "Checked", Toast.LENGTH_SHORT).show();
-			}
-			return true;
-		case R.id.binary_file:
-			if (item.isChecked()) {
-				item.setChecked(false);
-				Toast.makeText(this, "Was true, set False", Toast.LENGTH_SHORT)
-						.show();
-			} else {
-				item.setChecked(true);
-				Toast.makeText(this, "Checked", Toast.LENGTH_SHORT).show();
-			}
-			return true;
-		case R.id.compressed_file:
-			if (item.isChecked()) {
-				item.setChecked(false);
-				Toast.makeText(this, "Was true, set False", Toast.LENGTH_SHORT)
-						.show();
-			} else {
-				item.setChecked(true);
-				Toast.makeText(this, "Checked", Toast.LENGTH_SHORT).show();
-			}
-			return true;
-		case R.id.matlab_file:
-			if (item.isChecked()) {
-				item.setChecked(false);
-				Toast.makeText(this, "Was true, set False", Toast.LENGTH_SHORT)
-						.show();
-			} else {
-				item.setChecked(true);
-				Toast.makeText(this, "Checked", Toast.LENGTH_SHORT).show();
-			}
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}*/
 	}
 
 	
 	// For testing button & popup menu purposes only!
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
-		switch (item.getItemId()) {
+		return false;
+	}
+/*		switch (item.getItemId()) {
 		case R.id.raw_plot:
 			Toast.makeText(this, "Selected Raw Plot", Toast.LENGTH_SHORT)
 					.show();
@@ -462,27 +418,48 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 					.show();
 			break;
 		}
-		return false;
-	}
-	
-	
-	
-	
-	
+		return false;*/
+
 	
 	
 
 	
 	// Saving pop-up menu
-	public void saveMenu(View display) {
-		PopupMenu popup2 = new PopupMenu(this, display);
-		// popup2.setOnMenuItemClickListener(this);
-		popup2.inflate(R.menu.saving_menu);
-		popup2.show();
+	public void saveFile(View display) {		
+		try{
+			NewFile save = new NewFile();
+			String fileContent = getDataToSave();
+			if (fileContent == null) {
+				Log.e("MainActivity", "No data to save.");
+			} else {
+				save.createFile(this, fileContent);
+			}
+		}
+		catch(IOException e){
+			Log.e("MainActivity", "IOError");
+		}
 	}
 	
-	
-	
+	public String getDataToSave() {
+		double[] arrayToSave = getFftData();
+		String stringToSave = null;
+		
+		if (mDataset != null) {	
+
+			for (int i = 0; i<arrayToSave.length; i++) {
+				if (stringToSave == null){
+					stringToSave = arrayToSave[i] + "\n";
+				} else{
+					stringToSave = stringToSave + arrayToSave[i] + "\n";
+				}
+			}
+			return stringToSave;
+		} else {
+			// NEED TO HANDLE ERRORS!
+			return stringToSave;
+		}	
+	}
+
 	// SENDS COMMAND TO FMCW RADAR KIT BY SELECTING THE "Collect Data" BUTTON
 	public void sendCollectSignal(View toast) {
 		sendMessage("Hi Jill");
@@ -494,18 +471,21 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		startActivity(archiveData);
 	}
 
+	
 	public void plotButton(View plotMe) {
+		Toast.makeText(this, "Selected Plot", Toast.LENGTH_SHORT).show();
 		
 		mDataset = new XYMultipleSeriesDataset();
 		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
 		double[] array = getDataFromFile();
-		for (int i=0; i<512; i++){				
+//		double[] array = getDataFromFile2();
+		for (int i=0; i<array.length; i++){				
 			dataSeries.add(i, array[i]);
 		}
 		mDataset.addSeries(dataSeries);
 
 		mRenderer = new XYMultipleSeriesRenderer();
-		mRenderer = getMyRenderer();
+		mRenderer = getRawRenderer();
 		
 		if (mChartView != null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
@@ -515,23 +495,31 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		} else {
 			mChartView.repaint();
 		}
-		
-		Toast.makeText(this, "Selected Plot", Toast.LENGTH_SHORT).show();
 	}
 	
 	public void plotFFT(View fftPlot) {
+		Toast.makeText(this, "Selected Plot FFT", Toast.LENGTH_SHORT).show();
+		
+		mDataset = new XYMultipleSeriesDataset();
+		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
+		double[] array = getDataFromFile();
+//		double[] array = getDataFromFile2();
+		for (int i=0; i<array.length; i++){				
+			dataSeries.add(i, array[i]);
+		}
+		mDataset.addSeries(dataSeries);
 		mDataset.removeSeries(0);
 		
 		XYSeries dataSeries2 = new XYSeries("FFT of Simulated Data");
 		double[] array2= getFftData();
 		int j=0;
-		for (j=0; j<(512/2); j++){
+		for (j=0; j<(array2.length); j++){
 			dataSeries2.add(j, array2[j]);
 		}
 		mDataset.addSeries(dataSeries2);
 		
 		mRenderer = new XYMultipleSeriesRenderer();
-		mRenderer = getMyFFTRenderer();
+		mRenderer = getFFTRenderer();
 		if (mChartView != null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
@@ -540,8 +528,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		} else {
 			mChartView.repaint();
 		}
-		
-		Toast.makeText(this, "Selected Plot FFT", Toast.LENGTH_SHORT).show();
 	}
 
 	
@@ -571,6 +557,34 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		}
 		return dataArray;	
 	}
+	
+	public double[] getDataFromFile2() {
+		File sdcard = Environment.getExternalStorageDirectory();
+
+		// Get the text file
+		// NEED TO SPECIFICALLY CHANGE THIS LINE OF CODE TO BE MORE UNIVERSAL!
+		File file = new File(sdcard, "100MhzRealReturn.txt");
+
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line;
+			int i = 0;
+			dataArray = new double[8192];
+
+			while ((line = br.readLine()) != null & (i != 8192)) {
+				dataArray[i] = Float.parseFloat(line);
+				i++;
+			}
+			br.close();
+		} 
+		// You'll need to add proper error handling here
+		catch (IOException e) {
+			Log.e("MainActivity", "IOError");
+		}
+		return dataArray;	
+	}
+	
+	
 	public XYMultipleSeriesDataset getMyDefaultData() {
 
 		XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
@@ -579,34 +593,10 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		return myDataset;
 	}
 	
-	public XYMultipleSeriesDataset getMyData() {
-
-		XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
-//		
-//		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
-//		double[] array = getDataFromFile();
-//
-//		for (int i=0; i<512; i++){				
-//			dataSeries.add(i, array[i]);
-//		}
-//		myDataset.addSeries(dataSeries);
-		
-//		XYSeries dataSeries2 = new XYSeries("FFT data");
-//		double[] array2= getFftData();
-//		System.out.print("in getMyData, array2 =" + array2);
-//		int j=0;
-//		for (j=0; j<(512/2); j++){
-//			dataSeries2.add(j, array2[j]);
-//		}
-//		mDataset.addSeries(dataSeries2);
-		
-		return myDataset;
-	}
-	
 	public double[] getFftData() {
 
 		double[] realArray = dataArray;
-		double[] imagArray = new double[512];
+		double[] imagArray = new double[realArray.length];
 	
 		FFTcalc fftData = new FFTcalc();
 		double[] fftArray = fftData.fft(realArray,imagArray, true);
@@ -615,24 +605,27 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		double[] realFFT = new double[fftArray.length/2];
 		double radice = 1 / Math.sqrt(n);	
 		
+		// real and imaginary parts are separated from output of FFT algorithm
 		for(int i=0; i< fftArray.length; i+=2) {
 			int i2 = i/2;
 			realFFT[i2] = fftArray[i] / radice;
 			imagFFT[i2] = fftArray[i + 1] / radice;
 		}
 		
+		// Magnitude of real & imaginary arrays is calculated and put into one array
 		double[] fftOutput = new double[n];
 		for (int i=0; i<n; i++){
 			fftOutput[i] = Math.sqrt(Math.pow(realFFT[i], 2) + Math.pow(imagFFT[i], 2)); 
 		}
+
 		
-		
-		for (int i=0; i<(n/2); i++){
-			fftOutput[i] = 20*Math.log10(fftOutput[i]);
-			
+		double[] fftOutput2 = new double[n];
+		// Power of m
+		for (int i=0; i<(n); i++){
+			fftOutput2[i] = 20*Math.log10(fftOutput[i]);
 		}
 		
-		return fftOutput;	
+		return fftOutput2;	
 	}
 	
 	public XYMultipleSeriesRenderer getMyDefaultRenderer() {
@@ -643,16 +636,10 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		r1.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
 		r1.setFillPoints(true); // not for point or x don't know how to set point size or point color
 
-//		XYSeriesRenderer r2 = new XYSeriesRenderer();
-//		r2.setColor(Color.RED);
-//		r2.setLineWidth(2);
-//		r2.setPointStyle(PointStyle.SQUARE);
-
 		XYMultipleSeriesRenderer myRenderer = new XYMultipleSeriesRenderer();
 		myRenderer.addSeriesRenderer(r1);
-//		myRenderer.addSeriesRenderer(r2);
 		myRenderer.setPanEnabled(true, true);
-		myRenderer.setZoomEnabled(true, false);
+		myRenderer.setZoomEnabled(true, true);
 		myRenderer.setZoomButtonsVisible(true);
 		
 		myRenderer.setChartTitle("FMCW Radar Data Plot");
@@ -672,14 +659,10 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setXTitle("Samples");
 		myRenderer.setYTitle("Amplitude");
 		myRenderer.setAxisTitleTextSize(20);
-
-		// background color of the PLOT ONLY
+		
 		myRenderer.setApplyBackgroundColor(true);
-		// Color.TRANSPARENT would show the background of the app (MainActivity)
 		myRenderer.setBackgroundColor(Color.LTGRAY); 
 
-		// sets the background area of the object itself
-		// does not change the plots background
 		myRenderer.setMarginsColor(Color.WHITE); 
 
 		myRenderer.setGridColor(Color.DKGRAY);
@@ -691,7 +674,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	}
 	
 
-	public XYMultipleSeriesRenderer getMyRenderer() {
+	public XYMultipleSeriesRenderer getRawRenderer() {
 
 		XYSeriesRenderer r1 = new XYSeriesRenderer();
 		r1.setColor(Color.BLUE);
@@ -699,16 +682,10 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		r1.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
 		r1.setFillPoints(true); // not for point or x don't know how to set point size or point color
 
-//		XYSeriesRenderer r2 = new XYSeriesRenderer();
-//		r2.setColor(Color.RED);
-//		r2.setLineWidth(2);
-//		r2.setPointStyle(PointStyle.SQUARE);
-
 		XYMultipleSeriesRenderer myRenderer = new XYMultipleSeriesRenderer();
 		myRenderer.addSeriesRenderer(r1);
-//		myRenderer.addSeriesRenderer(r2);
 		myRenderer.setPanEnabled(true, true);
-		myRenderer.setZoomEnabled(true, false);
+		myRenderer.setZoomEnabled(true, true);
 		myRenderer.setZoomButtonsVisible(true);
 		
 		myRenderer.setChartTitle("FMCW Radar Data Plot");
@@ -743,6 +720,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
 		myRenderer.setMargins(new int[] {35, 50, 15, 30});
+		
+		// Minimum & Max values to view plot area
 		myRenderer.setXAxisMin(0);
 		myRenderer.setXAxisMax(444);
 		myRenderer.setYAxisMin(-9000);
@@ -750,15 +729,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 
 		return myRenderer;
 	}
-	
-	
-	public XYMultipleSeriesRenderer getMyFFTRenderer() {
-
-//		XYSeriesRenderer r1 = new XYSeriesRenderer();
-//		r1.setColor(Color.BLUE);
-//		r1.setLineWidth(2);
-//		r1.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
-//		r1.setFillPoints(true); // not for point or x don't know how to set point size or point color
+		
+	public XYMultipleSeriesRenderer getFFTRenderer() {
 
 		XYSeriesRenderer r2 = new XYSeriesRenderer();
 		r2.setColor(Color.RED);
@@ -768,7 +740,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		XYMultipleSeriesRenderer myRenderer = new XYMultipleSeriesRenderer();
 		myRenderer.addSeriesRenderer(r2);
 		myRenderer.setPanEnabled(true, true);
-		myRenderer.setZoomEnabled(true, false);
+		myRenderer.setZoomEnabled(true, true);
 		myRenderer.setZoomButtonsVisible(true);
 		
 		myRenderer.setChartTitle("FMCW Radar Data Plot");
@@ -803,15 +775,17 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
 		myRenderer.setMargins(new int[] {35, 50, 15, 30});
+		
+		// Minimum & Max values to view plot area
 		myRenderer.setXAxisMin(0);
 		myRenderer.setXAxisMax(256);
 		myRenderer.setYAxisMin(0);
-		myRenderer.setYAxisMax(115);
+		myRenderer.setYAxisMax(120);
 		return myRenderer;
 	}
-	
-		private void setChartSettings(XYMultipleSeriesRenderer renderer) {
-			
+
+	private void setChartSettings(XYMultipleSeriesRenderer renderer) {
+
 			renderer.setPanEnabled(true, true);
 			renderer.setZoomEnabled(true, true);
 			renderer.setZoomButtonsVisible(true);
@@ -847,5 +821,29 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 			
 			renderer.setMargins(new int[] {35, 50, 15, 30});
 	  } 
-
+	
 } //END OF MAINACTIVITY CODE!
+
+/*	public XYMultipleSeriesDataset getMyData() {
+
+	XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
+			
+	XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
+	double[] array = getDataFromFile();
+
+	for (int i=0; i<array.length;; i++){				
+		dataSeries.add(i, array[i]);
+	}
+	myDataset.addSeries(dataSeries);
+
+	XYSeries dataSeries2 = new XYSeries("FFT data");
+	double[] array2= getFftData();
+	System.out.print("in getMyData, array2 =" + array2);
+	int j=0;
+	for (j=0; j<( i<array2.length;/2); j++){
+		dataSeries2.add(j, array2[j]);
+	}
+	mDataset.addSeries(dataSeries2);
+	
+	return myDataset;
+	}*/

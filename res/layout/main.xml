@@ -4,14 +4,8 @@
     android:layout_height="fill_parent"
     tools:context=".MainActivity" >
 
-    <!--
-         <RelativeLayout
-        android:id="@+id/button_group2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true" >
-    -->
+
+ 
 
 
     <!-- Plot Button [radiobutton menu] = removed for DEMO of app -->
@@ -153,5 +147,14 @@
             android:text="@string/plot_FFT"
             android:textSize="28sp" />
     </RelativeLayout>
+    
+	<Button
+        android:id="@+id/button_save"
+        android:layout_width="200sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:onClick="saveFile"
+        android:text="@string/save_data"
+        android:textSize="28sp" /> 
 
 </RelativeLayout>
