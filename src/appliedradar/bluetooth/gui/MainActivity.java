@@ -98,8 +98,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		
         // Displays chartview of plot in GUI
         
-        mRenderer = getMyRenderer();
-        mDataset = getMyData();
+        mRenderer = getMyDefaultRenderer();
+        mDataset = getMyDefaultData();
         setChartSettings(mRenderer);
 
         if (mChartView == null) {
@@ -494,12 +494,36 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		startActivity(archiveData);
 	}
 
+	public void plotMenu(View plotMe) {
+		
+		mDataset = new XYMultipleSeriesDataset();
+		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
+		double[] array = getDataFromFile();
+		for (int i=0; i<512; i++){				
+			dataSeries.add(i, array[i]);
+		}
+		mDataset.addSeries(dataSeries);
+
+		mRenderer = new XYMultipleSeriesRenderer();
+		mRenderer = getMyRenderer();
+		
+		if (mChartView != null) {
+			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
+			mChartView = ChartFactory.getLineChartView(this, mDataset,
+					mRenderer);
+			layout.addView(mChartView);
+		} else {
+			mChartView.repaint();
+		}
+		
+		Toast.makeText(this, "Selected Plot", Toast.LENGTH_SHORT).show();
+	}
+	
 	public void plotFFT(View fftPlot) {
 		mDataset.removeSeries(0);
 		
-		XYSeries dataSeries2 = new XYSeries("FFT data");
+		XYSeries dataSeries2 = new XYSeries("FFT of Simulated Data");
 		double[] array2= getFftData();
-		//System.out.print("in getMyData, array2 =" + array2);
 		int j=0;
 		for (j=0; j<(512/2); j++){
 			dataSeries2.add(j, array2[j]);
@@ -507,71 +531,21 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		mDataset.addSeries(dataSeries2);
 		
 		mRenderer = new XYMultipleSeriesRenderer();
-		ren2 = true;
-		
-		//mRenderer.removeSeriesRenderer(renderer);
-		XYSeriesRenderer r2 = new XYSeriesRenderer();
-		r2.setColor(Color.RED);
-		r2.setLineWidth(2);
-		r2.setPointStyle(PointStyle.SQUARE);
-		mRenderer = getMyRenderer();
-		mRenderer.addSeriesRenderer(r2);
-		mRenderer.setXTitle("Frequency (kHz)");
-		mRenderer.setYTitle("Power (dB)");
+		mRenderer = getMyFFTRenderer();
 		if (mChartView != null) {
-			mRenderer.setXTitle("Frequency (kHz)");
-			mRenderer.setYTitle("Power (dB)");
+			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
+			mChartView = ChartFactory.getLineChartView(this, mDataset,
+					mRenderer);
+			layout.addView(mChartView);
+		} else {
 			mChartView.repaint();
 		}
-		
-			//	XYChart(mDataset, mRenderer);
 		
 		Toast.makeText(this, "Selected Plot FFT", Toast.LENGTH_SHORT).show();
-		
-//		double[] print = getFftData();
-//		System.out.println("Clicking plotFFT button, print=" + print);
-	//	mChartView.repaint(dataSeries2.getMyData(print));
-		
 	}
 
-	// Plotting pop-up menu
 	
-	
-	public void plotMenu(View plotMe) {
-/*		mDataset.removeSeries(0);
-		mDataset = new XYMultipleSeriesDataset();
-		
-		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
-//		mDataset = getMyData();
-		//double[] array = new double[512];	
-		double[] array = getDataFromFile();
-		for (int i=0; i<512; i++){				
-			dataSeries.add(i, array[i]);
-		}
-		mDataset.addSeries(dataSeries);
-		
-		mRenderer = new XYMultipleSeriesRenderer();
-		ren2 = false;
-		mRenderer = getMyRenderer();
-		XYSeriesRenderer r1 = new XYSeriesRenderer();
-		r1.setColor(Color.BLUE);
-		mRenderer.addSeriesRenderer(r1);
-		mRenderer.setXTitle("Frequency (kHz)");
-		mRenderer.setYTitle("Power (dB)");
-		if (mChartView != null) {
-			mChartView.repaint();
-		}*/
-		Toast.makeText(this, "Selected Plot", Toast.LENGTH_SHORT).show();
-	}
 
-	/*		PopupMenu popup = new PopupMenu(this, view);
-	popup.setOnMenuItemClickListener(this);
-	popup.inflate(R.menu.plotting_menu);
-	popup.show();*/
-	
-	
-	// gets Data from a file in External Storage --> SD Card (?)
-	// NEED TO UPDATE FOR UNIVERSAL DATA FILES 
 	public double[] getDataFromFile() {
 		File sdcard = Environment.getExternalStorageDirectory();
 
@@ -597,19 +571,25 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		}
 		return dataArray;	
 	}
+	public XYMultipleSeriesDataset getMyDefaultData() {
+
+		XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
+		XYSeries dataSeries = new XYSeries(" ");
+		myDataset.addSeries(dataSeries);
+		return myDataset;
+	}
 	
 	public XYMultipleSeriesDataset getMyData() {
 
-		mDataset = new XYMultipleSeriesDataset();
-		
-		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
-//		//double[] array = new double[512];	
-		double[] array = getDataFromFile();
-
-		for (int i=0; i<512; i++){				
-			dataSeries.add(i, array[i]);
-		}
-		mDataset.addSeries(dataSeries);
+		XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
+//		
+//		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
+//		double[] array = getDataFromFile();
+//
+//		for (int i=0; i<512; i++){				
+//			dataSeries.add(i, array[i]);
+//		}
+//		myDataset.addSeries(dataSeries);
 		
 //		XYSeries dataSeries2 = new XYSeries("FFT data");
 //		double[] array2= getFftData();
@@ -620,7 +600,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 //		}
 //		mDataset.addSeries(dataSeries2);
 		
-		return mDataset;
+		return myDataset;
 	}
 	
 	public double[] getFftData() {
@@ -655,77 +635,241 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		return fftOutput;	
 	}
 	
-	public XYMultipleSeriesRenderer getMyRenderer() {
-		
-		mRenderer = new XYMultipleSeriesRenderer();
-		XYSeriesRenderer renderer = new XYSeriesRenderer();
-		XYSeriesRenderer renderer1 = new XYSeriesRenderer();
-		XYSeriesRenderer renderer2 = new XYSeriesRenderer();
-		if (ren2 == false) {
-			renderer = renderer2;
-			mRenderer.setXTitle("Frequency (kHz)");
-			mRenderer.setYTitle("Power (dB)");
-		}
-		else{
-			renderer = renderer1;
+	public XYMultipleSeriesRenderer getMyDefaultRenderer() {
 
-		}
+		XYSeriesRenderer r1 = new XYSeriesRenderer();
+		r1.setColor(Color.BLUE);
+		r1.setLineWidth(2);
+		r1.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
+		r1.setFillPoints(true); // not for point or x don't know how to set point size or point color
+
+//		XYSeriesRenderer r2 = new XYSeriesRenderer();
+//		r2.setColor(Color.RED);
+//		r2.setLineWidth(2);
+//		r2.setPointStyle(PointStyle.SQUARE);
+
+		XYMultipleSeriesRenderer myRenderer = new XYMultipleSeriesRenderer();
+		myRenderer.addSeriesRenderer(r1);
+//		myRenderer.addSeriesRenderer(r2);
+		myRenderer.setPanEnabled(true, true);
+		myRenderer.setZoomEnabled(true, false);
+		myRenderer.setZoomButtonsVisible(true);
 		
-		renderer1.setColor(Color.BLUE);
-		renderer1.setLineWidth(2);
-		renderer1.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
-		renderer1.setFillPoints(true); // not for point or x don't know how to set point size or point color
+		myRenderer.setChartTitle("FMCW Radar Data Plot");
+		myRenderer.setChartTitleTextSize(30);
+
+		myRenderer.setLegendTextSize(20);
+
+		myRenderer.setZoomRate(10);
+
+		myRenderer.setAxesColor(Color.BLACK);
+		myRenderer.getXLabelsAlign();
+		myRenderer.setXLabelsColor(Color.BLACK);
+		myRenderer.setYLabelsColor(0, Color.BLACK);
+		myRenderer.setShowAxes(true);
+		myRenderer.setLabelsColor(Color.BLACK);
+
+		myRenderer.setXTitle("Samples");
+		myRenderer.setYTitle("Amplitude");
+		myRenderer.setAxisTitleTextSize(20);
+
+		// background color of the PLOT ONLY
+		myRenderer.setApplyBackgroundColor(true);
+		// Color.TRANSPARENT would show the background of the app (MainActivity)
+		myRenderer.setBackgroundColor(Color.LTGRAY); 
+
+		// sets the background area of the object itself
+		// does not change the plots background
+		myRenderer.setMarginsColor(Color.WHITE); 
+
+		myRenderer.setGridColor(Color.DKGRAY);
+		myRenderer.setXLabels(20);
+		myRenderer.setYLabels(9);
+		myRenderer.setShowGrid(true);
+		return myRenderer;
+	}
+	
+
+	public XYMultipleSeriesRenderer getMyRenderer() {
+
+		XYSeriesRenderer r1 = new XYSeriesRenderer();
+		r1.setColor(Color.BLUE);
+		r1.setLineWidth(2);
+		r1.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
+		r1.setFillPoints(true); // not for point or x don't know how to set point size or point color
+
+//		XYSeriesRenderer r2 = new XYSeriesRenderer();
+//		r2.setColor(Color.RED);
+//		r2.setLineWidth(2);
+//		r2.setPointStyle(PointStyle.SQUARE);
+
+		XYMultipleSeriesRenderer myRenderer = new XYMultipleSeriesRenderer();
+		myRenderer.addSeriesRenderer(r1);
+//		myRenderer.addSeriesRenderer(r2);
+		myRenderer.setPanEnabled(true, true);
+		myRenderer.setZoomEnabled(true, false);
+		myRenderer.setZoomButtonsVisible(true);
 		
-		renderer2.setColor(Color.RED);
-		renderer2.setLineWidth(2);
-		renderer2.setPointStyle(PointStyle.SQUARE);
+		myRenderer.setChartTitle("FMCW Radar Data Plot");
+		myRenderer.setChartTitleTextSize(30);
+
+		myRenderer.setLegendTextSize(20);
+
+		myRenderer.setZoomRate(10);
+
+		myRenderer.setAxesColor(Color.BLACK);
+		myRenderer.getXLabelsAlign();
+		myRenderer.setXLabelsColor(Color.BLACK);
+		myRenderer.setYLabelsColor(0, Color.BLACK);
+		myRenderer.setShowAxes(true);
+		myRenderer.setLabelsColor(Color.BLACK);
+
+		myRenderer.setXTitle("Samples");
+		myRenderer.setYTitle("Amplitude");
+		myRenderer.setAxisTitleTextSize(20);
+
+		// background color of the PLOT ONLY
+		myRenderer.setApplyBackgroundColor(true);
+		// Color.TRANSPARENT would show the background of the app (MainActivity)
+		myRenderer.setBackgroundColor(Color.LTGRAY); 
+
+		// sets the background area of the object itself
+		// does not change the plots background
+		myRenderer.setMarginsColor(Color.WHITE); 
+
+		myRenderer.setGridColor(Color.DKGRAY);
+		myRenderer.setXLabels(20);
+		myRenderer.setYLabels(9);
+		myRenderer.setShowGrid(true);
+		return myRenderer;
+	/*	mRenderer = new XYMultipleSeriesRenderer();
+		XYSeriesRenderer renderer = new XYSeriesRenderer();
+//		XYSeriesRenderer renderer1 = new XYSeriesRenderer();
+//		XYSeriesRenderer renderer2 = new XYSeriesRenderer();
+//		if (ren2 == false) {
+//			renderer = renderer2;
+//			mRenderer.setXTitle("Frequency (kHz)");
+//			mRenderer.setYTitle("Power (dB)");
+//		}
+//		else{
+//			renderer = renderer1;
+//		}
+		
+		renderer.setColor(Color.BLUE);
+		renderer.setLineWidth(2);
+		renderer.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
+		renderer.setFillPoints(true); // not for point or x don't know how to set point size or point color
+		
+//		renderer2.setColor(Color.RED);
+//		renderer2.setLineWidth(2);
+//		renderer2.setPointStyle(PointStyle.SQUARE);
+		mRenderer.setXTitle("Samples");
+		mRenderer.setYTitle("Amplitude");
+		mRenderer.setAxisTitleTextSize(20);
 		mRenderer.addSeriesRenderer(renderer);
 		mRenderer.setXLabels(20);
 		mRenderer.setYLabels(9);
 		
-		// FFT CALLED
-//		XYSeriesRenderer r2 = new XYSeriesRenderer();
-//		renderer.setColor(Color.RED);
-//		renderer.setLineWidth(2);
-//		renderer.setPointStyle(PointStyle.SQUARE);
+	    mRenderer.setXAxisMin(0);
+	    mRenderer.setXAxisMax(5);
+	    mRenderer.setYAxisMin(0);
+	    mRenderer.setYAxisMax(250);*/
+	}
 	
-/*		mRenderer.setPanEnabled(true, true);
-		mRenderer.setZoomEnabled(true, true);
-		mRenderer.setZoomButtonsVisible(true);
-		mRenderer.setLegendTextSize(20);
+	
+	public XYMultipleSeriesRenderer getMyFFTRenderer() {
 
-		mRenderer.setZoomRate(10);
+//		XYSeriesRenderer r1 = new XYSeriesRenderer();
+//		r1.setColor(Color.BLUE);
+//		r1.setLineWidth(2);
+//		r1.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
+//		r1.setFillPoints(true); // not for point or x don't know how to set point size or point color
 
-		mRenderer.setAxesColor(Color.BLACK);
-		mRenderer.getXLabelsAlign();
-		mRenderer.setXLabelsColor(Color.BLACK);
-		mRenderer.setYLabelsColor(0, Color.BLACK);
-		mRenderer.setShowAxes(true);
-		mRenderer.setLabelsColor(Color.BLACK);
+		XYSeriesRenderer r2 = new XYSeriesRenderer();
+		r2.setColor(Color.RED);
+		r2.setLineWidth(2);
+		r2.setPointStyle(PointStyle.SQUARE);
 
-		mRenderer.setXTitle("Frequency (kHz)");
-		mRenderer.setYTitle("Power (dB)");
-		mRenderer.setAxisTitleTextSize(20);
+		XYMultipleSeriesRenderer myRenderer = new XYMultipleSeriesRenderer();
+		myRenderer.addSeriesRenderer(r2);
+		myRenderer.setPanEnabled(true, true);
+		myRenderer.setZoomEnabled(true, false);
+		myRenderer.setZoomButtonsVisible(true);
+		
+		myRenderer.setChartTitle("FMCW Radar Data Plot");
+		myRenderer.setChartTitleTextSize(30);
+
+		myRenderer.setLegendTextSize(20);
+
+		myRenderer.setZoomRate(10);
+
+		myRenderer.setAxesColor(Color.BLACK);
+		myRenderer.getXLabelsAlign();
+		myRenderer.setXLabelsColor(Color.BLACK);
+		myRenderer.setYLabelsColor(0, Color.BLACK);
+		myRenderer.setShowAxes(true);
+		myRenderer.setLabelsColor(Color.BLACK);
+		
+		myRenderer.setXTitle("Frequency (kHz)");
+		myRenderer.setYTitle("Power (dB)");
+		myRenderer.setAxisTitleTextSize(20);
 
 		// background color of the PLOT ONLY
-		mRenderer.setApplyBackgroundColor(true);
+		myRenderer.setApplyBackgroundColor(true);
 		// Color.TRANSPARENT would show the background of the app (MainActivity)
-		mRenderer.setBackgroundColor(Color.LTGRAY); 
+		myRenderer.setBackgroundColor(Color.LTGRAY); 
 
 		// sets the background area of the object itself
 		// does not change the plots background
-		mRenderer.setMarginsColor(Color.WHITE); 
+		myRenderer.setMarginsColor(Color.WHITE); 
 
-
-		mRenderer.setGridColor(Color.DKGRAY);
-		mRenderer.setXLabels(20);
-		mRenderer.setYLabels(9);
-		mRenderer.setShowGrid(true);
-		
-		mRenderer.setMargins(new int[] {20, 50, 15, 30});*/
-//		myRenderer.setChartTitle("FMCW Radar Data");
-		return mRenderer;
+		myRenderer.setGridColor(Color.DKGRAY);
+		myRenderer.setXLabels(20);
+		myRenderer.setYLabels(9);
+		myRenderer.setShowGrid(true);
+		return myRenderer;
 	}
+	// FFT CALLED
+//	XYSeriesRenderer r2 = new XYSeriesRenderer();
+//	renderer.setColor(Color.RED);
+//	renderer.setLineWidth(2);
+//	renderer.setPointStyle(PointStyle.SQUARE);
+
+/*		mRenderer.setPanEnabled(true, true);
+	mRenderer.setZoomEnabled(true, true);
+	mRenderer.setZoomButtonsVisible(true);
+	mRenderer.setLegendTextSize(20);
+
+	mRenderer.setZoomRate(10);
+
+	mRenderer.setAxesColor(Color.BLACK);
+	mRenderer.getXLabelsAlign();
+	mRenderer.setXLabelsColor(Color.BLACK);
+	mRenderer.setYLabelsColor(0, Color.BLACK);
+	mRenderer.setShowAxes(true);
+	mRenderer.setLabelsColor(Color.BLACK);
+
+	mRenderer.setXTitle("Frequency (kHz)");
+	mRenderer.setYTitle("Power (dB)");
+	mRenderer.setAxisTitleTextSize(20);
+
+	// background color of the PLOT ONLY
+	mRenderer.setApplyBackgroundColor(true);
+	// Color.TRANSPARENT would show the background of the app (MainActivity)
+	mRenderer.setBackgroundColor(Color.LTGRAY); 
+
+	// sets the background area of the object itself
+	// does not change the plots background
+	mRenderer.setMarginsColor(Color.WHITE); 
+
+
+	mRenderer.setGridColor(Color.DKGRAY);
+	mRenderer.setXLabels(20);
+	mRenderer.setYLabels(9);
+	mRenderer.setShowGrid(true);
+	
+	mRenderer.setMargins(new int[] {20, 50, 15, 30});*/
+//	myRenderer.setChartTitle("FMCW Radar Data");
 	
 		private void setChartSettings(XYMultipleSeriesRenderer renderer) {
 			
@@ -763,29 +907,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 			renderer.setShowGrid(true);
 			
 			renderer.setMargins(new int[] {20, 50, 15, 30});
-			
-/*		renderer.setApplyBackgroundColor(true);
-		// Color.TRANSPARENT would show the background of the app (MainActivity)
-		renderer.setBackgroundColor(Color.LTGRAY); 
-
-		// sets the background area of the object itself
-		// does not change the plots background
-		renderer.setMarginsColor(Color.WHITE);
-		renderer.setGridColor(Color.DKGRAY);
-		renderer.setXLabels(20);
-		renderer.setYLabels(9);
-		renderer.setShowGrid(true);
-		
-		renderer.setMargins(new int[] {35, 50, 15, 30});
-		
-	    renderer.setChartTitle("FMCW Radar Data");
-	    renderer.setXTitle("Frequency");
-	    renderer.setYTitle("Amplitude");
-	    renderer.setAxisTitleTextSize(20);
-	    renderer.setXAxisMin(0);
-	    renderer.setXAxisMax(5);
-	    renderer.setYAxisMin(0);
-	    renderer.setYAxisMax(250);*/
 	  } 
 
 } //END OF MAINACTIVITY CODE!
