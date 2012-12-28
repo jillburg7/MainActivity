@@ -15,13 +15,18 @@ public class NewFile {
 		Date myDate = new Date();
 		return (DateFormat.getDateInstance().format(myDate) + " " + DateFormat.getTimeInstance().format(myDate));
 	}
-	
+
 	public void createFile(Context c, String string) throws IOException{
-		String root = Environment.getExternalStorageDirectory().toString();
-		File myDir = new File(root + "/saved_data");    
+	//	String external_sd = Environment.getExternalStorageDirectory().toString();
+	//	File myDir = new File(external_sd + "/saved_data");  
+		File myDir = new File("/mnt/external_sd" + "/saved_data");  
+		
+//		File myDir = new File("/mnt/external_sd/saved_data");    
 		myDir.mkdirs();
 		String fname = timeStamp() + ".txt";
+	//	String fname = "dataFile" + ".txt";
 		File file = new File (myDir, fname);
+	//	File file = new File ("/mnt/external_sd/saved_data", fname);
 		if (file.exists ()){
 			file.delete (); 
 		}
@@ -30,12 +35,13 @@ public class NewFile {
 			out.write(string.getBytes());
 			out.flush();
 			out.close();
-	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 }
+
+
 //	public void createFile(Context c, String string) throws IOException{
 //		String FILENAME = timeStamp();
 //		

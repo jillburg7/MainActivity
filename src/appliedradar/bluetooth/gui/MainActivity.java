@@ -81,7 +81,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	GraphicalView mChartView;
 	XYMultipleSeriesDataset mDataset;
 	XYMultipleSeriesRenderer mRenderer;
-	boolean ren2 =false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -144,8 +143,16 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
               mChatService.start();
             }
         }
-		if (mChartView != null) {
-			mChartView.repaint();
+        if (mChartView == null) {
+			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
+//			mChartView = ChartFactory.getLineChartView(this, getMyData(),
+//					getMyRenderer());
+			mChartView = ChartFactory.getLineChartView(this, mDataset,
+					mRenderer);
+			layout.addView(mChartView);
+		} else {
+			mChartView.repaint(); // use this whenever data has changed and you
+									// want to redraw
 		}
 	}
 	
@@ -365,18 +372,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         	Intent settings = new Intent(this, SettingsActivity.class);
     		startActivity(settings);
         	return true;
-        /*case R.id.bt_settings:
-        	if (!mBluetoothAdapter.isEnabled()) {
-	            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-	            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-	           //findViewById(R.id.bt_settings).
-	            //findViewById(R.id.bt_settings).setVisibility(View.GONE);
-	            //findViewById(R.id.bt_settings).setVisibility(View.VISIBLE);
-	        // Otherwise, setup the chat session
-	        } else {
-	            if (mChatService == null) setupChat();
-	        }
-        	return true;*/
         case R.id.connect_scan:
             // Launch the DeviceListActivity to see devices and do scan
             serverIntent = new Intent(this, DeviceListActivty.class);
@@ -396,29 +391,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	public boolean onMenuItemClick(MenuItem item) {
 		return false;
 	}
-/*		switch (item.getItemId()) {
-		case R.id.raw_plot:
-			Toast.makeText(this, "Selected Raw Plot", Toast.LENGTH_SHORT)
-					.show();
-			break;
-		case R.id.range_plot:
-			Toast.makeText(this, "Selected Range Plot", Toast.LENGTH_SHORT)
-					.show();
-			break;
-		case R.id.doppler_plot:
-			Toast.makeText(this, "Selected Doppler Plot", Toast.LENGTH_SHORT)
-					.show();
-			break;
-		case R.id.fft_plot:
-			Toast.makeText(this, "Selected FFT Plot", Toast.LENGTH_SHORT)
-					.show();
-			break;
-		case R.id.sar_plot:
-			Toast.makeText(this, "Selected SAR Plot", Toast.LENGTH_SHORT)
-					.show();
-			break;
-		}
-		return false;*/
+
 
 	
 	
@@ -431,7 +404,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 			String fileContent = getDataToSave();
 			if (fileContent == null) {
 				Log.e("MainActivity", "No data to save.");
-			} else {
+			} else {		
 				save.createFile(this, fileContent);
 			}
 		}
@@ -439,8 +412,56 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 			Log.e("MainActivity", "IOError");
 		}
 	}
+
+	
+/*	BroadcastReceiver mExternalStorageReceiver;
+	boolean mExternalStorageAvailable = false;
+	boolean mExternalStorageWriteable = false;
+
+	void updateExternalStorageState() {
+	    String state = Environment.getExternalStorageState();
+	    if (Environment.MEDIA_MOUNTED.equals(state)) {
+	        mExternalStorageAvailable = mExternalStorageWriteable = true;
+	    } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+	        mExternalStorageAvailable = true;
+	        mExternalStorageWriteable = false;
+	    } else {
+	        mExternalStorageAvailable = mExternalStorageWriteable = false;
+	    }
+	    handleExternalStorageState(mExternalStorageAvailable,
+	            mExternalStorageWriteable);
+	}
+
+	private void handleExternalStorageState(boolean mExternalStorageAvailable2,
+			boolean mExternalStorageWriteable2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	void startWatchingExternalStorage() {
+	    mExternalStorageReceiver = new BroadcastReceiver() {
+	        @Override
+	        public void onReceive(Context context, Intent intent) {
+	            Log.i("test", "Storage: " + intent.getData());
+	            updateExternalStorageState();
+	        }
+	    };
+	    IntentFilter filter = new IntentFilter();
+	    filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+	    filter.addAction(Intent.ACTION_MEDIA_REMOVED);
+	    registerReceiver(mExternalStorageReceiver, filter);
+	    updateExternalStorageState();
+	}
+
+	void stopWatchingExternalStorage() {
+	    unregisterReceiver(mExternalStorageReceiver);
+	}*/
+
+	
 	
 	public String getDataToSave() {
+		//can save any FFT data into a file even if its hasn't been plotted yet
+		dataArray = getDataFromFile();
 		double[] arrayToSave = getFftData();
 		String stringToSave = null;
 		
@@ -537,7 +558,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 
 		// Get the text file
 		// NEED TO SPECIFICALLY CHANGE THIS LINE OF CODE TO BE MORE UNIVERSAL!
-		File file = new File(sdcard, "3kHz_44KHzFs.txt");
+		File file = new File(sdcard, "data3kHz_44KHzFs.txt");
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
