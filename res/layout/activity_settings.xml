@@ -69,15 +69,6 @@
         android:text="@string/currentSetting"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <android.support.v7.widget.Space
-        android:id="@+id/space1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/seekBar1"
-        android:layout_marginLeft="31dp"
-        android:layout_marginTop="40dp" />
-
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
@@ -105,5 +96,14 @@
         android:layout_alignLeft="@+id/textView4"
         android:text="@string/currentBandwidth"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="bandwidth"
+        android:text="Send Bandwidth" />
 
 </RelativeLayout>

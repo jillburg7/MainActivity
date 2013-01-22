@@ -44,5 +44,13 @@
 	<string name="ramptime">Ramp Time</string>
 	<string name="currentCapture"></string>
 	<string name="currentBandwidth"></string>
+	
+	<string name="pref_captureTime">Capture Time</string>
+    <string name="pref_currentSetting">Current Setting: </string>
+	<string name="pref_bandwidthSetting">Bandwidth</string>
+	<string name="pref_ramptime">Ramp Time</string>
+	<string name="pref_currentCapture"></string>
+	<string name="pref_currentBandwidth"></string>
+	<string name="pref_defaultBW">2250-2500MHz</string>
     
 </resources>

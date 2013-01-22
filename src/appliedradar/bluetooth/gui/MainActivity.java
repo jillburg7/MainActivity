@@ -222,12 +222,15 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         }
     }
 
+
+    public Message mSendMessage = new Message();
+    
     // BluetoothChat: sends messages to other BT device
     /**
      * Sends a message.
      * @param message  A string of text to send.
      */
-    private void sendMessage(String message) {
+    public void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
@@ -247,13 +250,14 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     }
     
     
+    
     // Status of Bluetooth connection is set in ActionBar
     private final void setStatus(int resId) {
         final ActionBar actionBar = getActionBar();
         actionBar.setSubtitle(resId);
     }
 
-	// Status of Bluetoothconnection is set in ActionBar
+	// Status of Bluetooth connection is set in ActionBar
     private final void setStatus(CharSequence subTitle) {
         final ActionBar actionBar = getActionBar();
         actionBar.setSubtitle(subTitle);
@@ -402,8 +406,9 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	
 	
 	// SENDS COMMAND TO FMCW RADAR KIT BY SELECTING THE "Collect Data" BUTTON
-	public void sendCollectSignal(View toast) {
+	public void sendCollectSignal(View button) {
 		sendMessage("Hi Jill");
+
 	}
 
 	// 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'

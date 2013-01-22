@@ -20,6 +20,7 @@ public final class R {
         public static final int binary_file=0x7f080027;
         public static final int bluetoothSettings=0x7f080001;
         public static final int bt_settings=0x7f08001c;
+        public static final int button1=0x7f08000b;
         public static final int button_collect=0x7f080014;
         public static final int button_group=0x7f080012;
         public static final int button_load=0x7f080013;
@@ -47,12 +48,11 @@ public final class R {
         public static final int search=0x7f08001a;
         public static final int seekBar1=0x7f080003;
         public static final int seekBar2=0x7f080006;
-        public static final int space1=0x7f080008;
         public static final int textView1=0x7f080005;
-        public static final int textView2=0x7f080009;
+        public static final int textView2=0x7f080008;
         public static final int textView3=0x7f080004;
-        public static final int textView4=0x7f08000a;
-        public static final int textView5=0x7f08000b;
+        public static final int textView4=0x7f080009;
+        public static final int textView5=0x7f08000a;
         public static final int text_file=0x7f080026;
         public static final int title_new_devices=0x7f08000e;
         public static final int title_paired_devices=0x7f08000c;
@@ -109,6 +109,13 @@ public final class R {
         public static final int not_connected=0x7f050001;
         public static final int plot_FFT=0x7f050026;
         public static final int plot_data=0x7f050025;
+        public static final int pref_bandwidthSetting=0x7f05003a;
+        public static final int pref_captureTime=0x7f050038;
+        public static final int pref_currentBandwidth=0x7f05003d;
+        public static final int pref_currentCapture=0x7f05003c;
+        public static final int pref_currentSetting=0x7f050039;
+        public static final int pref_defaultBW=0x7f05003e;
+        public static final int pref_ramptime=0x7f05003b;
         public static final int ramptime=0x7f050035;
         public static final int range_plot=0x7f050010;
         public static final int raw_plot=0x7f05000f;
@@ -144,6 +151,7 @@ public final class R {
         public static final int styleName=0x7f060001;
     }
     public static final class xml {
-        public static final int searchable=0x7f040000;
+        public static final int preferences=0x7f040000;
+        public static final int searchable=0x7f040001;
     }
 }
