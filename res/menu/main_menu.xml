@@ -30,4 +30,6 @@
     	        android:title="@string/connect"/>
     	</menu>
 	</item>
+	
+
 </menu>

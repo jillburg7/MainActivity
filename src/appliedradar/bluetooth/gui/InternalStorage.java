@@ -1,9 +1,5 @@
 package appliedradar.bluetooth.gui;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
-import android.content.Context;
 
 public class InternalStorage {
 

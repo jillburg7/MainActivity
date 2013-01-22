@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+        <RelativeLayout
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_group"
+        android:orientation="vertical" >
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/button_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" >
+
+        <Button
+            android:id="@+id/button_load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/button_collect"
+            android:onClick="openArchive"
+            android:text="@string/load_data"
+            android:textSize="28sp" />
+
+        <Button
+            android:id="@+id/button_collect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:onClick="sendCollectSignal"
+            android:text="@string/collect_data"
+            android:textSize="28sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/plotButtonGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" >
+
+        <Button
+            android:id="@+id/plot_button"
+            android:layout_width="200sp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:onClick="plotButton"
+            android:text="@string/plot_data"
+            android:textSize="28sp" />
+
+        <Button
+            android:id="@+id/plotFFT_button"
+            android:layout_width="200sp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/plot_button"
+            android:onClick="plotFFT"
+            android:text="@string/plot_FFT"
+            android:textSize="28sp" />
+    </RelativeLayout>
+    
+	<Button
+        android:id="@+id/button_save"
+        android:layout_width="200sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:onClick="saveFile"
+        android:text="@string/save_data"
+        android:textSize="28sp" /> 
+
+</RelativeLayout>

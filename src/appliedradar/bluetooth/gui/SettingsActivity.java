@@ -39,5 +39,11 @@ public class SettingsActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	String mCaptureTime;
+	String mBandwidth;
+	String mRampTime;
+	
+	
 
 }

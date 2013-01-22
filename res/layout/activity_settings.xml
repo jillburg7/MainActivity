@@ -4,24 +4,106 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity" >
 
-        <TextView
-            android:id="@+id/bluetoothSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="86dp"
-            android:text="@string/bluetoothSettings"
-            android:textSize="24sp" />
+    <TextView
+        android:id="@+id/bluetoothSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="86dp"
+        android:text="@string/bluetoothSettings"
+        android:textSize="24sp" />
 
-        <Switch
-            android:id="@+id/BTswitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/bluetoothSettings"
-            android:text="@string/bluetoothToggle"
-            android:textSize="20sp"
-            tools:ignore="NewApi" />
+    <Switch
+        android:id="@+id/BTswitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/bluetoothSettings"
+        android:text="@string/bluetoothToggle"
+        android:textSize="20sp"
+        tools:ignore="NewApi" />
+
+    <SeekBar
+        android:id="@+id/seekBar1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView3"
+        android:layout_marginTop="24dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/BTswitch"
+        android:layout_marginTop="101dp"
+        android:text="@string/currentSetting"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="30dp"
+        android:text="@string/captureTime"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <SeekBar
+        android:id="@+id/seekBar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/TextView01"
+        android:layout_marginTop="26dp" />
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:text="@string/currentSetting"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <android.support.v7.widget.Space
+        android:id="@+id/space1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/seekBar1"
+        android:layout_marginLeft="31dp"
+        android:layout_marginTop="40dp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/TextView01"
+        android:layout_alignParentLeft="true"
+        android:text="@string/bandwidthSetting"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView3"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_toRightOf="@+id/textView1"
+        android:text="@string/currentCapture"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/seekBar2"
+        android:layout_alignLeft="@+id/textView4"
+        android:text="@string/currentBandwidth"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

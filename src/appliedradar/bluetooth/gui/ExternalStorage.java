@@ -1,14 +1,57 @@
 package appliedradar.bluetooth.gui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Environment;
-import android.util.Log;
 
 public class ExternalStorage {
 
+	/*	BroadcastReceiver mExternalStorageReceiver;
+	boolean mExternalStorageAvailable = false;
+	boolean mExternalStorageWriteable = false;
+
+	void updateExternalStorageState() {
+	    String state = Environment.getExternalStorageState();
+	    if (Environment.MEDIA_MOUNTED.equals(state)) {
+	        mExternalStorageAvailable = mExternalStorageWriteable = true;
+	    } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+	        mExternalStorageAvailable = true;
+	        mExternalStorageWriteable = false;
+	    } else {
+	        mExternalStorageAvailable = mExternalStorageWriteable = false;
+	    }
+	    handleExternalStorageState(mExternalStorageAvailable,
+	            mExternalStorageWriteable);
+	}
+
+	private void handleExternalStorageState(boolean mExternalStorageAvailable2,
+			boolean mExternalStorageWriteable2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	void startWatchingExternalStorage() {
+	    mExternalStorageReceiver = new BroadcastReceiver() {
+	        @Override
+	        public void onReceive(Context context, Intent intent) {
+	            Log.i("test", "Storage: " + intent.getData());
+	            updateExternalStorageState();
+	        }
+	    };
+	    IntentFilter filter = new IntentFilter();
+	    filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+	    filter.addAction(Intent.ACTION_MEDIA_REMOVED);
+	    registerReceiver(mExternalStorageReceiver, filter);
+	    updateExternalStorageState();
+	}
+
+	void stopWatchingExternalStorage() {
+	    unregisterReceiver(mExternalStorageReceiver);
+	}*/
+	
+	
+	
+	
+	
+	
+	
 	/*BroadcastReceiver mExternalStorageReceiver;
 	boolean mExternalStorageAvailable = false;
 	boolean mExternalStorageWriteable = false;
@@ -46,6 +89,11 @@ public class ExternalStorage {
 	void stopWatchingExternalStorage() {
 		unregisterReceiver(mExternalStorageReceiver);
 	}*/
+	
+	
+	
+	
+	
 	
 	
 	

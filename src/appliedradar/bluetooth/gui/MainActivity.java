@@ -13,6 +13,7 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -75,6 +76,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     private BluetoothChatService mChatService = null;
     //END OF BT INITIALIZERS
     
+    // Whether or not we are in dual-pane mode
+    boolean mIsDualPane = false;
     
 	ShareActionProvider mShareActionProvider;
 	double[] dataArray;
@@ -85,6 +88,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.main);
 		// Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -94,16 +98,18 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
         }
 		
-        // Displays chartview of plot in GUI
+        // Determine whether we are in single-pane or dual-pane mode by testing the visibility
+        // of the article view.
+//        View articleView = findViewById(R.id.article);
+//        mIsDualPane = articleView != null && articleView.getVisibility() == View.VISIBLE;
         
+        // Displays chartview of plot in GUI
         mRenderer = getMyDefaultRenderer();
         mDataset = getMyDefaultData();
         setChartSettings(mRenderer);
 
         if (mChartView == null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
-//			mChartView = ChartFactory.getLineChartView(this, getMyData(),
-//					getMyRenderer());
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
 					mRenderer);
 			layout.addView(mChartView);
@@ -216,6 +222,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         }
     }
 
+    // BluetoothChat: sends messages to other BT device
     /**
      * Sends a message.
      * @param message  A string of text to send.
@@ -238,12 +245,15 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
             //mOutEditText.setText(mOutStringBuffer);
         }
     }
-
+    
+    
+    // Status of Bluetooth connection is set in ActionBar
     private final void setStatus(int resId) {
         final ActionBar actionBar = getActionBar();
         actionBar.setSubtitle(resId);
     }
 
+	// Status of Bluetoothconnection is set in ActionBar
     private final void setStatus(CharSequence subTitle) {
         final ActionBar actionBar = getActionBar();
         actionBar.setSubtitle(subTitle);
@@ -340,9 +350,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         mChatService.connect(device);
     }
 
-	
-    
-    
     
     // Action Bar displays options when Menu item in Action bar is clicked
 	@Override
@@ -356,13 +363,11 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		mShareActionProvider = (ShareActionProvider) menuItem
 				.getActionProvider();
 
-		// Return true to display menu
-		//if(deflate3 == true){
-			//getMenuInflater().deflate(R.id.bt_settings, menuItem);
-		//}
+		
 		return true;
 	}
 
+	// Action Bar MenuItem onClick events --> what to do next
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
@@ -395,7 +400,20 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 
 	
 	
+	
+	// SENDS COMMAND TO FMCW RADAR KIT BY SELECTING THE "Collect Data" BUTTON
+	public void sendCollectSignal(View toast) {
+		sendMessage("Hi Jill");
+	}
 
+	// 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
+	public void openArchive(View newActivity) {
+		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
+		Intent archiveData = new Intent(this, DisplayArchive.class);
+		startActivity(archiveData);
+	}
+	
+	
 	
 	// Saving pop-up menu
 	public void saveFile(View display) {		
@@ -413,52 +431,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		}
 	}
 
-	
-/*	BroadcastReceiver mExternalStorageReceiver;
-	boolean mExternalStorageAvailable = false;
-	boolean mExternalStorageWriteable = false;
-
-	void updateExternalStorageState() {
-	    String state = Environment.getExternalStorageState();
-	    if (Environment.MEDIA_MOUNTED.equals(state)) {
-	        mExternalStorageAvailable = mExternalStorageWriteable = true;
-	    } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-	        mExternalStorageAvailable = true;
-	        mExternalStorageWriteable = false;
-	    } else {
-	        mExternalStorageAvailable = mExternalStorageWriteable = false;
-	    }
-	    handleExternalStorageState(mExternalStorageAvailable,
-	            mExternalStorageWriteable);
-	}
-
-	private void handleExternalStorageState(boolean mExternalStorageAvailable2,
-			boolean mExternalStorageWriteable2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	void startWatchingExternalStorage() {
-	    mExternalStorageReceiver = new BroadcastReceiver() {
-	        @Override
-	        public void onReceive(Context context, Intent intent) {
-	            Log.i("test", "Storage: " + intent.getData());
-	            updateExternalStorageState();
-	        }
-	    };
-	    IntentFilter filter = new IntentFilter();
-	    filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
-	    filter.addAction(Intent.ACTION_MEDIA_REMOVED);
-	    registerReceiver(mExternalStorageReceiver, filter);
-	    updateExternalStorageState();
-	}
-
-	void stopWatchingExternalStorage() {
-	    unregisterReceiver(mExternalStorageReceiver);
-	}*/
-
-	
-	
 	public String getDataToSave() {
 		//can save any FFT data into a file even if its hasn't been plotted yet
 		dataArray = getDataFromFile();
@@ -481,18 +453,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		}	
 	}
 
-	// SENDS COMMAND TO FMCW RADAR KIT BY SELECTING THE "Collect Data" BUTTON
-	public void sendCollectSignal(View toast) {
-		sendMessage("Hi Jill");
-	}
-
-	public void openArchive(View newActivity) {
-		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
-		Intent archiveData = new Intent(this, DisplayArchive.class);
-		startActivity(archiveData);
-	}
-
-	
+	// Plots raw data onClick
 	public void plotButton(View plotMe) {
 		Toast.makeText(this, "Selected Plot", Toast.LENGTH_SHORT).show();
 		
@@ -518,6 +479,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		}
 	}
 	
+	// Plots FFT- power spectrum data onClick
 	public void plotFFT(View fftPlot) {
 		Toast.makeText(this, "Selected Plot FFT", Toast.LENGTH_SHORT).show();
 		
@@ -552,13 +514,13 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	}
 
 	
-
+	// Reads data line-by-line out of a '.txt' file which is saved to internal storage
 	public double[] getDataFromFile() {
-		File sdcard = Environment.getExternalStorageDirectory();
+		File datafile = Environment.getExternalStorageDirectory();
 
 		// Get the text file
 		// NEED TO SPECIFICALLY CHANGE THIS LINE OF CODE TO BE MORE UNIVERSAL!
-		File file = new File(sdcard, "data3kHz_44KHzFs.txt");
+		File file = new File(datafile, "data3kHz_44KHzFs.txt");
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
@@ -579,11 +541,10 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		return dataArray;	
 	}
 	
+	// Reads data line-by-line out of a '.txt' file which is saved to internal storage
 	public double[] getDataFromFile2() {
 		File sdcard = Environment.getExternalStorageDirectory();
 
-		// Get the text file
-		// NEED TO SPECIFICALLY CHANGE THIS LINE OF CODE TO BE MORE UNIVERSAL!
 		File file = new File(sdcard, "100MhzRealReturn.txt");
 
 		try {
@@ -605,7 +566,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		return dataArray;	
 	}
 	
-	
+	// Default "data" to display when no data has been selected to plot & process
 	public XYMultipleSeriesDataset getMyDefaultData() {
 
 		XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
@@ -614,6 +575,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		return myDataset;
 	}
 	
+	// FFT calucation, returns Power Spectrum output data
 	public double[] getFftData() {
 
 		double[] realArray = dataArray;
@@ -649,6 +611,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		return fftOutput2;	
 	}
 	
+	// Default Renderer to display when no data has been selected to process (blank graph)
 	public XYMultipleSeriesRenderer getMyDefaultRenderer() {
 
 		XYSeriesRenderer r1 = new XYSeriesRenderer();

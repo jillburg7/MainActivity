@@ -29,11 +29,20 @@
     <string name="hello_world">Hello empty screen! :D</string>
     
     <string name="title_activity_display_archive">Data Archive</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Hint: </string>
      
     <string name="title_activity_device_list_activty">Device List Activity</string>
     
     <string name="title_activity_settings">Settings</string>
     <string name="bluetoothToggle">Bluetooth</string>
     <string name="bluetoothSettings">Bluetooth Settings: </string>
-
+    
+    <string name="captureTime">Capture Time</string>
+    <string name="currentSetting">Current Setting: </string>
+	<string name="bandwidthSetting">Bandwidth</string>
+	<string name="ramptime">Ramp Time</string>
+	<string name="currentCapture"></string>
+	<string name="currentBandwidth"></string>
+    
 </resources>
