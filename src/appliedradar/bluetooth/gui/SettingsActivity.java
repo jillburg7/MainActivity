@@ -1,8 +1,8 @@
 package appliedradar.bluetooth.gui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,8 +10,9 @@ import android.view.View;
 
 public class SettingsActivity extends Activity {
 
-	public MainActivity mSendMessage = null;
 	
+	public static final String DEFAULT_BW =  "default_bandwidth";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,40 +46,42 @@ public class SettingsActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
+//	public MainActivity mSendMessage = null;
 	public String mCaptureTime;
 	public String mBandwidth;
 	public String mRampTime;
 	
+	// button created to send string message to another device using Bluetooth
+	// debugging purposes only; will remove once SettingsActivity is set up and functional
 	public void bandwidth(View view) {
 		mBandwidth = getCurrentBandwidth();
-		mSendMessage = new MainActivity();
-		mSendMessage.sendMessage(mBandwidth);
+		Intent intent = new Intent();
+		intent.putExtra(DEFAULT_BW, mBandwidth);
+		
+		setResult(Activity.RESULT_OK, intent);
+		finish();
 	}
 	
-	public String getCurrentBandwidth() {
-		String bandwidthSetting = "9";
-//		mSendMessage = new MainActivity();
-//		mSendMessage.sendMessage("bandwidth");
-		
-		// send command to radar to get current bandwidth setting
-		
+	// send command to radar to get current bandwidth setting
+	public String getCurrentBandwidth() {	
+		// the following string was successfully able to send to another device using Bluetooth
+		//String bandwidthSetting = "did you get this message?";
+	
+		// CR is sent are end of command for the PIC to understand command
+		String bandwidthSetting = "FMCW:Bandwidth ? CR";
 		return bandwidthSetting;
 	}
 	
-	public void getCurrentCaptureTime() {
-		String captureTime = null;
-		
-		// send command to radar to get current capture time setting
-		
-		mCaptureTime = captureTime;
+	// send command to radar to get current capture time setting
+	public String getCurrentCaptureTime() {
+		String captureTime = "FMCW:CaptureTime ? CR";
+		return captureTime;
 	}
 	
-	public void getCurrentRampTime() {
-		String rampTime = null;
-		
-		// send command to radar to get current ramp time setting
-		
-		mRampTime = rampTime;
+	// send command to radar to get current ramp time setting
+	public String getCurrentRampTime() {
+		String rampTime = "FMCW:CaptureTime ? CR";
+		return rampTime;
 	}
 }

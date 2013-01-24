@@ -54,6 +54,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
+    
+	public static final int REQUEST_BW = 1;
 
     // Layout Views
     //private ListView mConversationView;
@@ -322,26 +324,32 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     };
     
     @Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(D) Log.d(TAG, "onActivityResult " + resultCode);
-        switch (requestCode) {
-        case REQUEST_CONNECT_DEVICE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data);
-            }
-            break;
-        case REQUEST_ENABLE_BT:
-            // When the request to enable Bluetooth returns
-            if (resultCode == Activity.RESULT_OK) {
-                // Bluetooth is now enabled, so set up a chat session
-                setupChat();
-            } else {
-                // User did not enable Bluetooth or an error occurred
-                Log.d(TAG, "BT not enabled");
-                Toast.makeText(this, R.string.bt_not_enabled, Toast.LENGTH_SHORT).show();
-            }
-        }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	if(D) Log.d(TAG, "onActivityResult " + resultCode);
+    	switch (requestCode) {
+    	case REQUEST_CONNECT_DEVICE:
+    		// When DeviceListActivity returns with a device to connect
+    		if (resultCode == Activity.RESULT_OK) {
+    			connectDevice(data);
+    		}
+    		break;
+    	case REQUEST_ENABLE_BT:
+    		// When the request to enable Bluetooth returns
+    		if (resultCode == Activity.RESULT_OK) {
+    			// Bluetooth is now enabled, so set up a chat session
+    			setupChat();
+    		} else {
+    			// User did not enable Bluetooth or an error occurred
+    			Log.d(TAG, "BT not enabled");
+    			Toast.makeText(this, R.string.bt_not_enabled, Toast.LENGTH_SHORT).show();
+    		}
+    		break;
+    	case REQUEST_BW:
+    		if (resultCode == Activity.RESULT_OK) {
+    			String messageBW =  data.getExtras().getString(SettingsActivity.DEFAULT_BW);
+    			sendMessage(messageBW);
+    		}
+    	}
     }
 
     private void connectDevice(Intent data) {
@@ -371,6 +379,9 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		return true;
 	}
 
+
+
+	
 	// Action Bar MenuItem onClick events --> what to do next
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -379,7 +390,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         switch (item.getItemId()) {
         case R.id.menu_settings:
         	Intent settings = new Intent(this, SettingsActivity.class);
-    		startActivity(settings);
+    		startActivityForResult(settings, REQUEST_BW);
         	return true;
         case R.id.connect_scan:
             // Launch the DeviceListActivity to see devices and do scan
@@ -408,7 +419,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	// SENDS COMMAND TO FMCW RADAR KIT BY SELECTING THE "Collect Data" BUTTON
 	public void sendCollectSignal(View button) {
 		sendMessage("Hi Jill");
-
+		Toast.makeText(this, "Collecting Data", Toast.LENGTH_SHORT).show();
 	}
 
 	// 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
