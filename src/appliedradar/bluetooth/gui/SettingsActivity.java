@@ -69,19 +69,19 @@ public class SettingsActivity extends Activity {
 		//String bandwidthSetting = "did you get this message?";
 	
 		// CR is sent are end of command for the PIC to understand command
-		String bandwidthSetting = "FMCW:Bandwidth ? CR";
+		String bandwidthSetting = "FMCW:LFMBW? CR";
 		return bandwidthSetting;
 	}
 	
 	// send command to radar to get current capture time setting
 	public String getCurrentCaptureTime() {
-		String captureTime = "FMCW:CaptureTime ? CR";
+		String captureTime = "FMCW:CAPTURETIME? CR";
 		return captureTime;
 	}
 	
 	// send command to radar to get current ramp time setting
 	public String getCurrentRampTime() {
-		String rampTime = "FMCW:CaptureTime ? CR";
+		String rampTime = "FMCW:RAMPTIME? CR";
 		return rampTime;
 	}
 }

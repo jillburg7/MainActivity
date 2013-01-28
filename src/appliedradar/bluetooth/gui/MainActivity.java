@@ -225,7 +225,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     }
 
 
-    public Message mSendMessage = new Message();
+//    public Message mSendMessage = new Message();
     
     // BluetoothChat: sends messages to other BT device
     /**
