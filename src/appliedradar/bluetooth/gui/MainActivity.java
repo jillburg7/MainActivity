@@ -13,7 +13,6 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -58,9 +57,9 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	public static final int REQUEST_BW = 1;
 
     // Layout Views
-    //private ListView mConversationView;
-    //private EditText mOutEditText;
-   // private Button mSendButton;
+//    private ListView mConversationView;
+//    private EditText mOutEditText;
+//    private Button mSendButton;
 
     // Name of the connected device
     private String mConnectedDeviceName = null;
@@ -169,16 +168,16 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 
         // Initialize the array adapter for the conversation thread
         mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
-        //mConversationView = (ListView) findViewById(R.id.in);
-        //mConversationView.setAdapter(mConversationArrayAdapter);
+//        mConversationView = (ListView) findViewById(R.id.in);
+//        mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the compose field with a listener for the return key
-        //mOutEditText = (EditText) findViewById(R.id.edit_text_out);
-        //mOutEditText.setOnEditorActionListener(mWriteListener);
+//        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
+//        mOutEditText.setOnEditorActionListener(mWriteListener);
 
         // Initialize the send button with a listener that for click events
-        //mSendButton = (Button) findViewById(R.id.button_send);
-        /*mSendButton.setOnClickListener(new OnClickListener() {
+/*       mSendButton = (Button) findViewById(R.id.button_send);
+        mSendButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // Send a message using content of the edit text widget
                 TextView view = (TextView) findViewById(R.id.edit_text_out);
@@ -264,6 +263,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         final ActionBar actionBar = getActionBar();
         actionBar.setSubtitle(subTitle);
     }
+   
+    public RadarCommand myCommand = new RadarCommand();
     
     int n = 0;
     // The Handler that gets information back from the BluetoothChatService
@@ -297,9 +298,13 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
                 byte[] readBuf = (byte[]) msg.obj;
                 // construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
-                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
-                mStringData.add(readMessage);
-                try {
+                Log.e(TAG, "water bottle");
+                String returned = myCommand.parceCommand(readMessage);
+                Log.e(TAG, returned);
+                
+//                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
+//                mStringData.add(readMessage);
+               /* try {
                 	 if (n<512){
                 	newDataArray[n] = Float.parseFloat(readMessage);
                 	if(D) Log.e(TAG, String.valueOf(n) + String.valueOf(newDataArray[n]));
@@ -308,7 +313,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
                 	} catch (NumberFormatException e) {
                 	  // the array did not have a double
                 	}
-                break;
+                break;*/
             case MESSAGE_DEVICE_NAME:
                 // save the connected device's name
                 mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
@@ -415,10 +420,32 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 
 	
 	
-	
+	boolean started;
 	// SENDS COMMAND TO FMCW RADAR KIT BY SELECTING THE "Collect Data" BUTTON
 	public void sendCollectSignal(View button) {
-		sendMessage("Hi Jill");
+
+		
+		if(button.isPressed() == true) {
+			//String startCollect = "FMCW:FIRE \n";
+			sendMessage("FMCW:FIRE \n");
+			Log.e(TAG, "start collecting");
+			started = true;
+		}
+		if (started) {
+			sendMessage("FMCW:STOP \n");
+			Log.e(TAG, "stop collecting");
+		}
+		else {
+			sendMessage("FMCW:FIRE \n");
+			Log.e(TAG, "start collecting");
+		}
+	// the following code does run. 
+		//else {
+//			sendMessage("FMCW:STOP \n");
+//			Log.e(TAG, "stop collecting");
+	//		button.setPressed(true);
+	//	}
+//		mHandler.sendMessageAtFrontOfQueue(message);
 		Toast.makeText(this, "Collecting Data", Toast.LENGTH_SHORT).show();
 	}
 
