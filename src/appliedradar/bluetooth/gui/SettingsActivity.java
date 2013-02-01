@@ -12,7 +12,7 @@ public class SettingsActivity extends Activity {
 
 	
 	public static final String DEFAULT_BW =  "default_bandwidth";
-
+	public static final String READ_STATE = "read_state #";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,14 +54,27 @@ public class SettingsActivity extends Activity {
 	
 	// button created to send string message to another device using Bluetooth
 	// debugging purposes only; will remove once SettingsActivity is set up and functional
-	public void bandwidth(View view) {
-		mBandwidth = getCurrentBandwidth();
+//	public void bandwidth(View view) {
+//		mBandwidth = getCurrentBandwidth();
+//		Intent intent = new Intent();
+//		intent.putExtra(DEFAULT_BW, mBandwidth);
+//		
+//		setResult(Activity.RESULT_OK, intent);
+//		finish();
+//	}
+	
+	public RadarCommand myCommand = new RadarCommand();
+	
+	public void readState(View view) {
+		String currentState = myCommand.readCurrentState(0);
 		Intent intent = new Intent();
-		intent.putExtra(DEFAULT_BW, mBandwidth);
+		intent.putExtra(READ_STATE, currentState);
 		
 		setResult(Activity.RESULT_OK, intent);
 		finish();
 	}
+	
+	
 	
 	// send command to radar to get current bandwidth setting
 	public String getCurrentBandwidth() {	

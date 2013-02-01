@@ -54,7 +54,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     private static final int REQUEST_CONNECT_DEVICE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
     
-	public static final int REQUEST_BW = 1;
+	public static final int REQUEST_BW = 4;
+	public static final int REQUEST_STATE_INFO = 5;
 
     // Layout Views
 //    private ListView mConversationView;
@@ -249,8 +250,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
             //mOutEditText.setText(mOutStringBuffer);
         }
     }
-    
-    
+
     
     // Status of Bluetooth connection is set in ActionBar
     private final void setStatus(int resId) {
@@ -292,15 +292,22 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
                 byte[] writeBuf = (byte[]) msg.obj;
                 // construct a string from the buffer
                 String writeMessage = new String(writeBuf);
-                mConversationArrayAdapter.add("Me:  " + writeMessage);
+         //       Log.i(TAG, "Tablet:  " + writeMessage);
+//                mConversationArrayAdapter.add("Me:  " + writeMessage);
                 break;
             case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
                 // construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
-                Log.e(TAG, "water bottle");
-                String returned = myCommand.parceCommand(readMessage);
-                Log.e(TAG, returned);
+                Log.i(TAG, "water bottle");
+                
+//                String returned = myCommand.parceCommand(readMessage);
+//                Log.i(TAG, returned);
+                
+                boolean stateRead = true;
+                String returned = myCommand.parceCommand(readMessage, stateRead);
+                Log.i(TAG, returned);
+                
                 
 //                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
 //                mStringData.add(readMessage);
@@ -354,6 +361,11 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     			String messageBW =  data.getExtras().getString(SettingsActivity.DEFAULT_BW);
     			sendMessage(messageBW);
     		}
+    	case REQUEST_STATE_INFO:
+    		if (resultCode == Activity.RESULT_OK) {
+    			String stateInfo =  data.getExtras().getString(SettingsActivity.READ_STATE);
+    			sendMessage(stateInfo);
+    		}
     	}
     }
 
@@ -383,8 +395,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		
 		return true;
 	}
-
-
 
 	
 	// Action Bar MenuItem onClick events --> what to do next
@@ -426,7 +436,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 
 		
 		if(button.isPressed() == true) {
-			//String startCollect = "FMCW:FIRE \n";
 			sendMessage("FMCW:FIRE \n");
 			Log.e(TAG, "start collecting");
 			started = true;
@@ -700,7 +709,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		return myRenderer;
 	}
 	
-
 	public XYMultipleSeriesRenderer getRawRenderer() {
 
 		XYSeriesRenderer r1 = new XYSeriesRenderer();
