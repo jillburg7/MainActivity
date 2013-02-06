@@ -7,6 +7,9 @@ import java.util.List;
 public class RadarCommand {
 	boolean queriesState;
 	
+	//Constructor
+//	public RadarCommand(){}
+	
 	public String readCurrentState(int state) {
 		String readState = "SYST:READSTATE? " + state + "\n";
 		queriesState = true;

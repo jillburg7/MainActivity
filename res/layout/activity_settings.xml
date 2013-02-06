@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity" >
 
-    <TextView
+<!--     <TextView
         android:id="@+id/bluetoothSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,88 +22,90 @@
         android:layout_below="@+id/bluetoothSettings"
         android:text="@string/bluetoothToggle"
         android:textSize="20sp"
-        tools:ignore="NewApi" />
-
-    <SeekBar
-        android:id="@+id/seekBar1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView3"
-        android:layout_marginTop="24dp" />
+        tools:ignore="NewApi" /> -->
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/captureTimeSetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/BTswitch"
+        android:layout_alignParentLeft="true"   
         android:layout_marginTop="101dp"
         android:text="@string/currentSetting"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
+<!-- android:layout_below="@+id/BTswitch" -->    
+    
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/captureTimeOptions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView3"
+        android:layout_alignBottom="@+id/captureTimeSetting"
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="30dp"
         android:text="@string/captureTime"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<TextView
+        android:id="@+id/currentCapture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/captureTimeSetting"
+        android:layout_alignBottom="@+id/captureTimeSetting"
+        android:layout_toRightOf="@+id/captureTimeOptions"
+        android:text="@string/currentCapture"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <SeekBar
         android:id="@+id/seekBar2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/TextView01"
+        android:layout_below="@+id/bandwidthSetting"
         android:layout_marginTop="26dp" />
 
     <TextView
-        android:id="@+id/TextView01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:text="@string/currentSetting"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/TextView01"
-        android:layout_alignParentLeft="true"
-        android:text="@string/bandwidthSetting"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView3"
-        android:layout_alignBottom="@+id/textView3"
-        android:layout_toRightOf="@+id/textView1"
-        android:text="@string/currentCapture"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/currentBandwidth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/seekBar2"
-        android:layout_alignLeft="@+id/textView4"
+        android:layout_alignLeft="@+id/currentCapture"
         android:text="@string/currentBandwidth"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/readState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:onClick="readState"
         android:text="Read State" />
+
+    <Button
+        android:id="@+id/captureTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/captureTimeSetting"
+        android:text="@string/changeCaptureTime" />
+
+    <TextView
+        android:id="@+id/bandwidthOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/captureTime"
+        android:layout_marginTop="30dp"
+        android:text="@string/bandwidthSetting"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/bandwidthSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/bandwidthOptions"
+        android:text="@string/currentSetting"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

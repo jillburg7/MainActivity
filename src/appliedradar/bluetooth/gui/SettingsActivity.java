@@ -65,6 +65,7 @@ public class SettingsActivity extends Activity {
 	
 	public RadarCommand myCommand = new RadarCommand();
 	
+	// button to read State, test puruposes ONLY
 	public void readState(View view) {
 		String currentState = myCommand.readCurrentState(0);
 		Intent intent = new Intent();
@@ -74,9 +75,13 @@ public class SettingsActivity extends Activity {
 		finish();
 	}
 	
+	StringBuilder builder = new StringBuilder();
+//	builder.append("ValueGoesHere");
 	
+//	textView.setText(builder.toString());
 	
-	// send command to radar to get current bandwidth setting
+}
+/*	// send command to radar to get current bandwidth setting
 	public String getCurrentBandwidth() {	
 		// the following string was successfully able to send to another device using Bluetooth
 		//String bandwidthSetting = "did you get this message?";
@@ -96,5 +101,4 @@ public class SettingsActivity extends Activity {
 	public String getCurrentRampTime() {
 		String rampTime = "FMCW:RAMPTIME? \n";
 		return rampTime;
-	}
-}
+	}*/

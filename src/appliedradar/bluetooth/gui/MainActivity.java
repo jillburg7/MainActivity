@@ -224,8 +224,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         }
     }
 
-
-//    public Message mSendMessage = new Message();
     
     // BluetoothChat: sends messages to other BT device
     /**
@@ -434,7 +432,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	// SENDS COMMAND TO FMCW RADAR KIT BY SELECTING THE "Collect Data" BUTTON
 	public void sendCollectSignal(View button) {
 
-		
 		if(button.isPressed() == true) {
 			sendMessage("FMCW:FIRE \n");
 			Log.e(TAG, "start collecting");
@@ -448,7 +445,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 			sendMessage("FMCW:FIRE \n");
 			Log.e(TAG, "start collecting");
 		}
-	// the following code does run. 
+	// the following code doesnt run. 
 		//else {
 //			sendMessage("FMCW:STOP \n");
 //			Log.e(TAG, "stop collecting");
@@ -458,6 +455,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		Toast.makeText(this, "Collecting Data", Toast.LENGTH_SHORT).show();
 	}
 
+	
+	
 	// 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
 	public void openArchive(View newActivity) {
 		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
@@ -858,27 +857,3 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	  } 
 	
 } //END OF MAINACTIVITY CODE!
-
-/*	public XYMultipleSeriesDataset getMyData() {
-
-	XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
-			
-	XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
-	double[] array = getDataFromFile();
-
-	for (int i=0; i<array.length;; i++){				
-		dataSeries.add(i, array[i]);
-	}
-	myDataset.addSeries(dataSeries);
-
-	XYSeries dataSeries2 = new XYSeries("FFT data");
-	double[] array2= getFftData();
-	System.out.print("in getMyData, array2 =" + array2);
-	int j=0;
-	for (j=0; j<( i<array2.length;/2); j++){
-		dataSeries2.add(j, array2[j]);
-	}
-	mDataset.addSeries(dataSeries2);
-	
-	return myDataset;
-	}*/

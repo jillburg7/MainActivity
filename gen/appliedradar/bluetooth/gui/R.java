@@ -15,50 +15,45 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int BTswitch=0x7f080002;
-        public static final int TextView01=0x7f080007;
-        public static final int binary_file=0x7f08002a;
-        public static final int bluetoothSettings=0x7f080001;
-        public static final int bt_settings=0x7f08001f;
-        public static final int button1=0x7f08000b;
-        public static final int button_collect=0x7f080014;
-        public static final int button_group=0x7f080012;
-        public static final int button_load=0x7f080013;
-        public static final int button_save=0x7f080018;
-        public static final int button_scan=0x7f080010;
-        public static final int button_send=0x7f08001b;
-        public static final int chart=0x7f080011;
-        public static final int compressed_file=0x7f08002b;
-        public static final int connect_scan=0x7f080021;
-        public static final int discoverable=0x7f080020;
-        public static final int doppler_plot=0x7f080025;
-        public static final int edit_text_out=0x7f08001a;
-        public static final int fft_plot=0x7f080026;
-        public static final int in=0x7f080019;
-        public static final int matlab_file=0x7f08002c;
-        public static final int menu_item_share=0x7f08001e;
-        public static final int menu_settings=0x7f08001c;
-        public static final int new_devices=0x7f08000f;
-        public static final int paired_devices=0x7f08000d;
-        public static final int plotButtonGroup=0x7f080015;
-        public static final int plotFFT_button=0x7f080017;
-        public static final int plot_button=0x7f080016;
-        public static final int plotting_menu=0x7f080022;
-        public static final int range_plot=0x7f080024;
-        public static final int raw_plot=0x7f080023;
-        public static final int sar_plot=0x7f080027;
-        public static final int saving_menu=0x7f080028;
-        public static final int search=0x7f08001d;
-        public static final int seekBar1=0x7f080003;
-        public static final int seekBar2=0x7f080006;
-        public static final int textView1=0x7f080005;
-        public static final int textView2=0x7f080008;
-        public static final int textView3=0x7f080004;
-        public static final int textView4=0x7f080009;
-        public static final int textView5=0x7f08000a;
-        public static final int text_file=0x7f080029;
-        public static final int title_new_devices=0x7f08000e;
-        public static final int title_paired_devices=0x7f08000c;
+        public static final int bandwidthOptions=0x7f080009;
+        public static final int bandwidthSetting=0x7f080005;
+        public static final int binary_file=0x7f080025;
+        public static final int bt_settings=0x7f08001a;
+        public static final int button_collect=0x7f080012;
+        public static final int button_group=0x7f080010;
+        public static final int button_load=0x7f080011;
+        public static final int button_save=0x7f080016;
+        public static final int button_scan=0x7f08000e;
+        public static final int captureTime=0x7f080008;
+        public static final int captureTimeOptions=0x7f080002;
+        public static final int captureTimeSetting=0x7f080001;
+        public static final int chart=0x7f08000f;
+        public static final int compressed_file=0x7f080026;
+        public static final int connect_scan=0x7f08001c;
+        public static final int currentBandwidth=0x7f080006;
+        public static final int currentCapture=0x7f080003;
+        public static final int discoverable=0x7f08001b;
+        public static final int doppler_plot=0x7f080020;
+        public static final int fft_plot=0x7f080021;
+        public static final int matlab_file=0x7f080027;
+        public static final int menu_item_share=0x7f080019;
+        public static final int menu_settings=0x7f080017;
+        public static final int new_devices=0x7f08000d;
+        public static final int paired_devices=0x7f08000b;
+        public static final int plotButtonGroup=0x7f080013;
+        public static final int plotFFT_button=0x7f080015;
+        public static final int plot_button=0x7f080014;
+        public static final int plotting_menu=0x7f08001d;
+        public static final int range_plot=0x7f08001f;
+        public static final int raw_plot=0x7f08001e;
+        public static final int readState=0x7f080007;
+        public static final int sar_plot=0x7f080022;
+        public static final int saving_menu=0x7f080023;
+        public static final int search=0x7f080018;
+        public static final int seekBar2=0x7f080004;
+        public static final int text_file=0x7f080024;
+        public static final int title_new_devices=0x7f08000c;
+        public static final int title_paired_devices=0x7f08000a;
         public static final int txtview1=0x7f080000;
     }
     public static final class layout {
@@ -72,11 +67,12 @@ public final class R {
     }
     public static final class menu {
         public static final int activity_display_archive=0x7f070000;
-        public static final int activity_settings=0x7f070001;
-        public static final int main_menu=0x7f070002;
-        public static final int options_menu=0x7f070003;
-        public static final int plotting_menu=0x7f070004;
-        public static final int saving_menu=0x7f070005;
+        public static final int activity_prefs=0x7f070001;
+        public static final int activity_settings=0x7f070002;
+        public static final int main_menu=0x7f070003;
+        public static final int options_menu=0x7f070004;
+        public static final int plotting_menu=0x7f070005;
+        public static final int saving_menu=0x7f070006;
     }
     public static final class string {
         public static final int app_name=0x7f050018;
@@ -88,6 +84,9 @@ public final class R {
         public static final int bt_settings=0x7f05001d;
         public static final int button_scan=0x7f05000c;
         public static final int captureTime=0x7f050032;
+        public static final int changeBandwidth=0x7f050039;
+        public static final int changeCaptureTime=0x7f050038;
+        public static final int changeRampTime=0x7f05003a;
         public static final int collect_data=0x7f050021;
         public static final int compressed_file=0x7f050016;
         /**  Options Menu 
@@ -103,7 +102,7 @@ public final class R {
         public static final int doppler_plot=0x7f050011;
         public static final int fft_plot=0x7f050012;
         public static final int freq_settings=0x7f05001c;
-        public static final int hello_world=0x7f05002a;
+        public static final int hello_world=0x7f05002b;
         public static final int load_data=0x7f050022;
         public static final int matlab_file=0x7f050017;
         public static final int menu_settings=0x7f050019;
@@ -112,14 +111,7 @@ public final class R {
         public static final int not_connected=0x7f050001;
         public static final int plot_FFT=0x7f050026;
         public static final int plot_data=0x7f050025;
-        public static final int pref_bandwidthSetting=0x7f05003a;
-        public static final int pref_captureTime=0x7f050038;
-        public static final int pref_currentBandwidth=0x7f05003d;
-        public static final int pref_currentCapture=0x7f05003c;
-        public static final int pref_currentSetting=0x7f050039;
-        public static final int pref_defaultBW=0x7f05003e;
-        public static final int pref_ramptime=0x7f05003b;
-        public static final int ramptime=0x7f050035;
+        public static final int rampTime=0x7f050035;
         public static final int range_plot=0x7f050010;
         public static final int raw_plot=0x7f05000f;
         public static final int sar_plot=0x7f050013;
@@ -127,8 +119,8 @@ public final class R {
         /**   DeviceListActivity 
          */
         public static final int scanning=0x7f050006;
-        public static final int search_hint=0x7f05002d;
-        public static final int search_title=0x7f05002c;
+        public static final int search_hint=0x7f05002e;
+        public static final int search_title=0x7f05002d;
         public static final int select_device=0x7f050007;
         /**   BluetoothChat 
          */
@@ -137,13 +129,19 @@ public final class R {
         public static final int share_data=0x7f050024;
         public static final int statistics_log=0x7f050027;
         public static final int text_file=0x7f050014;
-        public static final int title_activity_device_list_activty=0x7f05002e;
-        public static final int title_activity_display_archive=0x7f05002b;
+        /**  Device List Layout Strings 
+         */
+        public static final int title_activity_device_list_activty=0x7f050028;
+        /**  Display Archive Layout Strings 
+         */
+        public static final int title_activity_display_archive=0x7f05002c;
+        /**  Settings Layout Strings 
+         */
         public static final int title_activity_settings=0x7f05002f;
         public static final int title_connected_to=0x7f050004;
         public static final int title_connecting=0x7f050003;
-        public static final int title_item_detail=0x7f050028;
-        public static final int title_item_list=0x7f050029;
+        public static final int title_item_detail=0x7f050029;
+        public static final int title_item_list=0x7f05002a;
         public static final int title_main_activity=0x7f05001a;
         public static final int title_not_connected=0x7f050005;
         public static final int title_other_devices=0x7f05000b;
@@ -154,7 +152,6 @@ public final class R {
         public static final int styleName=0x7f060001;
     }
     public static final class xml {
-        public static final int preferences=0x7f040000;
-        public static final int searchable=0x7f040001;
+        public static final int searchable=0x7f040000;
     }
 }

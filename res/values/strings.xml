@@ -4,53 +4,53 @@
     <string name="app_name">Bluetooth GUI</string>
     <string name="menu_settings">Settings</string>
     <string name="title_main_activity">Applied Radar, Inc. FMCW Radar Kit</string>
-    
     <string name="send_to">Send to</string>
-    
     <string name="freq_settings">Frequency Shifter</string>
-    
     <string name="bt_settings">Bluetooth Connections</string>
     <string name="device_search">Search for Devices</string>
     <string name="device_pair">Paired Devices</string>
     <string name="device_connect">Discovered Devices</string>
-    
     <string name="collect_data">Collect Data</string>
     <string name="load_data">Load Data</string>
     <string name="save_data">Save</string>
     <string name="share_data">Share</string>
     <string name="plot_data">Plot Raw Data</string>
     <string name="plot_FFT">Plot FFT Data</string>
-    
     <string name="statistics_log">Statistics</string>
-    
+
+    <!-- Device List Layout Strings -->
+    <string name="title_activity_device_list_activty">Device List Activity</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="title_item_list">Items</string>
-    
     <string name="hello_world">Hello empty screen! :D</string>
-    
+
+    <!-- Display Archive Layout Strings -->
     <string name="title_activity_display_archive">Data Archive</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Hint: </string>
-     
-    <string name="title_activity_device_list_activty">Device List Activity</string>
-    
+
+    <!-- Settings Layout Strings -->
     <string name="title_activity_settings">Settings</string>
     <string name="bluetoothToggle">Bluetooth</string>
     <string name="bluetoothSettings">Bluetooth Settings: </string>
-    
     <string name="captureTime">Capture Time</string>
     <string name="currentSetting">Current Setting: </string>
-	<string name="bandwidthSetting">Bandwidth</string>
-	<string name="ramptime">Ramp Time</string>
-	<string name="currentCapture"></string>
-	<string name="currentBandwidth"></string>
-	
-	<string name="pref_captureTime">Capture Time</string>
+    <string name="bandwidthSetting">Bandwidth</string>
+    <string name="rampTime">Ramp Time</string>
+    <string name="currentCapture"></string>
+    <string name="currentBandwidth"></string>
+    <string name="changeCaptureTime">Change Capture Time</string>
+    <string name="changeBandwidth">Change Bandwidth</string>
+    <string name="changeRampTime">Change Ramp Time</string>
+
+    <!-- Settings Preferences Strings - if I ever implement this feature :o -->
+<!--     <string name="pref_captureTime">Capture Time</string>
     <string name="pref_currentSetting">Current Setting: </string>
-	<string name="pref_bandwidthSetting">Bandwidth</string>
-	<string name="pref_ramptime">Ramp Time</string>
-	<string name="pref_currentCapture"></string>
-	<string name="pref_currentBandwidth"></string>
-	<string name="pref_defaultBW">2250-2500MHz</string>
-    
+    <string name="pref_bandwidthSetting">Bandwidth</string>
+    <string name="pref_ramptime">Ramp Time</string>
+    <string name="pref_currentCapture"></string>
+    <string name="pref_currentBandwidth"></string>
+    <string name="pref_defaultBW">2250-2500MHz</string>
+    <string name="title_activity_prefs">PrefsActivity</string>
+ -->
 </resources>
