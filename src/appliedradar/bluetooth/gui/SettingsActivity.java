@@ -7,21 +7,38 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends Activity implements OnSeekBarChangeListener {
 
-	
 	public static final String DEFAULT_BW =  "default_bandwidth";
 	public static final String READ_STATE = "read_state #";
+	
+	SeekBar mSeekBar;
+	TextView mProgressText;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 //		addPreferencesFromResource(R.xml.preferences);
 		
 		setContentView(R.layout.activity_settings);
+		
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
+		mSeekBar = (SeekBar)findViewById(R.id.seekBar1);
+        mSeekBar.setOnSeekBarChangeListener(this);
+        mProgressText = (TextView)findViewById(R.id.progress);
 	}
+	
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
+//        mProgressText.setText(progress + " " + 
+//                getString(R.string.seekbar_from_touch) + "=" + fromTouch);
+        mProgressText.setText(progress + " milliseconds");
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,6 +94,17 @@ public class SettingsActivity extends Activity {
 	
 	StringBuilder builder = new StringBuilder();
 //	builder.append("ValueGoesHere");
+
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 //	textView.setText(builder.toString());
 	
