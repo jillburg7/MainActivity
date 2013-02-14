@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -56,6 +57,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     
 	public static final int REQUEST_BW = 4;
 	public static final int REQUEST_STATE_INFO = 5;
+	public static final int REQUEST_CAPTURE_INFO = 6;
 
     // Layout Views
 //    private ListView mConversationView;
@@ -290,25 +292,33 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
                 byte[] writeBuf = (byte[]) msg.obj;
                 // construct a string from the buffer
                 String writeMessage = new String(writeBuf);
-         //       Log.i(TAG, "Tablet:  " + writeMessage);
+                Log.i(TAG, "Tablet:  " + writeMessage);
 //                mConversationArrayAdapter.add("Me:  " + writeMessage);
                 break;
             case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
+                
                 // construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
-                Log.i(TAG, "water bottle");
-                
-//                String returned = myCommand.parceCommand(readMessage);
-//                Log.i(TAG, returned);
-                
-                boolean stateRead = true;
-                String returned = myCommand.parceCommand(readMessage, stateRead);
+               // Log.i(TAG, readMessage);
+               
+                String returned = myCommand.parceCommand(readMessage);
                 Log.i(TAG, returned);
+                
+          /*      List<String> returned = myCommand.parceCommand(readMessage);
+                for(int i=0; i<returned.size(); i++){
+                	Log.i(TAG, returned.get(i));
+                }*/
+                
+                
+//                boolean stateRead = true;
+//                String returned = myCommand.parceCommand(readMessage, stateRead);
+//                Log.i(TAG, returned);
                 
                 
 //                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
 //                mStringData.add(readMessage);
+
                /* try {
                 	 if (n<512){
                 	newDataArray[n] = Float.parseFloat(readMessage);
@@ -354,16 +364,23 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     			Toast.makeText(this, R.string.bt_not_enabled, Toast.LENGTH_SHORT).show();
     		}
     		break;
-    	case REQUEST_BW:
-    		if (resultCode == Activity.RESULT_OK) {
-    			String messageBW =  data.getExtras().getString(SettingsActivity.DEFAULT_BW);
-    			sendMessage(messageBW);
-    		}
+//    	case REQUEST_BW:
+//    		if (resultCode == Activity.RESULT_OK) {
+//    			String messageBW =  data.getExtras().getString(SettingsActivity.DEFAULT_BW);
+//    			sendMessage(messageBW);
+//    		}
     	case REQUEST_STATE_INFO:
     		if (resultCode == Activity.RESULT_OK) {
     			String stateInfo =  data.getExtras().getString(SettingsActivity.READ_STATE);
     			sendMessage(stateInfo);
     		}
+    		break;
+    	case REQUEST_CAPTURE_INFO:
+    		if (resultCode == Activity.RESULT_OK) {
+    			String radar =  data.getExtras().getString(SettingsActivity.DEFAULT_CAPTURE);
+    			sendMessage(radar);
+    		}
+    		break;
     	}
     }
 

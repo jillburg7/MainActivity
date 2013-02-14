@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,8 +14,16 @@ import android.widget.TextView;
 
 public class SettingsActivity extends Activity implements OnSeekBarChangeListener {
 
+	private static final String TAG = "SettingsActivity";
+	
 	public static final String DEFAULT_BW =  "default_bandwidth";
 	public static final String READ_STATE = "read_state #";
+	public static final String DEFAULT_CAPTURE = "default_capture_time";  
+
+	
+	public String mCaptureTime;
+	public String mBandwidth;
+	public String mRampTime;
 	
 	SeekBar mSeekBar;
 	TextView mProgressText;
@@ -32,6 +41,10 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		mSeekBar = (SeekBar)findViewById(R.id.seekBar1);
         mSeekBar.setOnSeekBarChangeListener(this);
         mProgressText = (TextView)findViewById(R.id.progress);
+        
+        mCaptureTime = getString(R.string.currentCaptureTime, "some_number_here");
+    	((TextView)findViewById(R.id.currentCapture)).setText(mCaptureTime);
+        
 	}
 	
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
@@ -64,21 +77,18 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		return super.onOptionsItemSelected(item);
 	}
 
-//	public MainActivity mSendMessage = null;
-	public String mCaptureTime;
-	public String mBandwidth;
-	public String mRampTime;
+
 	
-	// button created to send string message to another device using Bluetooth
+/*	// button created to send string message to another device using Bluetooth
 	// debugging purposes only; will remove once SettingsActivity is set up and functional
-//	public void bandwidth(View view) {
-//		mBandwidth = getCurrentBandwidth();
-//		Intent intent = new Intent();
-//		intent.putExtra(DEFAULT_BW, mBandwidth);
-//		
-//		setResult(Activity.RESULT_OK, intent);
-//		finish();
-//	}
+	public void bandwidth(View view) {
+		mBandwidth = getCurrentBandwidth();
+		Intent intent = new Intent();
+		intent.putExtra(DEFAULT_BW, mBandwidth);
+		
+		setResult(Activity.RESULT_OK, intent);
+		finish();
+	}*/
 	
 	public RadarCommand myCommand = new RadarCommand();
 	
@@ -92,7 +102,18 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		finish();
 	}
 	
-	StringBuilder builder = new StringBuilder();
+	public void getDefaultValues(View view) {
+//		String currentValues = myCommand.getCurrentCaptureTime();
+		Log.i(TAG, "button");
+		String currentValues = "freq:set?$";
+		Intent intent2 = new Intent();
+		intent2.putExtra(DEFAULT_CAPTURE, currentValues);
+		setResult(Activity.RESULT_OK, intent2);
+		finish();
+		Log.i(TAG, currentValues);
+	}
+	
+//	StringBuilder builder = new StringBuilder();
 //	builder.append("ValueGoesHere");
 
 	@Override
@@ -105,28 +126,16 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		// TODO Auto-generated method stub
 		
 	}
+//	String capTime = myCommand.getCurrentCaptureTime();
 	
-//	textView.setText(builder.toString());
+	
+	
+//	Intent intent = new Intent();
+//	intent.putExtra(READ_STATE, cap);
+//	
+//	setResult(Activity.RESULT_OK, intent);
+//	finish();
+	
+
 	
 }
-/*	// send command to radar to get current bandwidth setting
-	public String getCurrentBandwidth() {	
-		// the following string was successfully able to send to another device using Bluetooth
-		//String bandwidthSetting = "did you get this message?";
-	
-		// \n is sent are end of command for the PIC to understand command
-		String bandwidthSetting = "FMCW:LFMBW? \n";
-		return bandwidthSetting;
-	}
-	
-	// send command to radar to get current capture time setting
-	public String getCurrentCaptureTime() {
-		String captureTime = "FMCW:CAPTURETIME? \n";
-		return captureTime;
-	}
-	
-	// send command to radar to get current ramp time setting
-	public String getCurrentRampTime() {
-		String rampTime = "FMCW:RAMPTIME? \n";
-		return rampTime;
-	}*/

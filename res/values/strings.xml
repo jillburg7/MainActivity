@@ -36,8 +36,8 @@
     <string name="captureTime">Capture Time</string>
     <string name="currentSetting">Current Setting: </string>
     <string name="bandwidthSetting">Bandwidth</string>
-    <string name="rampTime">Ramp Time</string>
-    <string name="currentCapture"></string>
+    <string name="currentRampTime">Ramp Time</string>
+    <string name="currentCaptureTime"></string>
     <string name="currentBandwidth"></string>
     <string name="changeCaptureTime">Change Capture Time</string>
     <string name="changeBandwidth">Change Bandwidth</string>
