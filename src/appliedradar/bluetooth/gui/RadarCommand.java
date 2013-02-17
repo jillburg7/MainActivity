@@ -57,6 +57,8 @@ public class RadarCommand {
 	// command to get current capture time setting
 	public String getCurrentCaptureTime() {
 //		queriesState = false;
+		
+//		String captureTime = "FMCW:CAPTURETIME?\n";
 		String captureTime = "*idn?\r\n";
 		return captureTime;
 	}
@@ -65,15 +67,15 @@ public class RadarCommand {
 		// the following string was successfully able to send to another device using Bluetooth
 		//String bandwidthSetting = "did you get this message?";
 		queriesState = false;
-		// \n is sent are end of command for the PIC to understand command
-		String bandwidthSetting = "FMCW:LFMBW? \n";
+		
+		String bandwidthSetting = "FMCW:LFMBW?\n";		// \n is sent are end of command for the PIC to understand command
 		return bandwidthSetting;
 	}
 	
 	// command to get current ramp time setting
 	public String getCurrentRampTime() {
 		queriesState = false;
-		String rampTime = "FMCW:RAMPTIME? \n";
+		String rampTime = "FMCW:RAMPTIME?\n";
 		return rampTime;
 	}
 	

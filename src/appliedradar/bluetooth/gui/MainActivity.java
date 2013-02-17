@@ -84,6 +84,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     boolean mIsDualPane = false;
     
 	ShareActionProvider mShareActionProvider;
+	// aChartEngine Objects for plotting and using Line Graph Renderer/Settings
 	double[] dataArray;
 	GraphicalView mChartView;
 	XYMultipleSeriesDataset mDataset;
@@ -123,26 +124,25 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		}
 	}
 	
-	 @Override
-	    public void onStart() {
-	        super.onStart();
-	        if(D) Log.e(TAG, "++ ON START ++");
+	@Override
+	public void onStart() {
+		super.onStart();
+		if(D) Log.e(TAG, "++ ON START ++");
 
-	        // If BT is not on, request that it be enabled.
-	        // setupChat() will then be called during onActivityResult
-	        if (!mBluetoothAdapter.isEnabled()) {
-	            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-	            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-	        // Otherwise, setup the chat session
-	        } else {
-	            if (mChatService == null) setupChat();
-	        }
-			if (mChartView != null) {
-				mChartView.repaint();
-			}
-	    }
+		// If BT is not on, request that it be enabled.
+		// setupChat() will then be called during onActivityResult
+		if (!mBluetoothAdapter.isEnabled()) {
+			Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+			// Otherwise, setup the chat session
+		} else {
+			if (mChatService == null) setupChat();
+		}
+		if (mChartView != null) {
+			mChartView.repaint();
+		}
+	}
 	 
-
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -268,7 +268,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     
     int n = 0;
     // The Handler that gets information back from the BluetoothChatService
-    private final Handler mHandler = new Handler() {
+    public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -297,14 +297,17 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
                 break;
             case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
-                
                 // construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
-               // Log.i(TAG, readMessage);
+              
+                // Log.i(TAG, readMessage);		//used to display in log the message before it is parced
                
                 String returned = myCommand.parceCommand(readMessage);
-                Log.i(TAG, returned);
+                Log.i(TAG, returned);			//used to display in log the message after it is parced
                 
+                // used when the List<String> parceCommand method in RadarComman.java is uncommented
+                // supposed to buffer commands into a list of strings in order to separate commands based on
+                // their designated terminate command character
           /*      List<String> returned = myCommand.parceCommand(readMessage);
                 for(int i=0; i<returned.size(); i++){
                 	Log.i(TAG, returned.get(i));
@@ -327,8 +330,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
                 	 n++;
                 	} catch (NumberFormatException e) {
                 	  // the array did not have a double
-                	}
-                break;*/
+                	}*/
+                break;
             case MESSAGE_DEVICE_NAME:
                 // save the connected device's name
                 mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
