@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -381,6 +380,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     	case REQUEST_CAPTURE_INFO:
     		if (resultCode == Activity.RESULT_OK) {
     			String radar =  data.getExtras().getString(SettingsActivity.DEFAULT_CAPTURE);
+    			Log.d(TAG, "breakpoint");
     			sendMessage(radar);
     		}
     		break;
@@ -423,7 +423,9 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         switch (item.getItemId()) {
         case R.id.menu_settings:
         	Intent settings = new Intent(this, SettingsActivity.class);
-    		startActivityForResult(settings, REQUEST_BW);
+        	
+        	startActivityForResult(settings, REQUEST_CAPTURE_INFO);
+    		//startActivityForResult(settings, REQUEST_BW);
         	return true;
         case R.id.connect_scan:
             // Launch the DeviceListActivity to see devices and do scan
@@ -446,36 +448,22 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	}
 
 
-	
-	
-	boolean started;
-	// SENDS COMMAND TO FMCW RADAR KIT BY SELECTING THE "Collect Data" BUTTON
-	public void sendCollectSignal(View button) {
-
-		if(button.isPressed() == true) {
-			sendMessage("FMCW:FIRE \n");
-			Log.e(TAG, "start collecting");
-			started = true;
-		}
-		if (started) {
-			sendMessage("FMCW:STOP \n");
-			Log.e(TAG, "stop collecting");
-		}
-		else {
-			sendMessage("FMCW:FIRE \n");
-			Log.e(TAG, "start collecting");
-		}
-	// the following code doesnt run. 
-		//else {
-//			sendMessage("FMCW:STOP \n");
-//			Log.e(TAG, "stop collecting");
-	//		button.setPressed(true);
-	//	}
-//		mHandler.sendMessageAtFrontOfQueue(message);
-		Toast.makeText(this, "Collecting Data", Toast.LENGTH_SHORT).show();
+	public void resetButton(View view) {
+		sendMessage(myCommand.resetKit());
 	}
 
+
+	public void startCollect(View butt1) {
+		String start = "FREQ:SWEEP:RUN\n";
+		sendMessage(start);
+		Log.d(TAG, "start collecting data...");
+	}
 	
+	public void stopCollect(View butt2) {
+		String stop = "FREQ:SWEEP:KILL\n";
+		sendMessage(stop);
+		Log.d(TAG, "...stop collecting data");
+	}
 	
 	// 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
 	public void openArchive(View newActivity) {

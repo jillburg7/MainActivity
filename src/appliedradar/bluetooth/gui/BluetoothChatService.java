@@ -31,8 +31,9 @@ public class BluetoothChatService {
 
     // Unique UUID for this application
     private static final UUID MY_UUID =
-        UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");
-  
+        UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");	// SPP
+    //	UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");	//INSECURE
+    
         //INSECURE	"8ce255c0-200a-11e0-ac64-0800200c9a66"
     	//SECURE	"fa87c0d0-afac-11de-8a39-0800200c9a66"
     	//SPP		"0001101-0000-1000-8000-00805F9B34FB"
@@ -407,12 +408,25 @@ public class BluetoothChatService {
             // Keep listening to the InputStream while connected
             while (true) {
                 try {
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch(InterruptedException ex) {
+//                        Thread.currentThread().interrupt();
+//                    }
+                	
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
-
+                    
                     // Send the obtained bytes to the UI Activity
                     mHandler.obtainMessage(MainActivity.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
+                    
+                    try {
+                        Thread.sleep(1000);
+                    } catch(InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                    
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
                     connectionLost();

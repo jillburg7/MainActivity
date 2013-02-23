@@ -13,14 +13,6 @@ public class RadarCommand {
 	public static int CURRENT_STATE;
 	boolean queriesState;
 	
-	//Constructor
-//	public RadarCommand(){}
-	
-	public String readCurrentState(int state) {
-		String readState = "SYST:READSTATE? " + state + "\n";
-		queriesState = true;
-		return readState;
-	}
 	
 	public String parceCommand(String returnCommand) {
 		return returnCommand;
@@ -54,16 +46,21 @@ public class RadarCommand {
 		}
 	}
 	
+	
+	public String resetKit() {
+		String debug = "*RST\n";
+		return debug;
+	}
+	
 	// command to get current capture time setting
-	public String getCurrentCaptureTime() {
-//		queriesState = false;
+	public String getCaptureTime() {
 		
-//		String captureTime = "FMCW:CAPTURETIME?\n";
-		String captureTime = "*idn?\r\n";
+		String captureTime = "FMCW:CAPTURETIME?\n";
+//		String captureTime = "*idn?\r\n";
 		return captureTime;
 	}
 	
-	public String getCurrentBandwidth() {	
+	public String getBandwidth() {	
 		// the following string was successfully able to send to another device using Bluetooth
 		//String bandwidthSetting = "did you get this message?";
 		queriesState = false;
@@ -73,9 +70,9 @@ public class RadarCommand {
 	}
 	
 	// command to get current ramp time setting
-	public String getCurrentRampTime() {
+	public String getRampTime() {
 		queriesState = false;
-		String rampTime = "FMCW:RAMPTIME?\n";
+		String rampTime = "FMCW:SWEEP:RAMPTIME?\n";
 		return rampTime;
 	}
 	
@@ -97,7 +94,13 @@ public class RadarCommand {
 	
 	public String setRampTime(int input) {
 		queriesState = false;
-		String newRampTime =  "FMCW:RAMPTIME " + String.valueOf(input) + "\n";
+		String newRampTime =  "FMCW:SWEEP:RAMPTIME " + String.valueOf(input) + "\n";
 		return newRampTime;
+	}
+	
+	public String readCurrentState(int state) {
+		String readState = "SYST:READSTATE? " + state + "\n";
+		queriesState = true;
+		return readState;
 	}
 }

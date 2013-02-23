@@ -17,6 +17,13 @@
     <string name="plot_data">Plot Raw Data</string>
     <string name="plot_FFT">Plot FFT Data</string>
     <string name="statistics_log">Statistics</string>
+    
+    <string name="start_collecting">Start Collecting</string>
+    <string name="stop_collecting">Stop Collecting</string>
+    <string name="reset">Reset</string>
+    
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 
     <!-- Device List Layout Strings -->
     <string name="title_activity_device_list_activty">Device List Activity</string>
@@ -36,9 +43,13 @@
     <string name="captureTime">Capture Time</string>
     <string name="currentSetting">Current Setting: </string>
     <string name="bandwidthSetting">Bandwidth</string>
+    
     <string name="currentRampTime">Ramp Time</string>
     <string name="currentCaptureTime"></string>
     <string name="currentBandwidth"></string>
+    <string name="rampTime">Get Ramp Time</string>
+    <string name="sweepType">Get Sweep Type</string>
+    
     <string name="changeCaptureTime">Change Capture Time</string>
     <string name="changeBandwidth">Change Bandwidth</string>
     <string name="changeRampTime">Change Ramp Time</string>
