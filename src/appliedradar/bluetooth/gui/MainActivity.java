@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -67,8 +68,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     private String mConnectedDeviceName = null;
     // Array adapter for the conversation thread
     private ArrayAdapter<String> mConversationArrayAdapter;
-    //STRING ARRAY for Data
-    private ArrayAdapter<String> mStringData;
+ 
     //DATA ARRAY of 512 data points
     double[] newDataArray = new double[512];
     // String buffer for outgoing messages
@@ -301,10 +301,26 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
               
                 // Log.i(TAG, readMessage);		//used to display in log the message before it is parced
                
-                String returned = myCommand.parceCommand(readMessage);
-                Log.i(TAG, returned);			//used to display in log the message after it is parced
                 
-                // used when the List<String> parceCommand method in RadarComman.java is uncommented
+                // readCommand sends string from radar to be "parced" (does nothing),
+                // just returns string to MainActivity to display in LogCat window.
+                int comma = readMessage.indexOf(',');
+                String returned;
+                List<String> arrayData;
+                if (comma == -1) {
+                	returned = myCommand.readCommand(readMessage);
+                	Log.i(TAG, returned);			//used to display in log the message after it is parced
+                }
+                // List<String> parceCommand method in RadarCommand class is [SUPPOSED] to buffer
+                // commands into a list of strings 
+                else {
+                	arrayData = myCommand.parceCommand(readMessage);
+                	returned = arrayData.get(0);
+                	Log.i(TAG, returned);
+                }
+                
+               
+                // used when the List<String> parceCommand method in RadarCommand.java is uncommented
                 // supposed to buffer commands into a list of strings in order to separate commands based on
                 // their designated terminate command character
           /*      List<String> returned = myCommand.parceCommand(readMessage);
@@ -320,16 +336,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
                 
 //                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
 //                mStringData.add(readMessage);
-
-               /* try {
-                	 if (n<512){
-                	newDataArray[n] = Float.parseFloat(readMessage);
-                	if(D) Log.e(TAG, String.valueOf(n) + String.valueOf(newDataArray[n]));
-                	 }
-                	 n++;
-                	} catch (NumberFormatException e) {
-                	  // the array did not have a double
-                	}*/
                 break;
             case MESSAGE_DEVICE_NAME:
                 // save the connected device's name
@@ -344,6 +350,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
             }
         }
     };
+    
     
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -386,11 +393,11 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     		break;
     	}
     }
+    
 
     private void connectDevice(Intent data) {
         // Get the device MAC address
-        String address = data.getExtras()
-            .getString(DeviceListActivty.EXTRA_DEVICE_ADDRESS);
+        String address = data.getExtras().getString(DeviceListActivty.EXTRA_DEVICE_ADDRESS);
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
@@ -409,8 +416,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		// Fetch and store ShareActionProvider
 		mShareActionProvider = (ShareActionProvider) menuItem
 				.getActionProvider();
-
-		
 		return true;
 	}
 
@@ -423,7 +428,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         switch (item.getItemId()) {
         case R.id.menu_settings:
         	Intent settings = new Intent(this, SettingsActivity.class);
-        	
         	startActivityForResult(settings, REQUEST_CAPTURE_INFO);
     		//startActivityForResult(settings, REQUEST_BW);
         	return true;

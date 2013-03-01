@@ -30,7 +30,7 @@
         android:onClick="getSweepType"
         android:text="@string/sweepType" />
     
-<LinearLayout
+	<LinearLayout
 	    android:id="@+id/LinearLayout"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
@@ -85,11 +85,10 @@
 		    android:layout_height="wrap_content"
 		    android:textAppearance="?android:attr/textAppearanceMedium"
 		    android:visibility="visible" />
-	
 	</LinearLayout>
 
 
-
+	
 </RelativeLayout>
 	
 

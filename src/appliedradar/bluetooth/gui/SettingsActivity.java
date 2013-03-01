@@ -1,7 +1,6 @@
 package appliedradar.bluetooth.gui;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -9,10 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -52,7 +47,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		mProgressText = (TextView)findViewById(R.id.progress);
 		
 	//	String bw = myCommand.getBandwidth();
-		String bw = "2.400";
+	//	String bw = "2.400";
 	//	mBandwidthText.setText(bw + " kHz");
 		mBandwidthText = (TextView)findViewById(R.id.bandwidth);
 
@@ -95,13 +90,10 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	public void readState(View view) {
 		String currentState = myCommand.readCurrentState(0);
 		Log.i(TAG, "Pressed read state button");
-	//	Log.i(TAG, currentState);
+		
 		Intent intent = new Intent();
 		//intent.putExtra(READ_STATE, currentState);
-		
 		intent.putExtra(DEFAULT_CAPTURE, currentState);
-	//	intent.putExtra(DEFAULT_CAPTURE, "FMCW:CAPTURETIME?");
-		
 		setResult(Activity.RESULT_OK, intent);
 		finish();
 	}
@@ -118,7 +110,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	
 	public void getSweepType(View view) {
 		Log.i(TAG, "Pressed sweep type button");
-		String sweepType = "FREQ:SWEEP:TYPE?\n";
+		String sweepType = "FREQ:SWEEP:TYPE?$\n";
 		Intent intent = new Intent();
 		intent.putExtra(DEFAULT_CAPTURE, sweepType);
 		setResult(Activity.RESULT_OK, intent);
