@@ -16,7 +16,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 
 	private static final String TAG = "SettingsActivity";
 
-	public static final String DEFAULT_BW =  "default_bandwidth";
+//	public static final String DEFAULT_BW =  "default_bandwidth";
 	public static final String READ_STATE = "read_state #";
 	public static final String DEFAULT_CAPTURE = "default_capture_time";  
 

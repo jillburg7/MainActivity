@@ -30,9 +30,10 @@ public class BluetoothChatService {
     private static final String NAME = "BluetoothChat";
 
     // Unique UUID for this application
-    private static final UUID MY_UUID =
-        UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");	// SPP
-    //	UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");	//INSECURE
+    private static final UUID MY_UUID = 
+//    		UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");		// SPP : use with Radar Kit 
+			UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");	// INSECURE : use with mobile devices
+//			UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");	// SECURE : similar to insecure, but don't recommend using
     
         //INSECURE	"8ce255c0-200a-11e0-ac64-0800200c9a66"
     	//SECURE	"fa87c0d0-afac-11de-8a39-0800200c9a66"
@@ -408,12 +409,6 @@ public class BluetoothChatService {
             // Keep listening to the InputStream while connected
             while (true) {
                 try {
-//                    try {
-//                        Thread.sleep(1000);
-//                    } catch(InterruptedException ex) {
-//                        Thread.currentThread().interrupt();
-//                    }
-                	
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
                     
@@ -425,8 +420,7 @@ public class BluetoothChatService {
                         Thread.sleep(1000);
                     } catch(InterruptedException ex) {
                         Thread.currentThread().interrupt();
-                    }
-                    
+                    }              
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
                     connectionLost();

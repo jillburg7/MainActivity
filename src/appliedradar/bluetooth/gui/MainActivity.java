@@ -59,10 +59,8 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	public static final int REQUEST_STATE_INFO = 5;
 	public static final int REQUEST_CAPTURE_INFO = 6;
 
-    // Layout Views
-//    private ListView mConversationView;
-//    private EditText mOutEditText;
-//    private Button mSendButton;
+	// RadarCommand Class object that controls the context of commands sent to the Radar Kit
+	public RadarCommand myCommand = new RadarCommand();
 
     // Name of the connected device
     private String mConnectedDeviceName = null;
@@ -226,7 +224,6 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
     }
 
     
-    // BluetoothChat: sends messages to other BT device
     /**
      * Sends a message.
      * @param message  A string of text to send.
@@ -263,7 +260,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
         actionBar.setSubtitle(subTitle);
     }
    
-    public RadarCommand myCommand = new RadarCommand();
+    
     
     int n = 0;
     // The Handler that gets information back from the BluetoothChatService
@@ -301,22 +298,38 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
               
                 // Log.i(TAG, readMessage);		//used to display in log the message before it is parced
                
-                
-                // readCommand sends string from radar to be "parced" (does nothing),
-                // just returns string to MainActivity to display in LogCat window.
+               
                 int comma = readMessage.indexOf(',');
                 String returned;
                 List<String> arrayData;
+                List<Integer> arrayInteger;
+                int values;
+                
+                // readCommand sends string from radar to be "parsed" (does nothing),
+                // just returns string to MainActivity to display in LogCat window.
                 if (comma == -1) {
                 	returned = myCommand.readCommand(readMessage);
                 	Log.i(TAG, returned);			//used to display in log the message after it is parced
                 }
-                // List<String> parceCommand method in RadarCommand class is [SUPPOSED] to buffer
+                
+                // List<String> parseCommand method in RadarCommand class is [SUPPOSED] to buffer
                 // commands into a list of strings 
                 else {
-                	arrayData = myCommand.parceCommand(readMessage);
-                	returned = arrayData.get(0);
-                	Log.i(TAG, returned);
+//                	arrayData = myCommand.parseCommand(readMessage);
+//                	for(int i=0; i<arrayData.size(); i++){
+//                		returned = arrayData.get(i);
+//                    	Log.i(TAG, i + " = " + returned);
+//                    }
+                	
+                	arrayInteger = myCommand.parseCommand(readMessage);
+                	for(int i=0; i<arrayInteger.size(); i++){
+                		values = arrayInteger.get(i);
+                    	Log.i(TAG, i + " = " + values);
+                    }
+                	
+                	//returned = arrayData.get(0);
+                	//Log.i(TAG, returned);
+                	
                 }
                 
                
@@ -329,13 +342,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
                 }*/
                 
                 
-//                boolean stateRead = true;
-//                String returned = myCommand.parceCommand(readMessage, stateRead);
-//                Log.i(TAG, returned);
-                
-                
-//                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
-//                mStringData.add(readMessage);
+
                 break;
             case MESSAGE_DEVICE_NAME:
                 // save the connected device's name
@@ -378,6 +385,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 //    			String messageBW =  data.getExtras().getString(SettingsActivity.DEFAULT_BW);
 //    			sendMessage(messageBW);
 //    		}
+//    		break;
     	case REQUEST_STATE_INFO:
     		if (resultCode == Activity.RESULT_OK) {
     			String stateInfo =  data.getExtras().getString(SettingsActivity.READ_STATE);
@@ -452,19 +460,19 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	}
 
 
-	public void resetButton(View view) {
+/*	public void resetButton(View view) {
 		sendMessage(myCommand.resetKit());
-	}
+	}*/
 
 
 	public void startCollect(View butt1) {
-		String start = "FREQ:SWEEP:RUN\n";
+		String start = "FREQ:SWEEP:RUN$\n";
 		sendMessage(start);
 		Log.d(TAG, "start collecting data...");
 	}
 	
 	public void stopCollect(View butt2) {
-		String stop = "FREQ:SWEEP:KILL\n";
+		String stop = "FREQ:SWEEP:KILL$\n";
 		sendMessage(stop);
 		Log.d(TAG, "...stop collecting data");
 	}
@@ -478,7 +486,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	
 	
 	
-	// Saving pop-up menu
+	// Save button
 	public void saveFile(View display) {		
 		try{
 			NewFile save = new NewFile();
@@ -579,11 +587,11 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	
 	// Reads data line-by-line out of a '.txt' file which is saved to internal storage
 	public double[] getDataFromFile() {
-		File datafile = Environment.getExternalStorageDirectory();
+		File internalMemory = Environment.getExternalStorageDirectory();
 
 		// Get the text file
 		// NEED TO SPECIFICALLY CHANGE THIS LINE OF CODE TO BE MORE UNIVERSAL!
-		File file = new File(datafile, "data3kHz_44KHzFs.txt");
+		File file = new File(internalMemory, "data3kHz_44KHzFs.txt");
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));

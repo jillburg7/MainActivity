@@ -1,15 +1,29 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DisplayArchive" >
 
-    <TextView
-        android:id="@+id/txtview1"
-        android:layout_width="wrap_content"
+    <TextView android:id="@+id/title_file_list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_world" />
+        android:text="@string/title_file_list"
+        android:visibility="gone"
+        android:background="#666"
+        android:textColor="#fff"
+        android:paddingLeft="5dp" />
+    
+    <ListView android:id="@+id/files_archived"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stackFromBottom="true"
+        android:layout_weight="1" />
+    
+        <Button
+        android:id="@+id/button_open"
+        android:layout_width="234dp"
+        android:layout_height="wrap_content"
+        android:text="@string/button_open" />
 
-</RelativeLayout>
+</LinearLayout>

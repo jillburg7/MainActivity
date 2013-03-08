@@ -1,5 +1,7 @@
 package appliedradar.bluetooth.gui;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -11,13 +13,29 @@ import android.widget.SearchView;
 
 public class DisplayArchive extends Activity {
 
+	private File[] mFileList;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_archive);
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setTitle("Data Archive");
+		//getActionBar().setTitle("Data Archive");
+		
+		
+		// Find and set up the ListView for archived .txt files
+//		ListView fileListView = (ListView) findViewById(R.id.files_archived);
+		
+		// mFileList.listFiles();
+//		File internalMemory = Environment.getExternalStorageDirectory();
+//		File myDir = new File(root + "/saved_data_2");
+		
+		
+		// If there are paired devices, add each one to the ArrayAdapter
+//				if (mFileList.length > 0) 
+//					findViewById(R.id.title_file_list).setVisibility(View.VISIBLE);
+				
 	}
 
 	@Override

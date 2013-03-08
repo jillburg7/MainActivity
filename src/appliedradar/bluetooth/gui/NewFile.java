@@ -20,19 +20,9 @@ public class NewFile {
 		String root = Environment.getExternalStorageDirectory().toString();
 		File myDir = new File(root + "/saved_data_2");
 		
-		// currently creates a folder on the actual sdcard,
-		// but it doesn't allow anything to be placed inside of it
-/*	//	String external_sd = Environment.getExternalStorageDirectory().toString();
-	//	File myDir = new File(external_sd + "/saved_data");  
-		File myDir = new File("/mnt/external_sd" + "/saved_data");  
-		
-//		File myDir = new File("/mnt/external_sd/saved_data"); 
-*/		
 		myDir.mkdirs();
 		String fname = timeStamp() + ".txt";
-	//	String fname = "dataFile" + ".txt";
 		File file = new File (myDir, fname);
-	//	File file = new File ("/mnt/external_sd/saved_data", fname);
 		if (file.exists ()){
 			file.delete (); 
 		}
@@ -56,3 +46,13 @@ public class NewFile {
 //		fos.close();
 //	}
 
+
+
+// currently creates a folder on the actual sdcard,
+// but it doesn't allow anything to be placed inside of it
+/*	//	String external_sd = Environment.getExternalStorageDirectory().toString();
+//	File myDir = new File(external_sd + "/saved_data");  
+File myDir = new File("/mnt/external_sd" + "/saved_data");  
+
+//File myDir = new File("/mnt/external_sd/saved_data"); 
+*/		
