@@ -20,7 +20,7 @@
         android:stackFromBottom="true"
         android:layout_weight="1" />
     
-        <Button
+	<Button
         android:id="@+id/button_open"
         android:layout_width="234dp"
         android:layout_height="wrap_content"

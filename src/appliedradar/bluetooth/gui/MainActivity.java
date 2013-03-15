@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.achartengine.ChartFactory;
@@ -29,60 +30,57 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.RelativeLayout;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 
-public class MainActivity extends Activity implements OnMenuItemClickListener {
+public class MainActivity extends Activity {
 	// Debugging
-    private static final String TAG = "MainActivity";
-    private static final boolean D = true;
+	private static final String TAG = "MainActivity";
+	private static final boolean D = true;
 
-    // Message types sent from the BluetoothChatService Handler
-    public static final int MESSAGE_STATE_CHANGE = 1;
-    public static final int MESSAGE_READ = 2;
-    public static final int MESSAGE_WRITE = 3;
-    public static final int MESSAGE_DEVICE_NAME = 4;
-    public static final int MESSAGE_TOAST = 5;
+	// Message types sent from the BluetoothChatService Handler
+	public static final int MESSAGE_STATE_CHANGE = 1;
+	public static final int MESSAGE_READ = 2;
+	public static final int MESSAGE_WRITE = 3;
+	public static final int MESSAGE_DEVICE_NAME = 4;
+	public static final int MESSAGE_TOAST = 5;
 
-    // Key names received from the BluetoothChatService Handler
-    public static final String DEVICE_NAME = "device_name";
-    public static final String TOAST = "toast";
+	// Key names received from the BluetoothChatService Handler
+	public static final String DEVICE_NAME = "device_name";
+	public static final String TOAST = "toast";
 
-    // Intent request codes
-    private static final int REQUEST_CONNECT_DEVICE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
-    
-	public static final int REQUEST_BW = 4;
-	public static final int REQUEST_STATE_INFO = 5;
-	public static final int REQUEST_CAPTURE_INFO = 6;
+	// Intent request codes
+	private static final int REQUEST_CONNECT_DEVICE = 2;
+	private static final int REQUEST_ENABLE_BT = 3;
+	public static final int REQUEST_RADAR_INFO = 4;
+	public static final int REQUEST_FILE_INFO = 5;
 
 	// RadarCommand Class object that controls the context of commands sent to the Radar Kit
 	public RadarCommand myCommand = new RadarCommand();
 
-    // Name of the connected device
-    private String mConnectedDeviceName = null;
-    // Array adapter for the conversation thread
-    private ArrayAdapter<String> mConversationArrayAdapter;
- 
-    //DATA ARRAY of 512 data points
-    double[] newDataArray = new double[512];
-    // String buffer for outgoing messages
-    private StringBuffer mOutStringBuffer;
-    // Local Bluetooth adapter
-    private BluetoothAdapter mBluetoothAdapter = null;
-    // Member object for the chat services
-    private BluetoothChatService mChatService = null;
-    //END OF BT INITIALIZERS
-    
-    // Whether or not we are in dual-pane mode
-    boolean mIsDualPane = false;
-    
-	ShareActionProvider mShareActionProvider;
+	// Name of the connected device
+	private String mConnectedDeviceName = null;
+
+	// Array adapter for the conversation thread
+	private ArrayAdapter<String> mConversationArrayAdapter;
+
+	//DATA ARRAY of 512 data points
+	double[] newDataArray = new double[512];
+	// String buffer for outgoing messages
+	private StringBuffer mOutStringBuffer;
+	// Local Bluetooth adapter
+	private BluetoothAdapter mBluetoothAdapter = null;
+	// Member object for the chat services
+	private BluetoothChatService mChatService = null;
+	//END OF BT INITIALIZERS
+
+
+	public ShareActionProvider mShareActionProvider;
 	// aChartEngine Objects for plotting and using Line Graph Renderer/Settings
 	double[] dataArray;
+	private double[] fileContents = null;
 	GraphicalView mChartView;
 	XYMultipleSeriesDataset mDataset;
 	XYMultipleSeriesRenderer mRenderer;
@@ -90,37 +88,37 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.main);
 		// Get local Bluetooth adapter
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // If the adapter is null, then Bluetooth is not supported
-        if (mBluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
-        }
-		
-        // Determine whether we are in single-pane or dual-pane mode by testing the visibility
-        // of the article view.
-//        View articleView = findViewById(R.id.article);
-//        mIsDualPane = articleView != null && articleView.getVisibility() == View.VISIBLE;
-        
-        // Displays chartview of plot in GUI
-        mRenderer = getMyDefaultRenderer();
-        mDataset = getMyDefaultData();
-        setChartSettings(mRenderer);
+		// If the adapter is null, then Bluetooth is not supported
+		if (mBluetoothAdapter == null) {
+			Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+		}
 
-        if (mChartView == null) {
+		// Determine whether we are in single-pane or dual-pane mode by testing the visibility
+		// of the article view.
+		//        View articleView = findViewById(R.id.article);
+		//        mIsDualPane = articleView != null && articleView.getVisibility() == View.VISIBLE;
+
+		// Displays chartview of plot in GUI
+		mRenderer = getMyDefaultRenderer();
+		mDataset = getMyDefaultData();
+		setChartSettings(mRenderer);
+
+		if (mChartView == null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
 					mRenderer);
 			layout.addView(mChartView);
 		} else {
 			mChartView.repaint(); // use this whenever data has changed and you
-									// want to redraw
+			// want to redraw
 		}
 	}
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -139,44 +137,44 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 			mChartView.repaint();
 		}
 	}
-	 
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		if (mChatService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
-              // Start the Bluetooth chat services
-              mChatService.start();
-            }
-        }
-        if (mChartView == null) {
+			// Only if the state is STATE_NONE, do we know that we haven't started already
+			if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+				// Start the Bluetooth chat services
+				mChatService.start();
+			}
+		}
+		if (mChartView == null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
-//			mChartView = ChartFactory.getLineChartView(this, getMyData(),
-//					getMyRenderer());
+			//			mChartView = ChartFactory.getLineChartView(this, getMyData(),
+			//					getMyRenderer());
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
 					mRenderer);
 			layout.addView(mChartView);
 		} else {
 			mChartView.repaint(); // use this whenever data has changed and you
-									// want to redraw
+			// want to redraw
 		}
 	}
-	
+
 	private void setupChat() {
-        Log.d(TAG, "setupChat()");
+		Log.d(TAG, "setupChat()");
 
-        // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
-//        mConversationView = (ListView) findViewById(R.id.in);
-//        mConversationView.setAdapter(mConversationArrayAdapter);
+		// Initialize the array adapter for the conversation thread
+		mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
+		//        mConversationView = (ListView) findViewById(R.id.in);
+		//        mConversationView.setAdapter(mConversationArrayAdapter);
 
-        // Initialize the compose field with a listener for the return key
-//        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
-//        mOutEditText.setOnEditorActionListener(mWriteListener);
+		// Initialize the compose field with a listener for the return key
+		//        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
+		//        mOutEditText.setOnEditorActionListener(mWriteListener);
 
-        // Initialize the send button with a listener that for click events
-/*       mSendButton = (Button) findViewById(R.id.button_send);
+		// Initialize the send button with a listener that for click events
+		/*       mSendButton = (Button) findViewById(R.id.button_send);
         mSendButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // Send a message using content of the edit text widget
@@ -186,234 +184,321 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
             }
         });*/
 
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(this, mHandler);
+		// Initialize the BluetoothChatService to perform bluetooth connections
+		mChatService = new BluetoothChatService(this, mHandler);
 
-        // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer("");
-    }
-	
+		// Initialize the buffer for outgoing messages
+		mOutStringBuffer = new StringBuffer("");
+	}
+
 	@Override
-    public synchronized void onPause() {
-        super.onPause();
-        if(D) Log.e(TAG, "- ON PAUSE -");
-    }
+	public synchronized void onPause() {
+		super.onPause();
+		if(D) Log.e(TAG, "- ON PAUSE -");
+	}
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if(D) Log.e(TAG, "-- ON STOP --");
-    }
+	@Override
+	public void onStop() {
+		super.onStop();
+		if(D) Log.e(TAG, "-- ON STOP --");
+	}
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        // Stop the Bluetooth chat services
-        if (mChatService != null) mChatService.stop();
-        if(D) Log.e(TAG, "--- ON DESTROY ---");
-    }
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		// Stop the Bluetooth chat services
+		if (mChatService != null) mChatService.stop();
+		if(D) Log.e(TAG, "--- ON DESTROY ---");
+	}
 
-    private void ensureDiscoverable() {
-        if(D) Log.d(TAG, "ensure discoverable");
-        if (mBluetoothAdapter.getScanMode() !=
-            BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            startActivity(discoverableIntent);
-        }
-    }
+	private void ensureDiscoverable() {
+		if(D) Log.d(TAG, "ensure discoverable");
+		if (mBluetoothAdapter.getScanMode() !=
+				BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+			Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+			discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+			startActivity(discoverableIntent);
+		}
+	}
 
-    
-    /**
-     * Sends a message.
-     * @param message  A string of text to send.
-     */
-    public void sendMessage(String message) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        // Check that there's actually something to send
-        if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = message.getBytes();
-            mChatService.write(send);
+	/**
+	 * Sends a message.
+	 * @param message  A string of text to send.
+	 */
+	public void sendMessage(String message) {
+		// Check that we're actually connected before trying anything
+		if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+			Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+			return;
+		}
 
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            //mOutEditText.setText(mOutStringBuffer);
-        }
-    }
+		// Check that there's actually something to send
+		if (message.length() > 0) {
+			// Get the message bytes and tell the BluetoothChatService to write
+			byte[] send = message.getBytes();
+			mChatService.write(send);
 
-    
-    // Status of Bluetooth connection is set in ActionBar
-    private final void setStatus(int resId) {
-        final ActionBar actionBar = getActionBar();
-        actionBar.setSubtitle(resId);
-    }
+			// Reset out string buffer to zero and clear the edit text field
+			mOutStringBuffer.setLength(0);
+			//mOutEditText.setText(mOutStringBuffer);
+		}
+	}
+
 
 	// Status of Bluetooth connection is set in ActionBar
-    private final void setStatus(CharSequence subTitle) {
-        final ActionBar actionBar = getActionBar();
-        actionBar.setSubtitle(subTitle);
-    }
-   
-    
-    
-    int n = 0;
-    // The Handler that gets information back from the BluetoothChatService
-    public final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MESSAGE_STATE_CHANGE:
-                if(D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
-                switch (msg.arg1) {
-                case BluetoothChatService.STATE_CONNECTED:
-                    setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                    mConversationArrayAdapter.clear();
-                    break;
-                case BluetoothChatService.STATE_CONNECTING:
-                    setStatus(R.string.title_connecting);
-                    break;
-                case BluetoothChatService.STATE_LISTEN:
-                case BluetoothChatService.STATE_NONE:
-                    setStatus(R.string.title_not_connected);
-                    break;
-                }
-                break;
-            case MESSAGE_WRITE:
-                byte[] writeBuf = (byte[]) msg.obj;
-                // construct a string from the buffer
-                String writeMessage = new String(writeBuf);
-                Log.i(TAG, "Tablet:  " + writeMessage);
-//                mConversationArrayAdapter.add("Me:  " + writeMessage);
-                break;
-            case MESSAGE_READ:
-                byte[] readBuf = (byte[]) msg.obj;
-                // construct a string from the valid bytes in the buffer
-                String readMessage = new String(readBuf, 0, msg.arg1);
-              
-                // Log.i(TAG, readMessage);		//used to display in log the message before it is parced
-               
-               
-                int comma = readMessage.indexOf(',');
-                String returned;
-                List<String> arrayData;
-                List<Integer> arrayInteger;
-                int values;
-                
-                // readCommand sends string from radar to be "parsed" (does nothing),
-                // just returns string to MainActivity to display in LogCat window.
-                if (comma == -1) {
-                	returned = myCommand.readCommand(readMessage);
-                	Log.i(TAG, returned);			//used to display in log the message after it is parced
-                }
-                
-                // List<String> parseCommand method in RadarCommand class is [SUPPOSED] to buffer
-                // commands into a list of strings 
-                else {
-//                	arrayData = myCommand.parseCommand(readMessage);
-//                	for(int i=0; i<arrayData.size(); i++){
-//                		returned = arrayData.get(i);
-//                    	Log.i(TAG, i + " = " + returned);
-//                    }
-                	
-                	arrayInteger = myCommand.parseCommand(readMessage);
-                	for(int i=0; i<arrayInteger.size(); i++){
-                		values = arrayInteger.get(i);
-                    	Log.i(TAG, i + " = " + values);
-                    }
-                	
-                	//returned = arrayData.get(0);
-                	//Log.i(TAG, returned);
-                	
-                }
-                
-               
-                // used when the List<String> parceCommand method in RadarCommand.java is uncommented
-                // supposed to buffer commands into a list of strings in order to separate commands based on
-                // their designated terminate command character
-          /*      List<String> returned = myCommand.parceCommand(readMessage);
-                for(int i=0; i<returned.size(); i++){
-                	Log.i(TAG, returned.get(i));
-                }*/
-                
-                
+	private final void setStatus(int resId) {
+		final ActionBar actionBar = getActionBar();
+		actionBar.setSubtitle(resId);
+	}
 
-                break;
-            case MESSAGE_DEVICE_NAME:
-                // save the connected device's name
-                mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
-                Toast.makeText(getApplicationContext(), "Connected to "
-                               + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                break;
-            case MESSAGE_TOAST:
-                Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST),
-                               Toast.LENGTH_SHORT).show();
-                break;
-            }
-        }
-    };
-    
-    
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	if(D) Log.d(TAG, "onActivityResult " + resultCode);
-    	switch (requestCode) {
-    	case REQUEST_CONNECT_DEVICE:
-    		// When DeviceListActivity returns with a device to connect
-    		if (resultCode == Activity.RESULT_OK) {
-    			connectDevice(data);
-    		}
-    		break;
-    	case REQUEST_ENABLE_BT:
-    		// When the request to enable Bluetooth returns
-    		if (resultCode == Activity.RESULT_OK) {
-    			// Bluetooth is now enabled, so set up a chat session
-    			setupChat();
-    		} else {
-    			// User did not enable Bluetooth or an error occurred
-    			Log.d(TAG, "BT not enabled");
-    			Toast.makeText(this, R.string.bt_not_enabled, Toast.LENGTH_SHORT).show();
-    		}
-    		break;
-//    	case REQUEST_BW:
-//    		if (resultCode == Activity.RESULT_OK) {
-//    			String messageBW =  data.getExtras().getString(SettingsActivity.DEFAULT_BW);
-//    			sendMessage(messageBW);
-//    		}
-//    		break;
-    	case REQUEST_STATE_INFO:
-    		if (resultCode == Activity.RESULT_OK) {
-    			String stateInfo =  data.getExtras().getString(SettingsActivity.READ_STATE);
-    			sendMessage(stateInfo);
-    		}
-    		break;
-    	case REQUEST_CAPTURE_INFO:
-    		if (resultCode == Activity.RESULT_OK) {
-    			String radar =  data.getExtras().getString(SettingsActivity.DEFAULT_CAPTURE);
-    			Log.d(TAG, "breakpoint");
-    			sendMessage(radar);
-    		}
-    		break;
-    	}
-    }
-    
+	// Status of Bluetooth connection is set in ActionBar
+	private final void setStatus(CharSequence subTitle) {
+		final ActionBar actionBar = getActionBar();
+		actionBar.setSubtitle(subTitle);
+	}
 
-    private void connectDevice(Intent data) {
-        // Get the device MAC address
-        String address = data.getExtras().getString(DeviceListActivty.EXTRA_DEVICE_ADDRESS);
-        // Get the BluetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-        // Attempt to connect to the device
-        mChatService.connect(device);
-    }
 
-    
-    // Action Bar displays options when Menu item in Action bar is clicked
+
+	int n = 0;
+	// The Handler that gets information back from the BluetoothChatService
+	public final Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case MESSAGE_STATE_CHANGE:
+				if(D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
+				switch (msg.arg1) {
+				case BluetoothChatService.STATE_CONNECTED:
+					setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+					mConversationArrayAdapter.clear();
+					break;
+				case BluetoothChatService.STATE_CONNECTING:
+					setStatus(R.string.title_connecting);
+					break;
+				case BluetoothChatService.STATE_LISTEN:
+				case BluetoothChatService.STATE_NONE:
+					setStatus(R.string.title_not_connected);
+					break;
+				}
+				break;
+			case MESSAGE_WRITE:
+				byte[] writeBuf = (byte[]) msg.obj;
+				// construct a string from the buffer
+				String writeMessage = new String(writeBuf);
+				Log.i(TAG, "Tablet:  " + writeMessage);
+				//                mConversationArrayAdapter.add("Me:  " + writeMessage);
+				break;
+			case MESSAGE_READ:
+				byte[] readBuf = (byte[]) msg.obj;
+				// construct a string from the valid bytes in the buffer
+				String readMessage = new String(readBuf, 0, msg.arg1);
+
+				// Log.i(TAG, readMessage);		//used to display in log the message before it is parced
+
+
+				int comma = readMessage.indexOf(',');
+				String returned;
+				//				List<String> arrayData;
+				List<Integer> arrayInteger;
+				int values;
+
+				// readCommand sends string from radar to be "parsed" (does nothing),
+				// just returns string to MainActivity to display in LogCat window.
+				if (comma == -1) {
+					returned = myCommand.readCommand(readMessage);
+					Log.i(TAG, returned);			//used to display in log the message after it is parced
+				}
+
+				// List<String> parseCommand method in RadarCommand class is [SUPPOSED] to buffer
+				// commands into a list of strings 
+				else {
+					//                	arrayData = myCommand.parseCommand(readMessage);
+					//                	for(int i=0; i<arrayData.size(); i++){
+					//                		returned = arrayData.get(i);
+					//                    	Log.i(TAG, i + " = " + returned);
+					//                    }
+
+					arrayInteger = myCommand.parseCommand(readMessage);
+					for(int i=0; i<arrayInteger.size(); i++) {
+						values = arrayInteger.get(i);
+						Log.i(TAG, i + " = " + values);
+					}
+					saveFile(arrayInteger);
+
+				}
+				break;
+			case MESSAGE_DEVICE_NAME:
+				// save the connected device's name
+				mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
+				Toast.makeText(getApplicationContext(), "Connected to "
+						+ mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+				break;
+			case MESSAGE_TOAST:
+				Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST),
+						Toast.LENGTH_SHORT).show();
+				break;
+			}
+		}
+	};
+
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(D) Log.d(TAG, "onActivityResult " + resultCode);
+		switch (requestCode) {
+		case REQUEST_CONNECT_DEVICE:
+			// When DeviceListActivity returns with a device to connect
+			if (resultCode == Activity.RESULT_OK) {
+				connectDevice(data);
+			}
+			break;
+		case REQUEST_ENABLE_BT:
+			// When the request to enable Bluetooth returns
+			if (resultCode == Activity.RESULT_OK) {
+				// Bluetooth is now enabled, so set up a chat session
+				setupChat();
+			} else {
+				// User did not enable Bluetooth or an error occurred
+				Log.d(TAG, "BT not enabled");
+				Toast.makeText(this, R.string.bt_not_enabled, Toast.LENGTH_SHORT).show();
+			}
+			break;
+		case REQUEST_RADAR_INFO:
+			if (resultCode == Activity.RESULT_OK) {
+				String radar =  data.getExtras().getString(SettingsActivity.EXTRA_RADAR_COMMAND);
+				Log.d(TAG, "breakpoint");
+				sendMessage(radar);
+			}
+			break;
+		case REQUEST_FILE_INFO:
+			if (resultCode == Activity.RESULT_OK) {
+				loadFile(data);
+			}
+			break;
+		}
+	}
+
+
+	private void connectDevice(Intent data) {
+		// Get the device MAC address
+		String address = data.getExtras().getString(DeviceListActivty.EXTRA_DEVICE_ADDRESS);
+		// Get the BluetoothDevice object
+		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+		// Attempt to connect to the device
+		mChatService.connect(device);
+	}
+
+
+	public void loadFile(Intent data) {
+		String fileInfo =  data.getExtras().getString(DisplayArchive.EXTRA_FILE_INFO);
+		loadData(fileInfo);
+	}
+	
+	
+	public void loadData(String fileName) {
+		ArrayList<Integer> contents = new ArrayList<Integer>();
+		
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			String line;
+			int value =0;
+			
+			while ((line = br.readLine()) != null) {	//2048
+				value = Integer.parseInt(line);
+				contents.add(value);
+			}
+			br.close();
+			
+			int size = contents.size();
+			fileContents = new double[size];
+			for (int i = 0; i<size; i++)
+				fileContents[i] = contents.get(i);
+		} 
+		// You'll need to add proper error handling here
+		catch (IOException e) {
+			Log.e("loadData()", "IOError");
+		}
+		plotData();
+	}
+
+	
+	public void plotData() {
+		if (fileContents != null) {
+			mDataset = new XYMultipleSeriesDataset();
+			XYSeries dataSeries = new XYSeries("Tablet Data");
+	
+			for (int i=0; i<fileContents.length; i++){				
+				dataSeries.add(i, fileContents[i]);
+			}
+			mDataset.addSeries(dataSeries);
+	
+			mRenderer = new XYMultipleSeriesRenderer();
+			mRenderer = getMyDefaultRenderer();
+	
+			if (mChartView != null) {
+				RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
+				mChartView = ChartFactory.getLineChartView(this, mDataset,
+						mRenderer);
+				layout.addView(mChartView);
+			} else {
+				mChartView.repaint();
+			}
+		} else {
+		}
+	}
+	
+	
+	
+
+	/**
+	 * 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
+	 * 
+	 * @param loadActivity
+	 */
+	public void openArchive(View loadActivity) {
+		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
+		Intent archiveIntent = new Intent(this, DisplayArchive.class);
+		startActivityForResult(archiveIntent, REQUEST_FILE_INFO);
+	}
+
+	/**
+	 * 
+	 * @param data
+	 */
+	public void saveFile(List<Integer> data) {	
+		String stringToSave = "";
+		for (int i = 0; i<data.size(); i++) 
+			stringToSave += data.get(i) + "\n";
+
+		try{
+			NewFile save = new NewFile();
+			save.createFile(this, stringToSave);
+		}
+		catch(IOException e){
+			Log.e("MainActivity", "IOError");
+		}
+	}
+
+	public void startCollect(View butt1) {
+		String start = "FREQ:SWEEP:RUN$\n";
+		sendMessage(start);
+		Log.d(TAG, "start collecting data...");
+	}
+
+
+
+	public void stopCollect(View butt2) {
+		String stop = "FREQ:SWEEP:KILL$\n";
+		sendMessage(stop);
+		Log.d(TAG, "...stop collecting data");
+	}
+
+
+
+
+
+	// Action Bar displays options when Menu item in Action bar is clicked
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -427,66 +512,36 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		return true;
 	}
 
-	
+
+
+
 	// Action Bar MenuItem onClick events --> what to do next
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		
 		Intent serverIntent = null;
-        switch (item.getItemId()) {
-        case R.id.menu_settings:
-        	Intent settings = new Intent(this, SettingsActivity.class);
-        	startActivityForResult(settings, REQUEST_CAPTURE_INFO);
-    		//startActivityForResult(settings, REQUEST_BW);
-        	return true;
-        case R.id.connect_scan:
-            // Launch the DeviceListActivity to see devices and do scan
-            serverIntent = new Intent(this, DeviceListActivty.class);
-            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
-            return true;
-        case R.id.discoverable:
-            // Ensure this device is discoverable by others
-            ensureDiscoverable();
-            return true;
-        }
-        return false;
-	}
-
-	
-	// For testing button & popup menu purposes only!
-	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_settings:
+			Intent settings = new Intent(this, SettingsActivity.class);
+			startActivityForResult(settings, REQUEST_RADAR_INFO);
+			return true;
+		case R.id.connect_scan:
+			// Launch the DeviceListActivity to see devices and do scan
+			serverIntent = new Intent(this, DeviceListActivty.class);
+			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+			return true;
+		case R.id.discoverable:
+			// Ensure this device is discoverable by others
+			ensureDiscoverable();
+			return true;
+		}
 		return false;
 	}
 
 
-/*	public void resetButton(View view) {
-		sendMessage(myCommand.resetKit());
-	}*/
-
-
-	public void startCollect(View butt1) {
-		String start = "FREQ:SWEEP:RUN$\n";
-		sendMessage(start);
-		Log.d(TAG, "start collecting data...");
-	}
-	
-	public void stopCollect(View butt2) {
-		String stop = "FREQ:SWEEP:KILL$\n";
-		sendMessage(stop);
-		Log.d(TAG, "...stop collecting data");
-	}
-	
-	// 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
-	public void openArchive(View newActivity) {
-		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
-		Intent archiveData = new Intent(this, DisplayArchive.class);
-		startActivity(archiveData);
-	}
-	
-	
-	
-	// Save button
+	/**
+	 *  Save button
+	 * @param display	Button view
+	 */
 	public void saveFile(View display) {		
 		try{
 			NewFile save = new NewFile();
@@ -502,97 +557,19 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		}
 	}
 
-	public String getDataToSave() {
-		//can save any FFT data into a file even if its hasn't been plotted yet
-		dataArray = getDataFromFile();
-		double[] arrayToSave = getFftData();
-		String stringToSave = null;
-		
-		if (mDataset != null) {	
 
-			for (int i = 0; i<arrayToSave.length; i++) {
-				if (stringToSave == null){
-					stringToSave = arrayToSave[i] + "\n";
-				} else{
-					stringToSave = stringToSave + arrayToSave[i] + "\n";
-				}
-			}
-			return stringToSave;
-		} else {
-			// NEED TO HANDLE ERRORS!
-			return stringToSave;
-		}	
-	}
-
-	// Plots raw data onClick
-	public void plotButton(View plotMe) {
-		Toast.makeText(this, "Selected Plot", Toast.LENGTH_SHORT).show();
-		
-		mDataset = new XYMultipleSeriesDataset();
-		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
-		double[] array = getDataFromFile();
-//		double[] array = getDataFromFile2();
-		for (int i=0; i<array.length; i++){				
-			dataSeries.add(i, array[i]);
-		}
-		mDataset.addSeries(dataSeries);
-
-		mRenderer = new XYMultipleSeriesRenderer();
-		mRenderer = getRawRenderer();
-		
-		if (mChartView != null) {
-			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
-			mChartView = ChartFactory.getLineChartView(this, mDataset,
-					mRenderer);
-			layout.addView(mChartView);
-		} else {
-			mChartView.repaint();
-		}
-	}
-	
-	// Plots FFT- power spectrum data onClick
-	public void plotFFT(View fftPlot) {
-		Toast.makeText(this, "Selected Plot FFT", Toast.LENGTH_SHORT).show();
-		
-		mDataset = new XYMultipleSeriesDataset();
-		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
-		double[] array = getDataFromFile();
-//		double[] array = getDataFromFile2();
-		for (int i=0; i<array.length; i++){				
-			dataSeries.add(i, array[i]);
-		}
-		mDataset.addSeries(dataSeries);
-		mDataset.removeSeries(0);
-		
-		XYSeries dataSeries2 = new XYSeries("FFT of Simulated Data");
-		double[] array2= getFftData();
-		int j=0;
-		for (j=0; j<(array2.length); j++){
-			dataSeries2.add(j, array2[j]);
-		}
-		mDataset.addSeries(dataSeries2);
-		
-		mRenderer = new XYMultipleSeriesRenderer();
-		mRenderer = getFFTRenderer();
-		if (mChartView != null) {
-			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
-			mChartView = ChartFactory.getLineChartView(this, mDataset,
-					mRenderer);
-			layout.addView(mChartView);
-		} else {
-			mChartView.repaint();
-		}
-	}
-
-	
-	// Reads data line-by-line out of a '.txt' file which is saved to internal storage
+	/**
+	 * Reads data line-by-line out of a '.txt' file which is saved to internal storage
+	 * 
+	 * @return dataArray	floating-pointing samples from Radar Kit, stored into an array
+	 */
 	public double[] getDataFromFile() {
 		File internalMemory = Environment.getExternalStorageDirectory();
 
 		// Get the text file
 		// NEED TO SPECIFICALLY CHANGE THIS LINE OF CODE TO BE MORE UNIVERSAL!
 		File file = new File(internalMemory, "data3kHz_44KHzFs.txt");
-
+			
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line;
@@ -611,78 +588,160 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		}
 		return dataArray;	
 	}
-	
-	// Reads data line-by-line out of a '.txt' file which is saved to internal storage
-	public double[] getDataFromFile2() {
-		File sdcard = Environment.getExternalStorageDirectory();
 
-		File file = new File(sdcard, "100MhzRealReturn.txt");
 
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String line;
-			int i = 0;
-			dataArray = new double[8192];
+	/**
+	 * can save any FFT data into a file even if its hasn't been plotted yet
+	 * 
+	 * @return
+	 */
+	public String getDataToSave() {
+		dataArray = getDataFromFile();
+		double[] arrayToSave = getFftData();
+		String stringToSave = null;
 
-			while ((line = br.readLine()) != null & (i != 8192)) {
-				dataArray[i] = Float.parseFloat(line);
-				i++;
+		if (mDataset != null) {	
+			for (int i = 0; i<arrayToSave.length; i++) {
+				if (stringToSave == null)
+					stringToSave = arrayToSave[i] + "\n";
+				else
+					stringToSave += arrayToSave[i] + "\n";
 			}
-			br.close();
-		} 
-		// You'll need to add proper error handling here
-		catch (IOException e) {
-			Log.e("MainActivity", "IOError");
-		}
-		return dataArray;	
+			return stringToSave;
+		} else {
+			// NEED TO HANDLE ERRORS!
+			return stringToSave;
+		}	
 	}
-	
+
+	/**
+	 * Plots raw data in MainActivity chart.
+	 * @param plotMe	Button view
+	 */
+	public void plotButton(View plotMe) {
+		Toast.makeText(this, "Selected Plot", Toast.LENGTH_SHORT).show();
+
+		mDataset = new XYMultipleSeriesDataset();
+		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");
+
+		double[] array = getDataFromFile();
+
+		for (int i=0; i<array.length; i++){				
+			dataSeries.add(i, array[i]);
+		}
+		mDataset.addSeries(dataSeries);
+
+		mRenderer = new XYMultipleSeriesRenderer();
+		mRenderer = getRawRenderer();
+
+		if (mChartView != null) {
+			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
+			mChartView = ChartFactory.getLineChartView(this, mDataset,
+					mRenderer);
+			layout.addView(mChartView);
+		} else {
+			mChartView.repaint();
+		}
+	}
+
+
+	/**
+	 *  Plots FFT- power spectrum data onClick
+	 * @param fftPlot
+	 */
+	public void plotFFT(View fftPlot) {
+		Toast.makeText(this, "Selected Plot FFT", Toast.LENGTH_SHORT).show();
+
+		mDataset = new XYMultipleSeriesDataset();
+		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
+
+		double[] array = getDataFromFile();
+
+		for (int i=0; i<array.length; i++){				
+			dataSeries.add(i, array[i]);
+		}
+
+		mDataset.addSeries(dataSeries);
+		mDataset.removeSeries(0);
+
+
+		XYSeries dataSeries2 = new XYSeries("FFT of Simulated Data");
+		double[] array2= getFftData();
+		int j=0;
+		for (j=0; j<(array2.length); j++){
+			dataSeries2.add(j, array2[j]);
+		}
+		mDataset.addSeries(dataSeries2);
+
+		mRenderer = new XYMultipleSeriesRenderer();
+		mRenderer = getFFTRenderer();
+		if (mChartView != null) {
+			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
+			mChartView = ChartFactory.getLineChartView(this, mDataset,
+					mRenderer);
+			layout.addView(mChartView);
+		} else {
+			mChartView.repaint();
+		}
+	}
+
+	/**
+	 * Default dataset for initial app start-up
+	 * @return myDataSet
+	 */
+
+
+
 	// Default "data" to display when no data has been selected to plot & process
 	public XYMultipleSeriesDataset getMyDefaultData() {
-
 		XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
 		XYSeries dataSeries = new XYSeries(" ");
 		myDataset.addSeries(dataSeries);
 		return myDataset;
 	}
-	
-	// FFT calucation, returns Power Spectrum output data
+
+	/**
+	 *  FFT calucation
+	 * @return fftOutput2	Power Spectrum output data
+	 */
 	public double[] getFftData() {
 
 		double[] realArray = dataArray;
 		double[] imagArray = new double[realArray.length];
-	
+
 		FFTcalc fftData = new FFTcalc();
 		double[] fftArray = fftData.fft(realArray,imagArray, true);
 		int n = realArray.length;
 		double[] imagFFT = new double[fftArray.length/2];
 		double[] realFFT = new double[fftArray.length/2];
 		double radice = 1 / Math.sqrt(n);	
-		
+
 		// real and imaginary parts are separated from output of FFT algorithm
 		for(int i=0; i< fftArray.length; i+=2) {
 			int i2 = i/2;
 			realFFT[i2] = fftArray[i] / radice;
 			imagFFT[i2] = fftArray[i + 1] / radice;
 		}
-		
+
 		// Magnitude of real & imaginary arrays is calculated and put into one array
 		double[] fftOutput = new double[n];
 		for (int i=0; i<n; i++){
 			fftOutput[i] = Math.sqrt(Math.pow(realFFT[i], 2) + Math.pow(imagFFT[i], 2)); 
 		}
 
-		
+
 		double[] fftOutput2 = new double[n];
 		// Power of m
 		for (int i=0; i<(n); i++){
 			fftOutput2[i] = 20*Math.log10(fftOutput[i]);
 		}
-		
+
 		return fftOutput2;	
 	}
-	
-	// Default Renderer to display when no data has been selected to process (blank graph)
+
+	/**
+	 *  Default Renderer to display when no data has been selected to process (blank graph)
+	 */
 	public XYMultipleSeriesRenderer getMyDefaultRenderer() {
 
 		XYSeriesRenderer r1 = new XYSeriesRenderer();
@@ -696,7 +755,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setPanEnabled(true, true);
 		myRenderer.setZoomEnabled(true, true);
 		myRenderer.setZoomButtonsVisible(true);
-		
+
 		myRenderer.setChartTitle("FMCW Radar Data Plot");
 		myRenderer.setChartTitleTextSize(30);
 
@@ -714,7 +773,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setXTitle("Samples");
 		myRenderer.setYTitle("Amplitude");
 		myRenderer.setAxisTitleTextSize(20);
-		
+
 		myRenderer.setApplyBackgroundColor(true);
 		myRenderer.setBackgroundColor(Color.LTGRAY); 
 
@@ -727,7 +786,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setMargins(new int[] {35, 50, 15, 30});
 		return myRenderer;
 	}
-	
+
 	public XYMultipleSeriesRenderer getRawRenderer() {
 
 		XYSeriesRenderer r1 = new XYSeriesRenderer();
@@ -741,7 +800,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setPanEnabled(true, true);
 		myRenderer.setZoomEnabled(true, true);
 		myRenderer.setZoomButtonsVisible(true);
-		
+
 		myRenderer.setChartTitle("FMCW Radar Data Plot");
 		myRenderer.setChartTitleTextSize(30);
 
@@ -774,7 +833,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
 		myRenderer.setMargins(new int[] {35, 50, 15, 30});
-		
+
 		// Minimum & Max values to view plot area
 		myRenderer.setXAxisMin(0);
 		myRenderer.setXAxisMax(444);
@@ -783,7 +842,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 
 		return myRenderer;
 	}
-		
+
 	public XYMultipleSeriesRenderer getFFTRenderer() {
 
 		XYSeriesRenderer r2 = new XYSeriesRenderer();
@@ -796,7 +855,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setPanEnabled(true, true);
 		myRenderer.setZoomEnabled(true, true);
 		myRenderer.setZoomButtonsVisible(true);
-		
+
 		myRenderer.setChartTitle("FMCW Radar Data Plot");
 		myRenderer.setChartTitleTextSize(30);
 
@@ -810,7 +869,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setYLabelsColor(0, Color.BLACK);
 		myRenderer.setShowAxes(true);
 		myRenderer.setLabelsColor(Color.BLACK);
-		
+
 		myRenderer.setXTitle("Frequency (kHz)");
 		myRenderer.setYTitle("Power (dB)");
 		myRenderer.setAxisTitleTextSize(20);
@@ -829,7 +888,7 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
 		myRenderer.setMargins(new int[] {35, 50, 15, 30});
-		
+
 		// Minimum & Max values to view plot area
 		myRenderer.setXAxisMin(0);
 		myRenderer.setXAxisMax(256);
@@ -840,40 +899,40 @@ public class MainActivity extends Activity implements OnMenuItemClickListener {
 
 	private void setChartSettings(XYMultipleSeriesRenderer renderer) {
 
-			renderer.setPanEnabled(true, true);
-			renderer.setZoomEnabled(true, true);
-			renderer.setZoomButtonsVisible(true);
-			renderer.setLegendTextSize(20);
+		renderer.setPanEnabled(true, true);
+		renderer.setZoomEnabled(true, true);
+		renderer.setZoomButtonsVisible(true);
+		renderer.setLegendTextSize(20);
 
-			renderer.setZoomRate(10);
+		renderer.setZoomRate(10);
 
-			renderer.setAxesColor(Color.BLACK);
-			renderer.getXLabelsAlign();
-			renderer.setXLabelsColor(Color.BLACK);
-			renderer.setYLabelsColor(0, Color.BLACK);
-			renderer.setShowAxes(true);
-			renderer.setLabelsColor(Color.BLACK);
-			renderer.setXTitle("Frequency (kHz)");
-			renderer.setYTitle("Power (dB)");
+		renderer.setAxesColor(Color.BLACK);
+		renderer.getXLabelsAlign();
+		renderer.setXLabelsColor(Color.BLACK);
+		renderer.setYLabelsColor(0, Color.BLACK);
+		renderer.setShowAxes(true);
+		renderer.setLabelsColor(Color.BLACK);
+		renderer.setXTitle("Frequency (kHz)");
+		renderer.setYTitle("Power (dB)");
 
-			renderer.setAxisTitleTextSize(20);
+		renderer.setAxisTitleTextSize(20);
 
-			// background color of the PLOT ONLY
-			renderer.setApplyBackgroundColor(true);
-			// Color.TRANSPARENT would show the background of the app (MainActivity)
-			renderer.setBackgroundColor(Color.LTGRAY); 
+		// background color of the PLOT ONLY
+		renderer.setApplyBackgroundColor(true);
+		// Color.TRANSPARENT would show the background of the app (MainActivity)
+		renderer.setBackgroundColor(Color.LTGRAY); 
 
-			// sets the background area of the object itself
-			// does not change the plots background
-			renderer.setMarginsColor(Color.WHITE); 
+		// sets the background area of the object itself
+		// does not change the plots background
+		renderer.setMarginsColor(Color.WHITE); 
 
 
-			renderer.setGridColor(Color.DKGRAY);
-			renderer.setXLabels(20);
-			renderer.setYLabels(9);
-			renderer.setShowGrid(true);
-			
-			renderer.setMargins(new int[] {35, 50, 15, 30});
-	  } 
-	
+		renderer.setGridColor(Color.DKGRAY);
+		renderer.setXLabels(20);
+		renderer.setYLabels(9);
+		renderer.setShowGrid(true);
+
+		renderer.setMargins(new int[] {35, 50, 15, 30});
+	} 
+
 } //END OF MAINACTIVITY CODE!

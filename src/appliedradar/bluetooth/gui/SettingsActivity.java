@@ -13,12 +13,11 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class SettingsActivity extends Activity implements OnSeekBarChangeListener {
-
+	// Debug-use
 	private static final String TAG = "SettingsActivity";
 
-//	public static final String DEFAULT_BW =  "default_bandwidth";
-	public static final String READ_STATE = "read_state #";
-	public static final String DEFAULT_CAPTURE = "default_capture_time";  
+	
+	public static final String EXTRA_RADAR_COMMAND = "default_capture_time";  
 
 	public String mCaptureTime;
 	public String mBandwidth;
@@ -86,24 +85,14 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		return super.onOptionsItemSelected(item);
 	}
 
-	// button to read State, test puruposes ONLY
-	public void readState(View view) {
-		String currentState = myCommand.readCurrentState(0);
-		Log.i(TAG, "Pressed read state button");
-		
-		Intent intent = new Intent();
-		//intent.putExtra(READ_STATE, currentState);
-		intent.putExtra(DEFAULT_CAPTURE, currentState);
-		setResult(Activity.RESULT_OK, intent);
-		finish();
-	}
+
 
 	public void getRampTime(View view) {
-		//		String currentValues = myCommand.getCurrentCaptureTime();
+//		String currentValues = myCommand.getCurrentCaptureTime();
 		Log.i(TAG, "Pressed 'Ramp Time' button");
 		String rampTime = "FREQ:SWEEP:RAMPTIME?$\n";
 		Intent intent2 = new Intent();
-		intent2.putExtra(DEFAULT_CAPTURE, rampTime);
+		intent2.putExtra(EXTRA_RADAR_COMMAND, rampTime);
 		setResult(Activity.RESULT_OK, intent2);
 		finish();
 	}
@@ -112,11 +101,23 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		Log.i(TAG, "Pressed sweep type button");
 		String sweepType = "FREQ:SWEEP:TYPE?$\n";
 		Intent intent = new Intent();
-		intent.putExtra(DEFAULT_CAPTURE, sweepType);
+		intent.putExtra(EXTRA_RADAR_COMMAND, sweepType);
 		setResult(Activity.RESULT_OK, intent);
 		finish();
 	}
 	
+	
+	
+	// button to read State, test puruposes ONLY
+	public void readState(View view) {
+		String currentState = myCommand.readCurrentState(0);
+		Log.i(TAG, "Pressed read state button");
+		
+		Intent intent = new Intent();
+		intent.putExtra(EXTRA_RADAR_COMMAND, currentState);
+		setResult(Activity.RESULT_OK, intent);
+		finish();
+	}
 	
 	
 	@Override

@@ -37,13 +37,13 @@
             android:text="@string/load_data"
             android:textSize="28sp" />
         
-        <!-- <Button 
-            android:id="@+id/reset"
+<!--         <Button 
+            android:id="@+id/plot_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/reset"
+            android:text="@string/load_new"
             android:textSize="28sp"
-            android:onClick="resetButton" /> -->
+            android:onClick="plotData" /> -->
 
     </LinearLayout>
 

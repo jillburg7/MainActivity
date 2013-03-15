@@ -15,8 +15,6 @@ public class FFTcalc {
 	 */
 	public double[] fft(double[] inputReal, double[] inputImag,
 			boolean DIRECT) {
-	//	printReIm(inputReal);
-	//	printReIm(inputImag);
 
 		// - n is the dimension of the problem
 		// - nu is its logarithm in base e

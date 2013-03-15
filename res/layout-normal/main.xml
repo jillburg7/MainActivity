@@ -34,13 +34,14 @@
             android:onClick="openArchive"
             android:text="@string/load_data"
             android:textSize="15sp" />
+        
         <!-- <Button 
-            android:id="@+id/reset"
+            android:id="@+id/plot_data"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:text="@string/reset"
-            android:textSize="15sp"
-            android:onClick="resetButton" /> -->
+            android:text="@string/load_new"
+            android:textSize="15sp" 
+            android:onClick="plotData" /> -->
     </LinearLayout>
 
     

@@ -18,9 +18,8 @@ public class NewFile {
 
 	public void createFile(Context c, String string) throws IOException{
 		String root = Environment.getExternalStorageDirectory().toString();
-		File myDir = new File(root + "/saved_data_2");
+		File myDir = new File(root + "/FMCW File Archive");
 		
-		myDir.mkdirs();
 		String fname = timeStamp() + ".txt";
 		File file = new File (myDir, fname);
 		if (file.exists ()){

@@ -66,9 +66,10 @@ public final class R {
         public static final int activity_settings=0x7f030001;
         public static final int device_list=0x7f030002;
         public static final int device_name=0x7f030003;
-        public static final int main=0x7f030004;
-        public static final int message=0x7f030005;
-        public static final int radiogroup=0x7f030006;
+        public static final int file_name=0x7f030004;
+        public static final int main=0x7f030005;
+        public static final int message=0x7f030006;
+        public static final int radiogroup=0x7f030007;
     }
     public static final class menu {
         public static final int activity_display_archive=0x7f070000;
@@ -111,6 +112,7 @@ public final class R {
         public static final int freq_settings=0x7f05001c;
         public static final int hello_world=0x7f050030;
         public static final int load_data=0x7f050022;
+        public static final int load_new=0x7f05002a;
         public static final int matlab_file=0x7f050017;
         public static final int menu_settings=0x7f050019;
         public static final int none_found=0x7f050009;
@@ -122,7 +124,6 @@ public final class R {
         public static final int range_plot=0x7f050010;
         public static final int raw_plot=0x7f05000f;
         public static final int readState=0x7f050044;
-        public static final int reset=0x7f05002a;
         public static final int sar_plot=0x7f050013;
         public static final int save_data=0x7f050023;
         /**   DeviceListActivity 
