@@ -98,10 +98,13 @@ public class MainActivity extends Activity {
 			Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
 		}
 
+<<<<<<< HEAD
 		// Determine whether we are in single-pane or dual-pane mode by testing the visibility
 		// of the article view.
 		//        View articleView = findViewById(R.id.article);
 		//        mIsDualPane = articleView != null && articleView.getVisibility() == View.VISIBLE;
+=======
+>>>>>>> File Archive Beta = Success!;  Storing & Loading "Data" received from the tablet1 (BTChat App) into App = Success!
 
 		// Displays chartview of plot in GUI
 		mRenderer = getMyDefaultRenderer();

@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -118,8 +117,9 @@ public class DeviceListActivty extends Activity {
 			//
 			// TODO: If Settings has multiple levels, Up should navigate up
 			// that hierarchy.
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
+//			NavUtils.navigateUpFromSameTask(this);
+//			return true;
+			finish();
 		}
 		return super.onOptionsItemSelected(item);
 	}

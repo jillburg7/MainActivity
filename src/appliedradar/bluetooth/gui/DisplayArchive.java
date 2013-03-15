@@ -7,7 +7,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,10 +51,13 @@ public class DisplayArchive extends Activity {
 		fileListView.setAdapter(fileAdapter);
 		fileListView.setOnItemClickListener(mFileClickListener);
 
+<<<<<<< HEAD
 		// mFileList.listFiles();
 		//		File internalMemory = Environment.getExternalStorageDirectory();
 		//		File myDir = new File(root + "/saved_data_2");
 
+=======
+>>>>>>> File Archive Beta = Success!;  Storing & Loading "Data" received from the tablet1 (BTChat App) into App = Success!
 
 		// If there are paired devices, add each one to the ArrayAdapter
 		if (mFileList.length > 0) 
@@ -89,9 +91,10 @@ public class DisplayArchive extends Activity {
 			// more details, see the Navigation pattern on Android Design:
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
+			
+			finish();
+			//NavUtils.navigateUpFromSameTask(this);
+			//return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
