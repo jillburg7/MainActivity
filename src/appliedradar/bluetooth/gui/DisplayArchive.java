@@ -51,14 +51,6 @@ public class DisplayArchive extends Activity {
 		fileListView.setAdapter(fileAdapter);
 		fileListView.setOnItemClickListener(mFileClickListener);
 
-<<<<<<< HEAD
-		// mFileList.listFiles();
-		//		File internalMemory = Environment.getExternalStorageDirectory();
-		//		File myDir = new File(root + "/saved_data_2");
-
-=======
->>>>>>> File Archive Beta = Success!;  Storing & Loading "Data" received from the tablet1 (BTChat App) into App = Success!
-
 		// If there are paired devices, add each one to the ArrayAdapter
 		if (mFileList.length > 0) 
 			findViewById(R.id.title_file_list).setVisibility(View.VISIBLE);

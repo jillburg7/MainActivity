@@ -11,37 +11,31 @@ public class RadarCommand {
 	public static String BANDWIDTH;
 	public static String RAMP_TIME;
 	public static int CURRENT_STATE;
+	
+	private ArrayList<Double> arrayValues;
 
+	
 	public String readCommand(String returnCommand) {
 		return returnCommand;
 	}
-//
-//	public List<String> parseCommand(String returnCommand) {
-//		List<String> data = null;
-//		data = Arrays.asList(returnCommand.split("\\s*,\\s*"));
-//		return data;
-//	}
+
 	
 	
-	public List<Integer> parseCommand(String returnCommand) {
+/*	public List<Integer> parseCommand(String returnCommand) {
 		List<String> data = null;
 		data = Arrays.asList(returnCommand.split("\\s*,\\s*"));
 		List<Integer> intArray = convertToIntegerList(data);
-//		ArrayList<Integer> intArray = convertToIntegerList(data);
 		return intArray;
-	}
+	}*/
 	
-	
-	// MAY NOT EVEN WORK.... I DON'T KNOW!
-	// HAVEN'T TESTED IT!
-	// may consider changing access-modifier to private and call this method from List<String> parseCommand
+
 	/**
 	 * Returns the integer values of the String list as an ArrayList<Integer> type
 	 * 
 	 * @param	 stringList		List of data strings to be converted to integer values
 	 * @return	rawDataArray	Array of integer values to be used for processing data
 	 */
-	public ArrayList<Integer> convertToIntegerList(List<String> stringList) {
+/*	public ArrayList<Integer> convertToIntegerList(List<String> stringList) {
 		ArrayList<Integer> rawDataArray = new ArrayList<Integer>();
 		int value;
 		int elements = stringList.size();
@@ -50,20 +44,26 @@ public class RadarCommand {
 			rawDataArray.add(value);
 		}
 		return rawDataArray;
+	}*/
+	
+	
+	
+	
+	public ArrayList<Double> parseCommand (String toParse) {
+		List<String> data = Arrays.asList(toParse.split("\\s*,\\s*"));
+		convertToDouble(data);
+		return arrayValues;
 	}
-
 	
-	
-//	public ArrayList<double[]> convertToInteger (List<String> stringList) {
-//		ArrayList<double[]> rawDataArray = new ArrayList<double[]>();
-//		double value;
-//		int elements = stringList.size();
-//		for (int i=0; i<elements; i++) {
-//			value = Double.parseDouble(stringList.get(i));
-//			rawDataArray.add(value);
-//		}
-//		return rawDataArray;
-//	}
+	private void convertToDouble (List<String> stringList) {
+		arrayValues = new ArrayList<Double>();
+		double value;
+		int elements = stringList.size();
+		for (int i=0; i<elements; i++) {
+			value = Double.parseDouble(stringList.get(i));
+			arrayValues.add(value);
+		}
+	}
 	
 	
 	// command to get current ramp time setting

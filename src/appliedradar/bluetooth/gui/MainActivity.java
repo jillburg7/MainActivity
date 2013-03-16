@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
 
 	public ShareActionProvider mShareActionProvider;
 	// aChartEngine Objects for plotting and using Line Graph Renderer/Settings
-	double[] dataArray;
+	private double[] dataArray;
 	private double[] fileContents = null;
 	GraphicalView mChartView;
 	XYMultipleSeriesDataset mDataset;
@@ -98,13 +98,6 @@ public class MainActivity extends Activity {
 			Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
 		}
 
-<<<<<<< HEAD
-		// Determine whether we are in single-pane or dual-pane mode by testing the visibility
-		// of the article view.
-		//        View articleView = findViewById(R.id.article);
-		//        mIsDualPane = articleView != null && articleView.getVisibility() == View.VISIBLE;
-=======
->>>>>>> File Archive Beta = Success!;  Storing & Loading "Data" received from the tablet1 (BTChat App) into App = Success!
 
 		// Displays chartview of plot in GUI
 		mRenderer = getMyDefaultRenderer();
@@ -263,6 +256,10 @@ public class MainActivity extends Activity {
 
 
 
+	private List<Integer> arrayInteger;
+	private ArrayList<Double> arrayDouble;
+	
+	
 	int n = 0;
 	// The Handler that gets information back from the BluetoothChatService
 	public final Handler mHandler = new Handler() {
@@ -297,38 +294,22 @@ public class MainActivity extends Activity {
 				// construct a string from the valid bytes in the buffer
 				String readMessage = new String(readBuf, 0, msg.arg1);
 
-				// Log.i(TAG, readMessage);		//used to display in log the message before it is parced
-
-
 				int comma = readMessage.indexOf(',');
-				String returned;
-				//				List<String> arrayData;
-				List<Integer> arrayInteger;
-				int values;
-
+				
 				// readCommand sends string from radar to be "parsed" (does nothing),
 				// just returns string to MainActivity to display in LogCat window.
 				if (comma == -1) {
-					returned = myCommand.readCommand(readMessage);
+					String returned = myCommand.readCommand(readMessage);
 					Log.i(TAG, returned);			//used to display in log the message after it is parced
 				}
-
-				// List<String> parseCommand method in RadarCommand class is [SUPPOSED] to buffer
-				// commands into a list of strings 
 				else {
-					//                	arrayData = myCommand.parseCommand(readMessage);
-					//                	for(int i=0; i<arrayData.size(); i++){
-					//                		returned = arrayData.get(i);
-					//                    	Log.i(TAG, i + " = " + returned);
-					//                    }
-
-					arrayInteger = myCommand.parseCommand(readMessage);
-					for(int i=0; i<arrayInteger.size(); i++) {
-						values = arrayInteger.get(i);
+					arrayDouble = myCommand.parseCommand(readMessage);
+					for(int i=0; i<arrayDouble.size(); i++) {
+						double values = arrayDouble.get(i);
 						Log.i(TAG, i + " = " + values);
 					}
-					saveFile(arrayInteger);
-
+					plotData();
+					//saveFile(arrayDouble);
 				}
 				break;
 			case MESSAGE_DEVICE_NAME:
@@ -344,8 +325,8 @@ public class MainActivity extends Activity {
 			}
 		}
 	};
-
-
+	
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(D) Log.d(TAG, "onActivityResult " + resultCode);
@@ -382,125 +363,7 @@ public class MainActivity extends Activity {
 		}
 	}
 
-
-	private void connectDevice(Intent data) {
-		// Get the device MAC address
-		String address = data.getExtras().getString(DeviceListActivty.EXTRA_DEVICE_ADDRESS);
-		// Get the BluetoothDevice object
-		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-		// Attempt to connect to the device
-		mChatService.connect(device);
-	}
-
-
-	public void loadFile(Intent data) {
-		String fileInfo =  data.getExtras().getString(DisplayArchive.EXTRA_FILE_INFO);
-		loadData(fileInfo);
-	}
 	
-	
-	public void loadData(String fileName) {
-		ArrayList<Integer> contents = new ArrayList<Integer>();
-		
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			String line;
-			int value =0;
-			
-			while ((line = br.readLine()) != null) {	//2048
-				value = Integer.parseInt(line);
-				contents.add(value);
-			}
-			br.close();
-			
-			int size = contents.size();
-			fileContents = new double[size];
-			for (int i = 0; i<size; i++)
-				fileContents[i] = contents.get(i);
-		} 
-		// You'll need to add proper error handling here
-		catch (IOException e) {
-			Log.e("loadData()", "IOError");
-		}
-		plotData();
-	}
-
-	
-	public void plotData() {
-		if (fileContents != null) {
-			mDataset = new XYMultipleSeriesDataset();
-			XYSeries dataSeries = new XYSeries("Tablet Data");
-	
-			for (int i=0; i<fileContents.length; i++){				
-				dataSeries.add(i, fileContents[i]);
-			}
-			mDataset.addSeries(dataSeries);
-	
-			mRenderer = new XYMultipleSeriesRenderer();
-			mRenderer = getMyDefaultRenderer();
-	
-			if (mChartView != null) {
-				RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
-				mChartView = ChartFactory.getLineChartView(this, mDataset,
-						mRenderer);
-				layout.addView(mChartView);
-			} else {
-				mChartView.repaint();
-			}
-		} else {
-		}
-	}
-	
-	
-	
-
-	/**
-	 * 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
-	 * 
-	 * @param loadActivity
-	 */
-	public void openArchive(View loadActivity) {
-		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
-		Intent archiveIntent = new Intent(this, DisplayArchive.class);
-		startActivityForResult(archiveIntent, REQUEST_FILE_INFO);
-	}
-
-	/**
-	 * 
-	 * @param data
-	 */
-	public void saveFile(List<Integer> data) {	
-		String stringToSave = "";
-		for (int i = 0; i<data.size(); i++) 
-			stringToSave += data.get(i) + "\n";
-
-		try{
-			NewFile save = new NewFile();
-			save.createFile(this, stringToSave);
-		}
-		catch(IOException e){
-			Log.e("MainActivity", "IOError");
-		}
-	}
-
-	public void startCollect(View butt1) {
-		String start = "FREQ:SWEEP:RUN$\n";
-		sendMessage(start);
-		Log.d(TAG, "start collecting data...");
-	}
-
-
-
-	public void stopCollect(View butt2) {
-		String stop = "FREQ:SWEEP:KILL$\n";
-		sendMessage(stop);
-		Log.d(TAG, "...stop collecting data");
-	}
-
-
-
-
-
 	// Action Bar displays options when Menu item in Action bar is clicked
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -514,7 +377,6 @@ public class MainActivity extends Activity {
 				.getActionProvider();
 		return true;
 	}
-
 
 
 
@@ -539,25 +401,156 @@ public class MainActivity extends Activity {
 		}
 		return false;
 	}
+	
+
+	private void connectDevice(Intent data) {
+		// Get the device MAC address
+		String address = data.getExtras().getString(DeviceListActivty.EXTRA_DEVICE_ADDRESS);
+		// Get the BluetoothDevice object
+		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+		// Attempt to connect to the device
+		mChatService.connect(device);
+	}
+
+
+	public void loadFile(Intent data) {
+		String fileInfo =  data.getExtras().getString(DisplayArchive.EXTRA_FILE_INFO);
+		loadData(fileInfo);
+	}
+	
+	
+	public void loadData(String fileName) {
+		ArrayList<Double> contents = new ArrayList<Double>();
+
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			String line;
+			double value;
+			
+			while ((line = br.readLine()) != null) {	//2048
+				value = Double.parseDouble(line);
+				contents.add(value);
+			}
+			br.close();
+			
+			int size = contents.size();
+			fileContents = new double[size];
+			for (int i = 0; i<size; i++)
+				fileContents[i] = contents.get(i);
+		} 
+		// You'll need to add proper error handling here
+		catch (IOException e) {
+			Log.e("loadData()", "IOError");
+		}
+		plotData();
+	}
+	
+	
+	public void plotData() {
+		if (fileContents == null) {					// NULL b/c nothing has been choosen to load from file Archive!
+			int size = arrayDouble.size();
+			fileContents = new double[size];
+			for (int i = 0; i<size; i++)
+				fileContents[i] = arrayDouble.get(i);
+		}											// No else {} statement b/c if fileContents has been initialized already
+		
+		
+			mDataset = new XYMultipleSeriesDataset();
+			XYSeries dataSeries = new XYSeries("Tablet Data");
+	
+			for (int i=0; i<fileContents.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
+				dataSeries.add(i, fileContents[i]);
+			
+			fileContents = null;		// set to null again so that each new block of data sent is plotted
+			
+			mDataset.addSeries(dataSeries);
+			mRenderer = new XYMultipleSeriesRenderer();
+			mRenderer = getMyDefaultRenderer();
+			
+			if (mChartView != null) {
+				RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
+				mChartView = ChartFactory.getLineChartView(this, mDataset,
+						mRenderer);
+				layout.addView(mChartView);
+			} else {
+				mChartView.repaint();
+			}
+	}
+	
+
+	/**
+	 * 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
+	 * 
+	 * @param loadActivity
+	 */
+	public void openArchive(View loadActivity) {
+		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
+		Intent archiveIntent = new Intent(this, DisplayArchive.class);
+		startActivityForResult(archiveIntent, REQUEST_FILE_INFO);
+	}
+
+	/**
+	 * 
+	 * @param data	Data to save in File Archive
+	 */	
+	public void saveFile(ArrayList<Double> data) {	
+		String stringToSave = "";
+		for (int i = 0; i<arrayDouble.size(); i++) 
+			stringToSave += arrayDouble.get(i) + "\n";
+		try{
+			NewFile save = new NewFile();
+			save.createFile(this, stringToSave);
+		}
+		catch(IOException e){
+			Log.e("MainActivity", "IOError");
+		}
+	}
+	
+	
+
+	public void startCollect(View butt1) {
+		String start = "FREQ:SWEEP:RUN$\n";
+		sendMessage(start);
+		Log.d(TAG, "start collecting data...");
+	}
+
+
+	public void stopCollect(View butt2) {
+		String stop = "FREQ:SWEEP:KILL$\n";
+		sendMessage(stop);
+		Log.d(TAG, "...stop collecting data");
+	}
 
 
 	/**
 	 *  Save button
 	 * @param display	Button view
 	 */
-	public void saveFile(View display) {		
+	public void saveFile(View display) {	
+
+		String stringToSave = "";
+		for (int i = 0; i<arrayDouble.size(); i++) 
+			stringToSave += arrayDouble.get(i) + "\n";
 		try{
 			NewFile save = new NewFile();
-			String fileContent = getDataToSave();
-			if (fileContent == null) {
-				Log.e("MainActivity", "No data to save.");
-			} else {		
-				save.createFile(this, fileContent);
-			}
+			save.createFile(this, stringToSave);
 		}
 		catch(IOException e){
 			Log.e("MainActivity", "IOError");
 		}
+		
+//		try{
+//			NewFile save = new NewFile();
+//			String fileContent = getDataToSave();
+//			if (fileContent == null) {
+//				Log.e("MainActivity", "No data to save.");
+//			} else {		
+//				save.createFile(this, fileContent);
+//			}
+//		}
+//		catch(IOException e){
+//			Log.e("MainActivity", "IOError");
+//		}
 	}
 
 
