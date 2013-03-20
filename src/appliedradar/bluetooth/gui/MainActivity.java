@@ -881,7 +881,7 @@ public class MainActivity extends Activity {
 
 		myRenderer.setGridColor(Color.DKGRAY);
 		myRenderer.setXLabels(20);
-		myRenderer.setYLabels(9);
+//		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
 		myRenderer.setMargins(new int[] {35, 50, 15, 30});
 
@@ -890,6 +890,8 @@ public class MainActivity extends Activity {
 		myRenderer.setXAxisMax(256);
 		myRenderer.setYAxisMin(0);
 		myRenderer.setYAxisMax(120);
+		
+		myRenderer.addXTextLabel(5, "word");
 		return myRenderer;
 	}
 
@@ -899,7 +901,7 @@ public class MainActivity extends Activity {
 		renderer.setZoomEnabled(true, true);
 		renderer.setZoomButtonsVisible(true);
 		renderer.setLegendTextSize(20);
-
+		
 		renderer.setZoomRate(10);
 
 		renderer.setAxesColor(Color.BLACK);
