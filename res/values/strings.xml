@@ -10,7 +10,8 @@
     <string name="device_search">Search for Devices</string>
     <string name="device_pair">Paired Devices</string>
     <string name="device_connect">Discovered Devices</string>
-    <string name="collect_data">Collect Data</string>
+    
+    <string name="collect_data">Collect</string>
     <string name="load_data">File Archive</string>
     <string name="save_data">Save</string>
     <string name="share_data">Share</string>
@@ -18,10 +19,11 @@
     <string name="plot_FFT">Plot FFT Data</string>
     <string name="statistics_log">Statistics</string>
     
-    <string name="start_collecting">Start Collecting</string>
+    <string name="collect_save">Collect/Save</string>
     <string name="stop_collecting">Stop Collecting</string>
     <string name="load_new">Load</string>
     
+    <!-- Used on unexecutable layout-large & layout-normal XML files -->
     <string name="start">Start</string>
     <string name="stop">Stop</string>
 

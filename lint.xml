@@ -8,6 +8,7 @@
     <issue id="OldTargetApi">
         <ignore path="AndroidManifest.xml" />
     </issue>
+    <issue id="TypographyEllipsis" severity="ignore" />
     <issue id="UnusedResources">
         <ignore path="res/drawable-hdpi/ic_action_search.png" />
         <ignore path="res/values/strings.xml" />

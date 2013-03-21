@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -59,6 +58,9 @@ public class MainActivity extends Activity {
 
 	// RadarCommand Class object that controls the context of commands sent to the Radar Kit
 	public RadarCommand myCommand = new RadarCommand();
+	
+	//Data array collected from Radar kit
+	private ArrayList<Double> arrayDouble;
 
 	// Name of the connected device
 	private String mConnectedDeviceName = null;
@@ -67,7 +69,7 @@ public class MainActivity extends Activity {
 	private ArrayAdapter<String> mConversationArrayAdapter;
 
 	//DATA ARRAY of 512 data points
-	double[] newDataArray = new double[512];
+//	double[] newDataArray = new double[512];
 	// String buffer for outgoing messages
 	private StringBuffer mOutStringBuffer;
 	// Local Bluetooth adapter
@@ -254,10 +256,6 @@ public class MainActivity extends Activity {
 		actionBar.setSubtitle(subTitle);
 	}
 
-
-
-	private List<Integer> arrayInteger;
-	private ArrayList<Double> arrayDouble;
 	
 	
 	int n = 0;
@@ -507,18 +505,28 @@ public class MainActivity extends Activity {
 	}
 	
 	
-
+	/**
+	 * Signals to start collecting data from Radar kit.
+	 * @param butt1		Should only save this data temporarily (up to user if they want to saved perminentally)					
+	 */
 	public void startCollect(View butt1) {
-		String start = "FREQ:SWEEP:RUN$\n";
-		sendMessage(start);
+		sendMessage(myCommand.startCollect());
 		Log.d(TAG, "start collecting data...");
+//		butt1.setVisibility(0);			// goes invisible onClick and stopCollect button should show up.
 	}
 
-
-	public void stopCollect(View butt2) {
-		String stop = "FREQ:SWEEP:KILL$\n";
-		sendMessage(stop);
+	public void stopCollect(View butt1_5) {
+		sendMessage(myCommand.stopCollect());
 		Log.d(TAG, "...stop collecting data");
+	}
+	
+	/**
+	 * Signals to start collecting data from Radar kit. This data will be saved automatically.
+	 * @param butt2
+	 */
+	public void collectSave(View butt2) {
+		sendMessage(myCommand.startCollect());
+		// NEED TO HAVE ALSO SAVE THE FILE PERMENTALLY!
 	}
 
 
@@ -529,9 +537,9 @@ public class MainActivity extends Activity {
 	public void saveFile(View display) {	
 
 		String stringToSave = "";
-		for (int i = 0; i<arrayDouble.size(); i++) 
-			stringToSave += arrayDouble.get(i) + "\n";
 		try{
+			for (int i = 0; i<arrayDouble.size(); i++) 
+				stringToSave += arrayDouble.get(i) + "\n";
 			NewFile save = new NewFile();
 			save.createFile(this, stringToSave);
 		}

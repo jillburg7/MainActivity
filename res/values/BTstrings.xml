@@ -2,22 +2,22 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!--  BluetoothChat -->
     <string name="send">Send</string>
-    <string name="not_connected">You are not connected to a device</string>
-    <string name="bt_not_enabled">Bluetooth was not enabled</string>
-    <string name="title_connecting">connecting</string>
-    <string name="title_connected_to">connected to<xliff:g id="device_name">%1$s</xliff:g></string>
-    <string name="title_not_connected">not connected</string>
+    <string name="not_connected">You are not connected to a device.</string>
+    <string name="bt_not_enabled">Bluetooth was not enabled.</string>
+    <string name="title_connecting">Connecting...</string>
+    <string name="title_connected_to">Connected to <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="title_not_connected">Not Connected</string>
 
     <!--  DeviceListActivity -->
-    <string name="scanning">scanning for devices</string>
-    <string name="select_device">select a device to connect</string>
-    <string name="none_paired">No devices have been paired</string>
-    <string name="none_found">No devices found</string>
+    <string name="scanning">Scanning for Devices...</string>
+    <string name="select_device">Select a Device to Connect:</string>
+    <string name="none_paired">No devices have been paired.</string>
+    <string name="none_found">No Devices Found</string>
     <string name="title_paired_devices">Paired Devices</string>
     <string name="title_other_devices">Other Available Devices</string>
-    <string name="button_scan">Scan for devices</string>
+    <string name="button_scan">Scan for Devices</string>
 
     <!-- Options Menu -->
-    <string name="connect">Connect a device</string>
-    <string name="discoverable">Make discoverable</string>
+    <string name="connect">Connect a Device</string>
+    <string name="discoverable">Make Discoverable</string>
 </resources>

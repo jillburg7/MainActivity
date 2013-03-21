@@ -66,6 +66,14 @@ public class RadarCommand {
 	}
 	
 	
+	public String startCollect() {
+		return "FREQ:SWEEP:RUN$\n";
+	}
+	
+	public String stopCollect() {
+		return "FREQ:SWEEP:KILL$\n";
+	}
+	
 	// command to get current ramp time setting
 	public String getRampTime() {
 		String rampTime = "FMCW:SWEEP:RAMPTIME?$\n";
@@ -118,25 +126,4 @@ public class RadarCommand {
 		String readState = "SYST:READSTATE? " + state + "$\n";
 		return readState;
 	}
-
-	/*
-	 * public List<String> parceCommand(String returnCommand) { // String
-	 * valuesReturned = Integer.parseInt(returnCommand); // int messageLength =
-	 * returnCommand.length(); // int endIndex = messageLength - 3; // String
-	 * parsedString = returnCommand.substring(0, endIndex);
-	 * 
-	 * 
-	 * List<String> items = null; int semicolon = returnCommand.indexOf(';'); if
-	 * (semicolon != -1) { items = Arrays.asList(returnCommand.split(";")); }
-	 * items.add(0, "fish tacos"); return items; }
-	 */
-
-	/*
-	 * public String parceCommand(String returnCommand, boolean queriesState) {
-	 * String newCommand; if(queriesState) { List<String> items =
-	 * Arrays.asList(returnCommand.split("\\s*,\\s*")); newCommand =
-	 * items.get(1) + " " + items.get(2) + " " + items.get(3); return
-	 * newCommand; } else { return returnCommand; } }
-	 */
-
 }
