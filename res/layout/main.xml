@@ -83,7 +83,6 @@
             android:onClick="plotButton"
             android:text="@string/plot_data"
             android:textSize="28sp" />
-        <!-- android:layout_alignParentBottom="true" -->
 
         <Button
             android:id="@+id/plotFFT_button"

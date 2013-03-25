@@ -13,21 +13,10 @@ public class RadarCommand {
 	public static int CURRENT_STATE;
 	
 	private ArrayList<Double> arrayValues;
-
 	
 	public String readCommand(String returnCommand) {
 		return returnCommand;
 	}
-
-	
-	
-/*	public List<Integer> parseCommand(String returnCommand) {
-		List<String> data = null;
-		data = Arrays.asList(returnCommand.split("\\s*,\\s*"));
-		List<Integer> intArray = convertToIntegerList(data);
-		return intArray;
-	}*/
-	
 
 	/**
 	 * Returns the integer values of the String list as an ArrayList<Integer> type
@@ -47,8 +36,6 @@ public class RadarCommand {
 	}*/
 	
 	
-	
-	
 	public ArrayList<Double> parseCommand (String toParse) {
 		List<String> data = Arrays.asList(toParse.split("\\s*,\\s*"));
 		convertToDouble(data);
@@ -64,7 +51,6 @@ public class RadarCommand {
 			arrayValues.add(value);
 		}
 	}
-	
 	
 	public String startCollect() {
 		return "FREQ:SWEEP:RUN$\n";
@@ -86,12 +72,6 @@ public class RadarCommand {
 		return newRampTime;
 	}
 
-/*	
-	public String resetKit() {
-		String debug = "*RST$\n";
-		return debug;
-	}
-*/
 	
 	// NO LONGER A COMMAND
 	// command to get current capture time setting

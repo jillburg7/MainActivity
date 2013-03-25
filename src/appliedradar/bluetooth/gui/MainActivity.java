@@ -1,7 +1,6 @@
 package appliedradar.bluetooth.gui;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -30,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
-import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 
@@ -56,20 +53,10 @@ public class MainActivity extends Activity {
 	public static final int REQUEST_RADAR_INFO = 4;
 	public static final int REQUEST_FILE_INFO = 5;
 
-	// RadarCommand Class object that controls the context of commands sent to the Radar Kit
-	public RadarCommand myCommand = new RadarCommand();
-	
-	//Data array collected from Radar kit
-	private ArrayList<Double> arrayDouble;
-
 	// Name of the connected device
 	private String mConnectedDeviceName = null;
-
 	// Array adapter for the conversation thread
 	private ArrayAdapter<String> mConversationArrayAdapter;
-
-	//DATA ARRAY of 512 data points
-//	double[] newDataArray = new double[512];
 	// String buffer for outgoing messages
 	private StringBuffer mOutStringBuffer;
 	// Local Bluetooth adapter
@@ -77,15 +64,22 @@ public class MainActivity extends Activity {
 	// Member object for the chat services
 	private BluetoothChatService mChatService = null;
 	//END OF BT INITIALIZERS
+	
+//	public ShareActionProvider mShareActionProvider;
+	
+	
+	// RadarCommand Class object that controls the context of commands sent to the Radar Kit
+	public RadarCommand myCommand = new RadarCommand();
 
-
-	public ShareActionProvider mShareActionProvider;
+	// List of data collected from Radar kit
+	private ArrayList<Double> dataCollected;
+	private double[] dataToPlot;
+	
 	// aChartEngine Objects for plotting and using Line Graph Renderer/Settings
-	private double[] dataArray;
-	private double[] fileContents = null;
 	GraphicalView mChartView;
 	XYMultipleSeriesDataset mDataset;
 	XYMultipleSeriesRenderer mRenderer;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -256,8 +250,8 @@ public class MainActivity extends Activity {
 		actionBar.setSubtitle(subTitle);
 	}
 
-	
-	
+
+
 	int n = 0;
 	// The Handler that gets information back from the BluetoothChatService
 	public final Handler mHandler = new Handler() {
@@ -293,7 +287,7 @@ public class MainActivity extends Activity {
 				String readMessage = new String(readBuf, 0, msg.arg1);
 
 				int comma = readMessage.indexOf(',');
-				
+
 				// readCommand sends string from radar to be "parsed" (does nothing),
 				// just returns string to MainActivity to display in LogCat window.
 				if (comma == -1) {
@@ -301,13 +295,13 @@ public class MainActivity extends Activity {
 					Log.i(TAG, returned);			//used to display in log the message after it is parced
 				}
 				else {
-					arrayDouble = myCommand.parseCommand(readMessage);
-					for(int i=0; i<arrayDouble.size(); i++) {
-						double values = arrayDouble.get(i);
+					dataCollected = myCommand.parseCommand(readMessage);
+					for(int i=0; i<dataCollected.size(); i++) {
+						double values = dataCollected.get(i);
 						Log.i(TAG, i + " = " + values);
 					}
+					dataControl(dataCollected);
 					plotData();
-					//saveFile(arrayDouble);
 				}
 				break;
 			case MESSAGE_DEVICE_NAME:
@@ -323,8 +317,8 @@ public class MainActivity extends Activity {
 			}
 		}
 	};
-	
-	
+
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(D) Log.d(TAG, "onActivityResult " + resultCode);
@@ -361,7 +355,7 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	
+
 	// Action Bar displays options when Menu item in Action bar is clicked
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -371,11 +365,10 @@ public class MainActivity extends Activity {
 		MenuItem menuItem = menu.findItem(R.id.menu_item_share);
 
 		// Fetch and store ShareActionProvider
-		mShareActionProvider = (ShareActionProvider) menuItem
-				.getActionProvider();
+//		mShareActionProvider = (ShareActionProvider) menuItem
+//				.getActionProvider();
 		return true;
 	}
-
 
 
 	// Action Bar MenuItem onClick events --> what to do next
@@ -399,7 +392,7 @@ public class MainActivity extends Activity {
 		}
 		return false;
 	}
-	
+
 
 	private void connectDevice(Intent data) {
 		// Get the device MAC address
@@ -411,91 +404,165 @@ public class MainActivity extends Activity {
 	}
 
 
-	public void loadFile(Intent data) {
-		String fileInfo =  data.getExtras().getString(DisplayArchive.EXTRA_FILE_INFO);
-		loadData(fileInfo);
-	}
 	
 	
-	public void loadData(String fileName) {
-		ArrayList<Double> contents = new ArrayList<Double>();
-
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			String line;
-			double value;
-			
-			while ((line = br.readLine()) != null) {	//2048
-				value = Double.parseDouble(line);
-				contents.add(value);
-			}
-			br.close();
-			
-			int size = contents.size();
-			fileContents = new double[size];
-			for (int i = 0; i<size; i++)
-				fileContents[i] = contents.get(i);
-		} 
-		// You'll need to add proper error handling here
-		catch (IOException e) {
-			Log.e("loadData()", "IOError");
-		}
-		plotData();
-	}
-	
-	
-	public void plotData() {
-		if (fileContents == null) {					// NULL b/c nothing has been choosen to load from file Archive!
-			int size = arrayDouble.size();
-			fileContents = new double[size];
-			for (int i = 0; i<size; i++)
-				fileContents[i] = arrayDouble.get(i);
-		}											// No else {} statement b/c if fileContents has been initialized already
-		
-		
-			mDataset = new XYMultipleSeriesDataset();
-			XYSeries dataSeries = new XYSeries("Tablet Data");
-	
-			for (int i=0; i<fileContents.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
-				dataSeries.add(i, fileContents[i]);
-			
-			fileContents = null;		// set to null again so that each new block of data sent is plotted
-			
-			mDataset.addSeries(dataSeries);
-			mRenderer = new XYMultipleSeriesRenderer();
-			mRenderer = getMyDefaultRenderer();
-			
-			if (mChartView != null) {
-				RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
-				mChartView = ChartFactory.getLineChartView(this, mDataset,
-						mRenderer);
-				layout.addView(mChartView);
-			} else {
-				mChartView.repaint();
-			}
-	}
-	
-
 	/**
 	 * 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
-	 * 
-	 * @param loadActivity
+	 * @param view the button that was pressed
 	 */
-	public void openArchive(View loadActivity) {
+	public void openArchive(View view) {
 		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
 		Intent archiveIntent = new Intent(this, DisplayArchive.class);
 		startActivityForResult(archiveIntent, REQUEST_FILE_INFO);
 	}
 
 	/**
-	 * 
+	 * Information regarding the file selected in Display Archive
+	 * @param data file information regarding the selected file
+	 */
+	public void loadFile(Intent data) {
+		String fileInfo =  data.getExtras().getString(DisplayArchive.EXTRA_FILE_INFO);
+		loadData(fileInfo);
+	}
+
+	/**
+	 * Reads data out of text file line-by-line and stores value in an ArrayList
+	 * @param fileName
+	 */
+	public void loadData(String fileName) {
+		ArrayList<Double> contents = new ArrayList<Double>();
+		try {
+			String line;
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+
+			while ((line = br.readLine()) != null) {
+				double value = Double.parseDouble(line);
+				contents.add(value);
+			}
+			br.close();
+		} 
+		catch (IOException e) {
+			Log.e("loadData()", "IOError");		// You'll need to add proper error handling here
+		}	
+		dataControl(contents);
+		plotData();
+	}
+	
+	/**
+	 * ArrayList is be copied into an array of type double to use for processing
+	 * @param dataList	ArrayList to copy
+	 */
+	public void dataControl(ArrayList<Double> dataList) {
+		int size = dataList.size();
+		dataToPlot = new double[size];
+		for(int i = 0; i < size; i++)
+			dataToPlot[i] = dataList.get(i);
+	}
+	
+	
+	/**
+	 * Plots raw data on chart.
+	 * @param plotMe
+	 */
+	public void plotButton(View plotMe) {
+		try {
+			plotData();
+		} catch(NullPointerException e) {
+			Log.e("PlotButton", "no data to plot");
+		}
+	}
+	
+	/**
+	 * Plots raw data on graph
+	 */
+	public void plotData() {
+		mDataset = new XYMultipleSeriesDataset();
+		XYSeries dataSeries = new XYSeries("Tablet Data");
+
+		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
+			dataSeries.add(i, dataToPlot[i]);
+		mDataset.addSeries(dataSeries);
+		
+		mRenderer = new XYMultipleSeriesRenderer();
+		mRenderer = getMyDefaultRenderer();
+
+		if (mChartView != null) {
+			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
+			mChartView = ChartFactory.getLineChartView(this, mDataset,
+					mRenderer);
+			layout.addView(mChartView);
+		} else {
+			mChartView.repaint();
+		}
+	}
+
+	
+	
+	/**
+	 * Plot FFT Button
+	 * @param view	button pressed
+	 */
+	public void plotFFT(View view) {	
+		try {
+			fftPlot();
+		} 
+		catch(NullPointerException e) {
+			Log.e("PlotFFTButton", "no data to plot");
+		}	
+	}
+	
+	
+	/**
+	 * Calculates FFT data
+	 */
+	public void fftPlot() {
+		mDataset = new XYMultipleSeriesDataset();
+		XYSeries dataSeries = new XYSeries("FFT Data");
+		
+		CalcFFT calculate = new CalcFFT();
+		double[] fftData = calculate.fft(dataToPlot);
+		
+		for (int i=0; i<(fftData.length); i++)
+			dataSeries.add(i, fftData[i]);
+		mDataset.addSeries(dataSeries);
+
+		mRenderer = new XYMultipleSeriesRenderer();
+		mRenderer = getFFTRenderer();
+		
+		if (mChartView != null) {
+			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
+			mChartView = ChartFactory.getLineChartView(this, mDataset,
+					mRenderer);
+			layout.addView(mChartView);
+		} else {
+			mChartView.repaint();
+		}
+	}
+	
+	
+
+	/**
+	 *  Save button
+	 * @param display	Button view
+	 */
+	public void saveFile(View display) {
+		try {
+			saveFile();
+		}
+		catch(NullPointerException e) {
+			Log.e("SaveButton", "no data to save");
+		}
+	}
+	
+	/**
+	 * Saves data collected
 	 * @param data	Data to save in File Archive
 	 */	
-	public void saveFile(ArrayList<Double> data) {	
+	public void saveFile() {	
 		String stringToSave = "";
-		for (int i = 0; i<arrayDouble.size(); i++) 
-			stringToSave += arrayDouble.get(i) + "\n";
 		try{
+			for (int i = 0; i<dataToPlot.length; i++) 
+				stringToSave += dataToPlot[i] + "\n";
 			NewFile save = new NewFile();
 			save.createFile(this, stringToSave);
 		}
@@ -503,8 +570,8 @@ public class MainActivity extends Activity {
 			Log.e("MainActivity", "IOError");
 		}
 	}
-	
-	
+
+
 	/**
 	 * Signals to start collecting data from Radar kit.
 	 * @param butt1		Should only save this data temporarily (up to user if they want to saved perminentally)					
@@ -512,173 +579,43 @@ public class MainActivity extends Activity {
 	public void startCollect(View butt1) {
 		sendMessage(myCommand.startCollect());
 		Log.d(TAG, "start collecting data...");
-//		butt1.setVisibility(0);			// goes invisible onClick and stopCollect button should show up.
+		//		butt1.setVisibility(0);			// goes invisible onClick and stopCollect button should show up.
 	}
 
 	public void stopCollect(View butt1_5) {
 		sendMessage(myCommand.stopCollect());
 		Log.d(TAG, "...stop collecting data");
 	}
-	
+
 	/**
-	 * Signals to start collecting data from Radar kit. This data will be saved automatically.
-	 * @param butt2
+	 * Signals to start collecting data from Radar kit. 
+	 * The raw data will be saved automatically.
+	 * @param butt2 button pressed
 	 */
 	public void collectSave(View butt2) {
 		sendMessage(myCommand.startCollect());
-		// NEED TO HAVE ALSO SAVE THE FILE PERMENTALLY!
-	}
-
-
-	/**
-	 *  Save button
-	 * @param display	Button view
-	 */
-	public void saveFile(View display) {	
-
-		String stringToSave = "";
-		try{
-			for (int i = 0; i<arrayDouble.size(); i++) 
-				stringToSave += arrayDouble.get(i) + "\n";
-			NewFile save = new NewFile();
-			save.createFile(this, stringToSave);
-		}
-		catch(IOException e){
-			Log.e("MainActivity", "IOError");
-		}
 		
-//		try{
-//			NewFile save = new NewFile();
-//			String fileContent = getDataToSave();
-//			if (fileContent == null) {
-//				Log.e("MainActivity", "No data to save.");
-//			} else {		
-//				save.createFile(this, fileContent);
-//			}
-//		}
-//		catch(IOException e){
-//			Log.e("MainActivity", "IOError");
-//		}
+		// MAKE SURE THIS WORKS!
+		//saveFile(); // Saves file perminently
 	}
-
+	
+	
 
 	/**
-	 * Reads data line-by-line out of a '.txt' file which is saved to internal storage
-	 * 
-	 * @return dataArray	floating-pointing samples from Radar Kit, stored into an array
+	 * Plots FFT: power spectrum data
 	 */
-	public double[] getDataFromFile() {
-		File internalMemory = Environment.getExternalStorageDirectory();
-
-		// Get the text file
-		// NEED TO SPECIFICALLY CHANGE THIS LINE OF CODE TO BE MORE UNIVERSAL!
-		File file = new File(internalMemory, "data3kHz_44KHzFs.txt");
-			
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String line;
-			int i = 0;
-			dataArray = new double[512];	//2048
-
-			while ((line = br.readLine()) != null & (i != 512)) {	//2048
-				dataArray[i] = Float.parseFloat(line);
-				i++;
-			}
-			br.close();
-		} 
-		// You'll need to add proper error handling here
-		catch (IOException e) {
-			Log.e("MainActivity", "IOError");
-		}
-		return dataArray;	
-	}
-
-
-	/**
-	 * can save any FFT data into a file even if its hasn't been plotted yet
-	 * 
-	 * @return
-	 */
-	public String getDataToSave() {
-		dataArray = getDataFromFile();
-		double[] arrayToSave = getFftData();
-		String stringToSave = null;
-
-		if (mDataset != null) {	
-			for (int i = 0; i<arrayToSave.length; i++) {
-				if (stringToSave == null)
-					stringToSave = arrayToSave[i] + "\n";
-				else
-					stringToSave += arrayToSave[i] + "\n";
-			}
-			return stringToSave;
-		} else {
-			// NEED TO HANDLE ERRORS!
-			return stringToSave;
-		}	
-	}
-
-	/**
-	 * Plots raw data in MainActivity chart.
-	 * @param plotMe	Button view
-	 */
-	public void plotButton(View plotMe) {
-		Toast.makeText(this, "Selected Plot", Toast.LENGTH_SHORT).show();
-
+/*	public void plotFFT() {	
+		XYSeries dataSeries = new XYSeries("FFT of Simulated Data");
 		mDataset = new XYMultipleSeriesDataset();
-		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");
-
-		double[] array = getDataFromFile();
-
-		for (int i=0; i<array.length; i++){				
-			dataSeries.add(i, array[i]);
-		}
+		
+		double[] fftArray = getFftData(dataToPlot);
+		for (int i=0; i<(fftArray.length); i++)
+			dataSeries.add(i, fftArray[i]);
 		mDataset.addSeries(dataSeries);
-
-		mRenderer = new XYMultipleSeriesRenderer();
-		mRenderer = getRawRenderer();
-
-		if (mChartView != null) {
-			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
-			mChartView = ChartFactory.getLineChartView(this, mDataset,
-					mRenderer);
-			layout.addView(mChartView);
-		} else {
-			mChartView.repaint();
-		}
-	}
-
-
-	/**
-	 *  Plots FFT- power spectrum data onClick
-	 * @param fftPlot
-	 */
-	public void plotFFT(View fftPlot) {
-		Toast.makeText(this, "Selected Plot FFT", Toast.LENGTH_SHORT).show();
-
-		mDataset = new XYMultipleSeriesDataset();
-		XYSeries dataSeries = new XYSeries("Simulated Data: Fs = 44KHz");	
-
-		double[] array = getDataFromFile();
-
-		for (int i=0; i<array.length; i++){				
-			dataSeries.add(i, array[i]);
-		}
-
-		mDataset.addSeries(dataSeries);
-		mDataset.removeSeries(0);
-
-
-		XYSeries dataSeries2 = new XYSeries("FFT of Simulated Data");
-		double[] array2= getFftData();
-		int j=0;
-		for (j=0; j<(array2.length); j++){
-			dataSeries2.add(j, array2[j]);
-		}
-		mDataset.addSeries(dataSeries2);
 
 		mRenderer = new XYMultipleSeriesRenderer();
 		mRenderer = getFFTRenderer();
+		
 		if (mChartView != null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
@@ -688,33 +625,19 @@ public class MainActivity extends Activity {
 			mChartView.repaint();
 		}
 	}
-
-	/**
-	 * Default dataset for initial app start-up
-	 * @return myDataSet
-	 */
-
-
-
-	// Default "data" to display when no data has been selected to plot & process
-	public XYMultipleSeriesDataset getMyDefaultData() {
-		XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
-		XYSeries dataSeries = new XYSeries(" ");
-		myDataset.addSeries(dataSeries);
-		return myDataset;
-	}
+*/
 
 	/**
 	 *  FFT calucation
 	 * @return fftOutput2	Power Spectrum output data
 	 */
-	public double[] getFftData() {
+/*	public double[] getFftData(double[] data) {
 
-		double[] realArray = dataArray;
+		double[] realArray = data;
 		double[] imagArray = new double[realArray.length];
 
 		FFTcalc fftData = new FFTcalc();
-		double[] fftArray = fftData.fft(realArray,imagArray, true);
+		double[] fftArray = fftData.fft(realArray, imagArray, true);
 		int n = realArray.length;
 		double[] imagFFT = new double[fftArray.length/2];
 		double[] realFFT = new double[fftArray.length/2];
@@ -730,7 +653,7 @@ public class MainActivity extends Activity {
 		// Magnitude of real & imaginary arrays is calculated and put into one array
 		double[] fftOutput = new double[n];
 		for (int i=0; i<n; i++){
-			fftOutput[i] = Math.sqrt(Math.pow(realFFT[i], 2) + Math.pow(imagFFT[i], 2)); 
+			fftOutput[i] = Math.sqrt(Math.pow(realFFT[i], 2) + Math.pow(imagFFT[i], 2));
 		}
 
 
@@ -742,7 +665,26 @@ public class MainActivity extends Activity {
 
 		return fftOutput2;	
 	}
-
+*/
+	
+	
+	
+	
+	
+	
+	/**
+	 * Default dataset for initial app start-up
+	 * @return myDataSet
+	 */
+	// Default "data" to display when no data has been selected to plot & process
+	public XYMultipleSeriesDataset getMyDefaultData() {
+		XYMultipleSeriesDataset myDataset = new XYMultipleSeriesDataset();
+		XYSeries dataSeries = new XYSeries(" ");
+		myDataset.addSeries(dataSeries);
+		return myDataset;
+	}
+	
+	
 	/**
 	 *  Default Renderer to display when no data has been selected to process (blank graph)
 	 */
@@ -791,7 +733,7 @@ public class MainActivity extends Activity {
 		return myRenderer;
 	}
 
-	public XYMultipleSeriesRenderer getRawRenderer() {
+/*	public XYMultipleSeriesRenderer getRawRenderer() {
 
 		XYSeriesRenderer r1 = new XYSeriesRenderer();
 		r1.setColor(Color.BLUE);
@@ -843,9 +785,10 @@ public class MainActivity extends Activity {
 		myRenderer.setXAxisMax(444);
 		myRenderer.setYAxisMin(-9000);
 		myRenderer.setYAxisMax(9000);
-
+		
 		return myRenderer;
 	}
+*/
 
 	public XYMultipleSeriesRenderer getFFTRenderer() {
 
@@ -889,17 +832,16 @@ public class MainActivity extends Activity {
 
 		myRenderer.setGridColor(Color.DKGRAY);
 		myRenderer.setXLabels(20);
-//		myRenderer.setYLabels(9);
+		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
 		myRenderer.setMargins(new int[] {35, 50, 15, 30});
 
 		// Minimum & Max values to view plot area
-		myRenderer.setXAxisMin(0);
-		myRenderer.setXAxisMax(256);
+//		myRenderer.setXAxisMin(0);
+//		myRenderer.setXAxisMax(256);
 		myRenderer.setYAxisMin(0);
-		myRenderer.setYAxisMax(120);
-		
-		myRenderer.addXTextLabel(5, "word");
+//		myRenderer.setYAxisMax(120);
+
 		return myRenderer;
 	}
 
@@ -909,7 +851,7 @@ public class MainActivity extends Activity {
 		renderer.setZoomEnabled(true, true);
 		renderer.setZoomButtonsVisible(true);
 		renderer.setLegendTextSize(20);
-		
+
 		renderer.setZoomRate(10);
 
 		renderer.setAxesColor(Color.BLACK);

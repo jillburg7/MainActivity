@@ -26,6 +26,7 @@ public class FFTcalc {
 		// Here I check if n is a power of 2. If exist decimals in ld, I quit
 		// from the function returning null.
 		if (((int) ld) - ld != 0) {
+
 			System.out.println("The number of elements is not a power of 2.");
 			return null;
 		}
@@ -108,9 +109,6 @@ public class FFTcalc {
 			newArray[i] = xReal[i2] * radice;
 			newArray[i + 1] = xImag[i2] * radice;
 		}
-	//	System.out.println("After: ");
-		//printReIm(newArray);
-	//	System.out.println("Length of newArray before returning data to main= " + newArray.length);
 		return newArray;
 	}
 
@@ -128,12 +126,4 @@ public class FFTcalc {
 		}
 		return k;
 	}
-
-//	protected static void printReIm(double[] re) {
-//		System.out.print("Re: [");
-//		for(int i=0; i<re.length; i++)
-//			System.out.print(((int)(re[i]*1000)/1000.0) + " ");
-//		System.out.println("]");
-//		System.out.println("Length of Array in FFTcalc= " + re.length);
-//	}
 }
