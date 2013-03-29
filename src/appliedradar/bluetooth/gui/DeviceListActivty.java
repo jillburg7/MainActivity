@@ -44,20 +44,21 @@ public class DeviceListActivty extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// Setup the window
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.device_list);
-		
+
 		//Back button
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Set result CANCELED in case the user backs out
 		setResult(Activity.RESULT_CANCELED);
-		
+
 		// Initialize the button to perform device discovery
 		Button scanButton = (Button) findViewById(R.id.button_scan);
 		scanButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				doDiscovery();
 				v.setVisibility(View.GONE);
@@ -117,8 +118,8 @@ public class DeviceListActivty extends Activity {
 			//
 			// TODO: If Settings has multiple levels, Up should navigate up
 			// that hierarchy.
-//			NavUtils.navigateUpFromSameTask(this);
-//			return true;
+			//			NavUtils.navigateUpFromSameTask(this);
+			//			return true;
 			finish();
 		}
 		return super.onOptionsItemSelected(item);
@@ -161,6 +162,7 @@ public class DeviceListActivty extends Activity {
 
 	// The on-click listener for all devices in the ListViews
 	private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
+		@Override
 		public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
 			// Cancel discovery because it's costly and we're about to connect
 			mBtAdapter.cancelDiscovery();

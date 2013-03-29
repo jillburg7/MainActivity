@@ -98,8 +98,8 @@ public class RangeCalc {
 	 * meters -> feet:
 	 * 		meters * (3.28084) = feet
 	 */
-	private void convertToFeet() {
-		
+	private void convertToFeet(double meters) {
+		double feet = meters * 3.28084;
 	}
 	
 	

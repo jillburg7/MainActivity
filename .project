@@ -3,6 +3,7 @@
 	<name>ARIAlphaApp</name>
 	<comment></comment>
 	<projects>
+		<project>ChartDemo</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

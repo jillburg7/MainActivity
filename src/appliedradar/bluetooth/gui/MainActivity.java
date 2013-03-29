@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
+
 	// Debugging
 	private static final String TAG = "MainActivity";
 	private static final boolean D = true;
@@ -48,6 +49,7 @@ public class MainActivity extends Activity {
 	public static final String TOAST = "toast";
 
 	// Intent request codes
+
 	private static final int REQUEST_CONNECT_DEVICE = 2;
 	private static final int REQUEST_ENABLE_BT = 3;
 	public static final int REQUEST_RADAR_INFO = 4;
@@ -64,27 +66,28 @@ public class MainActivity extends Activity {
 	// Member object for the chat services
 	private BluetoothChatService mChatService = null;
 	//END OF BT INITIALIZERS
-	
-//	public ShareActionProvider mShareActionProvider;
-	
-	
+
+	//	public ShareActionProvider mShareActionProvider;
+
+
 	// RadarCommand Class object that controls the context of commands sent to the Radar Kit
 	public RadarCommand myCommand = new RadarCommand();
 
 	// List of data collected from Radar kit
 	private ArrayList<Double> dataCollected;
 	private double[] dataToPlot;
-	
+
 	// aChartEngine Objects for plotting and using Line Graph Renderer/Settings
 	GraphicalView mChartView;
 	XYMultipleSeriesDataset mDataset;
 	XYMultipleSeriesRenderer mRenderer;
-	
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// Set up the window layout
 		setContentView(R.layout.main);
 		// Get local Bluetooth adapter
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -94,10 +97,10 @@ public class MainActivity extends Activity {
 			Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
 		}
 
-
 		// Displays chartview of plot in GUI
 		mRenderer = getMyDefaultRenderer();
 		mDataset = getMyDefaultData();
+
 		setChartSettings(mRenderer);
 
 		if (mChartView == null) {
@@ -109,6 +112,36 @@ public class MainActivity extends Activity {
 			mChartView.repaint(); // use this whenever data has changed and you
 			// want to redraw
 		}
+	}
+
+
+	/** The most recently added series. */
+	private XYSeries mCurrentSeries;
+	/** The most recently created renderer, customizing the current series. */
+	private XYSeriesRenderer mCurrentRenderer;
+
+	/**
+	 * Save the current data, for instance when changing screen orientation
+	 */
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putSerializable("dataset", mDataset);
+		outState.putSerializable("renderer", mRenderer);
+		outState.putSerializable("current_series", mCurrentSeries);
+		outState.putSerializable("current_renderer", mCurrentRenderer);
+	}
+
+	/**
+	 * Restore the current data, for instance when changing the screen orientation
+	 */
+	@Override
+	protected void onRestoreInstanceState(Bundle savedState) {
+		super.onRestoreInstanceState(savedState);
+		mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("dataset");
+		mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("renderer");
+		mCurrentSeries = (XYSeries) savedState.getSerializable("current_series");
+		mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
 	}
 
 	@Override
@@ -131,7 +164,7 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	protected void onResume() {
+	public synchronized void onResume() {
 		super.onResume();
 		if (mChatService != null) {
 			// Only if the state is STATE_NONE, do we know that we haven't started already
@@ -286,23 +319,8 @@ public class MainActivity extends Activity {
 				// construct a string from the valid bytes in the buffer
 				String readMessage = new String(readBuf, 0, msg.arg1);
 
-				int comma = readMessage.indexOf(',');
-
-				// readCommand sends string from radar to be "parsed" (does nothing),
-				// just returns string to MainActivity to display in LogCat window.
-				if (comma == -1) {
-					String returned = myCommand.readCommand(readMessage);
-					Log.i(TAG, returned);			//used to display in log the message after it is parced
-				}
-				else {
-					dataCollected = myCommand.parseCommand(readMessage);
-					for(int i=0; i<dataCollected.size(); i++) {
-						double values = dataCollected.get(i);
-						Log.i(TAG, i + " = " + values);
-					}
-					dataControl(dataCollected);
-					plotData();
-				}
+				handleStringMsg(readMessage);	// handles comma spliting for data
+				// handles other messages from Radar Kit
 				break;
 			case MESSAGE_DEVICE_NAME:
 				// save the connected device's name
@@ -348,9 +366,8 @@ public class MainActivity extends Activity {
 			}
 			break;
 		case REQUEST_FILE_INFO:
-			if (resultCode == Activity.RESULT_OK) {
+			if (resultCode == Activity.RESULT_OK) 
 				loadFile(data);
-			}
 			break;
 		}
 	}
@@ -365,8 +382,8 @@ public class MainActivity extends Activity {
 		MenuItem menuItem = menu.findItem(R.id.menu_item_share);
 
 		// Fetch and store ShareActionProvider
-//		mShareActionProvider = (ShareActionProvider) menuItem
-//				.getActionProvider();
+		//		mShareActionProvider = (ShareActionProvider) menuItem
+		//				.getActionProvider();
 		return true;
 	}
 
@@ -400,12 +417,32 @@ public class MainActivity extends Activity {
 		// Get the BluetoothDevice object
 		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
 		// Attempt to connect to the device
-		mChatService.connect(device);
+		mChatService.connect(device, false);
 	}
 
 
-	
-	
+	private void handleStringMsg(String msg) {
+		int comma = msg.indexOf(',');
+
+		// readCommand sends string from radar to be "parsed" (does nothing),
+		// just returns string to MainActivity to display in LogCat window.
+		if (comma == -1) {
+			String returned = myCommand.readCommand(msg);
+			Log.i(TAG, returned);			//used to display in log the message after it is parced
+		}
+		else {
+			dataCollected = myCommand.parseCommand(msg);
+			for(int i=0; i<dataCollected.size(); i++) {
+				double values = dataCollected.get(i);
+				Log.i(TAG, i + " = " + values);
+			}
+			dataControl(dataCollected);
+			plotData();
+		}
+	}
+
+
+
 	/**
 	 * 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
 	 * @param view the button that was pressed
@@ -447,7 +484,7 @@ public class MainActivity extends Activity {
 		dataControl(contents);
 		plotData();
 	}
-	
+
 	/**
 	 * ArrayList is be copied into an array of type double to use for processing
 	 * @param dataList	ArrayList to copy
@@ -458,8 +495,8 @@ public class MainActivity extends Activity {
 		for(int i = 0; i < size; i++)
 			dataToPlot[i] = dataList.get(i);
 	}
-	
-	
+
+
 	/**
 	 * Plots raw data on chart.
 	 * @param plotMe
@@ -471,7 +508,7 @@ public class MainActivity extends Activity {
 			Log.e("PlotButton", "no data to plot");
 		}
 	}
-	
+
 	/**
 	 * Plots raw data on graph
 	 */
@@ -482,7 +519,7 @@ public class MainActivity extends Activity {
 		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
 			dataSeries.add(i, dataToPlot[i]);
 		mDataset.addSeries(dataSeries);
-		
+
 		mRenderer = new XYMultipleSeriesRenderer();
 		mRenderer = getMyDefaultRenderer();
 
@@ -496,8 +533,8 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	
-	
+
+
 	/**
 	 * Plot FFT Button
 	 * @param view	button pressed
@@ -510,25 +547,25 @@ public class MainActivity extends Activity {
 			Log.e("PlotFFTButton", "no data to plot");
 		}	
 	}
-	
-	
+
+	double[] fftData;
 	/**
 	 * Calculates FFT data
 	 */
 	public void fftPlot() {
 		mDataset = new XYMultipleSeriesDataset();
 		XYSeries dataSeries = new XYSeries("FFT Data");
-		
+
 		CalcFFT calculate = new CalcFFT();
-		double[] fftData = calculate.fft(dataToPlot);
-		
+		fftData = calculate.fft(dataToPlot);
+
 		for (int i=0; i<(fftData.length); i++)
 			dataSeries.add(i, fftData[i]);
 		mDataset.addSeries(dataSeries);
 
 		mRenderer = new XYMultipleSeriesRenderer();
 		mRenderer = getFFTRenderer();
-		
+
 		if (mChartView != null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
@@ -538,8 +575,9 @@ public class MainActivity extends Activity {
 			mChartView.repaint();
 		}
 	}
-	
-	
+
+
+
 
 	/**
 	 *  Save button
@@ -553,7 +591,7 @@ public class MainActivity extends Activity {
 			Log.e("SaveButton", "no data to save");
 		}
 	}
-	
+
 	/**
 	 * Saves data collected
 	 * @param data	Data to save in File Archive
@@ -594,20 +632,20 @@ public class MainActivity extends Activity {
 	 */
 	public void collectSave(View butt2) {
 		sendMessage(myCommand.startCollect());
-		
+
 		// MAKE SURE THIS WORKS!
 		//saveFile(); // Saves file perminently
 	}
-	
-	
+
+
 
 	/**
 	 * Plots FFT: power spectrum data
 	 */
-/*	public void plotFFT() {	
+	/*	public void plotFFT() {	
 		XYSeries dataSeries = new XYSeries("FFT of Simulated Data");
 		mDataset = new XYMultipleSeriesDataset();
-		
+
 		double[] fftArray = getFftData(dataToPlot);
 		for (int i=0; i<(fftArray.length); i++)
 			dataSeries.add(i, fftArray[i]);
@@ -615,7 +653,7 @@ public class MainActivity extends Activity {
 
 		mRenderer = new XYMultipleSeriesRenderer();
 		mRenderer = getFFTRenderer();
-		
+
 		if (mChartView != null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
@@ -625,13 +663,13 @@ public class MainActivity extends Activity {
 			mChartView.repaint();
 		}
 	}
-*/
+	 */
 
 	/**
 	 *  FFT calucation
 	 * @return fftOutput2	Power Spectrum output data
 	 */
-/*	public double[] getFftData(double[] data) {
+	/*	public double[] getFftData(double[] data) {
 
 		double[] realArray = data;
 		double[] imagArray = new double[realArray.length];
@@ -665,13 +703,13 @@ public class MainActivity extends Activity {
 
 		return fftOutput2;	
 	}
-*/
-	
-	
-	
-	
-	
-	
+	 */
+
+
+
+
+
+
 	/**
 	 * Default dataset for initial app start-up
 	 * @return myDataSet
@@ -683,8 +721,8 @@ public class MainActivity extends Activity {
 		myDataset.addSeries(dataSeries);
 		return myDataset;
 	}
-	
-	
+
+
 	/**
 	 *  Default Renderer to display when no data has been selected to process (blank graph)
 	 */
@@ -733,7 +771,7 @@ public class MainActivity extends Activity {
 		return myRenderer;
 	}
 
-/*	public XYMultipleSeriesRenderer getRawRenderer() {
+	/*	public XYMultipleSeriesRenderer getRawRenderer() {
 
 		XYSeriesRenderer r1 = new XYSeriesRenderer();
 		r1.setColor(Color.BLUE);
@@ -785,10 +823,10 @@ public class MainActivity extends Activity {
 		myRenderer.setXAxisMax(444);
 		myRenderer.setYAxisMin(-9000);
 		myRenderer.setYAxisMax(9000);
-		
+
 		return myRenderer;
 	}
-*/
+	 */
 
 	public XYMultipleSeriesRenderer getFFTRenderer() {
 
@@ -811,13 +849,13 @@ public class MainActivity extends Activity {
 		myRenderer.setZoomRate(10);
 
 		myRenderer.setAxesColor(Color.BLACK);
-		myRenderer.getXLabelsAlign();
+		//		myRenderer.getXLabelsAlign();
 		myRenderer.setXLabelsColor(Color.BLACK);
 		myRenderer.setYLabelsColor(0, Color.BLACK);
 		myRenderer.setShowAxes(true);
 		myRenderer.setLabelsColor(Color.BLACK);
 
-		myRenderer.setXTitle("Frequency (kHz)");
+		myRenderer.setXTitle("Range (meters)");
 		myRenderer.setYTitle("Power (dB)");
 		myRenderer.setAxisTitleTextSize(20);
 
@@ -831,17 +869,27 @@ public class MainActivity extends Activity {
 		myRenderer.setMarginsColor(Color.WHITE); 
 
 		myRenderer.setGridColor(Color.DKGRAY);
-		myRenderer.setXLabels(20);
-		myRenderer.setYLabels(9);
+		//		myRenderer.setXLabels(20);
+		//		myRenderer.setYLabels(9);
 		myRenderer.setShowGrid(true);
 		myRenderer.setMargins(new int[] {35, 50, 15, 30});
 
 		// Minimum & Max values to view plot area
-//		myRenderer.setXAxisMin(0);
-//		myRenderer.setXAxisMax(256);
+		//		myRenderer.setXAxisMin(0);
+		//		myRenderer.setXAxisMax(256);
 		myRenderer.setYAxisMin(0);
-//		myRenderer.setYAxisMax(120);
+		//		myRenderer.setYAxisMax(120);
 
+		myRenderer.setXLabels(RESULT_OK);
+		myRenderer.clearXTextLabels();
+
+		int fs = 44100;
+		int endValue = fs/2;
+
+		for(int i =0; i < fftData.length; i++) {
+			double increment = ((endValue)/fftData.length) * i;
+			myRenderer.addXTextLabel(i, "" + increment);
+		}
 		return myRenderer;
 	}
 

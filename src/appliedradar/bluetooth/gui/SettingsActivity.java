@@ -54,6 +54,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 
 	}
 
+	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
 		//        mProgressText.setText(progress + " " + 
 		//                getString(R.string.seekbar_from_touch) + "=" + fromTouch);
