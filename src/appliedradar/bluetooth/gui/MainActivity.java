@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -67,8 +68,6 @@ public class MainActivity extends Activity {
 	private BluetoothChatService mChatService = null;
 	//END OF BT INITIALIZERS
 
-	//	public ShareActionProvider mShareActionProvider;
-
 
 	// RadarCommand Class object that controls the context of commands sent to the Radar Kit
 	public RadarCommand myCommand = new RadarCommand();
@@ -114,36 +113,6 @@ public class MainActivity extends Activity {
 		}
 	}
 
-
-	/** The most recently added series. */
-	private XYSeries mCurrentSeries;
-	/** The most recently created renderer, customizing the current series. */
-	private XYSeriesRenderer mCurrentRenderer;
-
-	/**
-	 * Save the current data, for instance when changing screen orientation
-	 */
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putSerializable("dataset", mDataset);
-		outState.putSerializable("renderer", mRenderer);
-		outState.putSerializable("current_series", mCurrentSeries);
-		outState.putSerializable("current_renderer", mCurrentRenderer);
-	}
-
-	/**
-	 * Restore the current data, for instance when changing the screen orientation
-	 */
-	@Override
-	protected void onRestoreInstanceState(Bundle savedState) {
-		super.onRestoreInstanceState(savedState);
-		mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("dataset");
-		mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("renderer");
-		mCurrentSeries = (XYSeries) savedState.getSerializable("current_series");
-		mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
-	}
-
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -185,29 +154,24 @@ public class MainActivity extends Activity {
 			// want to redraw
 		}
 	}
+	
+	/** Saves resource states when orientation is changed instead of being reset */
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	    super.onConfigurationChanged(newConfig);
+
+	    // Checks the orientation of the screen
+	    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+	        Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+	    } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+	        Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+	    }
+	}
 
 	private void setupChat() {
 		Log.d(TAG, "setupChat()");
 
-		// Initialize the array adapter for the conversation thread
 		mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
-		//        mConversationView = (ListView) findViewById(R.id.in);
-		//        mConversationView.setAdapter(mConversationArrayAdapter);
-
-		// Initialize the compose field with a listener for the return key
-		//        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
-		//        mOutEditText.setOnEditorActionListener(mWriteListener);
-
-		// Initialize the send button with a listener that for click events
-		/*       mSendButton = (Button) findViewById(R.id.button_send);
-        mSendButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                // Send a message using content of the edit text widget
-                TextView view = (TextView) findViewById(R.id.edit_text_out);
-                String message = view.getText().toString();
-                sendMessage(message);
-            }
-        });*/
 
 		// Initialize the BluetoothChatService to perform bluetooth connections
 		mChatService = new BluetoothChatService(this, mHandler);
@@ -284,7 +248,6 @@ public class MainActivity extends Activity {
 	}
 
 
-
 	int n = 0;
 	// The Handler that gets information back from the BluetoothChatService
 	public final Handler mHandler = new Handler() {
@@ -312,15 +275,15 @@ public class MainActivity extends Activity {
 				// construct a string from the buffer
 				String writeMessage = new String(writeBuf);
 				Log.i(TAG, "Tablet:  " + writeMessage);
-				//                mConversationArrayAdapter.add("Me:  " + writeMessage);
 				break;
 			case MESSAGE_READ:
 				byte[] readBuf = (byte[]) msg.obj;
 				// construct a string from the valid bytes in the buffer
 				String readMessage = new String(readBuf, 0, msg.arg1);
 
-				handleStringMsg(readMessage);	// handles comma spliting for data
-				// handles other messages from Radar Kit
+				
+				// handles comma spliting for data as well other messages from Radar Kit
+				handleStringMsg(readMessage);
 				break;
 			case MESSAGE_DEVICE_NAME:
 				// save the connected device's name
@@ -335,6 +298,7 @@ public class MainActivity extends Activity {
 			}
 		}
 	};
+
 
 
 	@Override
@@ -432,15 +396,14 @@ public class MainActivity extends Activity {
 		}
 		else {
 			dataCollected = myCommand.parseCommand(msg);
-			for(int i=0; i<dataCollected.size(); i++) {
-				double values = dataCollected.get(i);
-				Log.i(TAG, i + " = " + values);
-			}
+//			for(int i=0; i<dataCollected.size(); i++) {
+//				double values = dataCollected.get(i);
+//				Log.i(TAG, i + " = " + values);
+//			}
 			dataControl(dataCollected);
 			plotData();
 		}
 	}
-
 
 
 	/**
@@ -469,17 +432,29 @@ public class MainActivity extends Activity {
 	public void loadData(String fileName) {
 		ArrayList<Double> contents = new ArrayList<Double>();
 		try {
-			String line;
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
-
+			String line;
+				
 			while ((line = br.readLine()) != null) {
-				double value = Double.parseDouble(line);
-				contents.add(value);
+				int comma = line.indexOf(',');
+
+				// readCommand sends string from radar to be "parsed" (does nothing),
+				// just returns string to MainActivity to display in LogCat window.
+				if (comma == -1) {
+					double value = Double.parseDouble(line);
+					contents.add(value);
+				}
+				else {
+					handleStringMsg(line);
+					Log.i(TAG, "handleStringMsg()");
+					break;
+				}
 			}
 			br.close();
 		} 
 		catch (IOException e) {
 			Log.e("loadData()", "IOError");		// You'll need to add proper error handling here
+			
 		}	
 		dataControl(contents);
 		plotData();
@@ -885,11 +860,12 @@ public class MainActivity extends Activity {
 
 		int fs = 44100;
 		int endValue = fs/2;
-
-		for(int i =0; i < fftData.length; i++) {
+		int space = fftData.length/40;
+		for(int i =0; i < fftData.length; i+=40) {
 			double increment = ((endValue)/fftData.length) * i;
 			myRenderer.addXTextLabel(i, "" + increment);
 		}
+		
 		return myRenderer;
 	}
 

@@ -47,8 +47,8 @@ public class BluetoothChatService {
 	private final BluetoothAdapter mAdapter;
 	private final Handler mHandler;
 	private AcceptThread mAcceptThread;
-	private AcceptThread mSecureAcceptThread;
-	private AcceptThread mInsecureAcceptThread;
+//	private AcceptThread mSecureAcceptThread;
+//	private AcceptThread mInsecureAcceptThread;
 	private ConnectThread mConnectThread;
 	private ConnectedThread mConnectedThread;
 	private int mState;
@@ -102,20 +102,20 @@ public class BluetoothChatService {
 
 		setState(STATE_LISTEN);
 
-		// Start the thread to listen on a BluetoothServerSocket
-		//		if (mAcceptThread == null) {
-		//			mAcceptThread = new AcceptThread();
-		//			mAcceptThread.start();
-		//		}
+				// Start the thread to listen on a BluetoothServerSocket
+				if (mAcceptThread == null) {
+					mAcceptThread = new AcceptThread();
+					mAcceptThread.start();
+				}
 
-		if (mSecureAcceptThread == null) {
-			mSecureAcceptThread = new AcceptThread(true);
-			mSecureAcceptThread.start();
-		}
-		if (mInsecureAcceptThread == null) {
-			mInsecureAcceptThread = new AcceptThread(false);
-			mInsecureAcceptThread.start();
-		}
+//		if (mSecureAcceptThread == null) {
+//			mSecureAcceptThread = new AcceptThread(true);
+//			mSecureAcceptThread.start();
+//		}
+//		if (mInsecureAcceptThread == null) {
+//			mInsecureAcceptThread = new AcceptThread(false);
+//			mInsecureAcceptThread.start();
+//		}
 	}
 
 	/**
@@ -160,14 +160,14 @@ public class BluetoothChatService {
 			mAcceptThread.cancel();
 			mAcceptThread = null;
 		}
-		if (mSecureAcceptThread != null) {
-			mSecureAcceptThread.cancel();
-			mSecureAcceptThread = null;
-		}
-		if (mInsecureAcceptThread != null) {
-			mInsecureAcceptThread.cancel();
-			mInsecureAcceptThread = null;
-		}
+//		if (mSecureAcceptThread != null) {
+//			mSecureAcceptThread.cancel();
+//			mSecureAcceptThread = null;
+//		}
+//		if (mInsecureAcceptThread != null) {
+//			mInsecureAcceptThread.cancel();
+//			mInsecureAcceptThread = null;
+//		}
 
 		// Start the thread to manage the connection and perform transmissions
 		mConnectedThread = new ConnectedThread(socket, socketType);
@@ -204,15 +204,15 @@ public class BluetoothChatService {
 			mAcceptThread = null;
 		}
 
-		if (mSecureAcceptThread != null) {
-			mSecureAcceptThread.cancel();
-			mSecureAcceptThread = null;
-		}
-
-		if (mInsecureAcceptThread != null) {
-			mInsecureAcceptThread.cancel();
-			mInsecureAcceptThread = null;
-		}
+//		if (mSecureAcceptThread != null) {
+//			mSecureAcceptThread.cancel();
+//			mSecureAcceptThread = null;
+//		}
+//
+//		if (mInsecureAcceptThread != null) {
+//			mInsecureAcceptThread.cancel();
+//			mInsecureAcceptThread = null;
+//		}
 
 		setState(STATE_NONE);
 	}
@@ -274,24 +274,24 @@ public class BluetoothChatService {
 		private final BluetoothServerSocket mmServerSocket;
 		private String mSocketType;
 
-		public AcceptThread(boolean secure) {
-			BluetoothServerSocket tmp = null;
-			mSocketType = secure ? "SPP":"Insecure: TABLET";
-
-			// Create a new listening server socket
-			try {
-				if (secure) {
-					tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SPP,
-							MY_UUID_SPP);
-				} else {
-					tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
-							NAME_TABLET, MY_UUID_TABLET);
-				}
-			} catch (IOException e) {
-				Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
-			}
-			mmServerSocket = tmp;
-		}
+//		public AcceptThread(boolean secure) {
+//			BluetoothServerSocket tmp = null;
+//			mSocketType = secure ? "SPP":"Insecure: TABLET";
+//
+//			// Create a new listening server socket
+//			try {
+//				if (secure) {
+//					tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SPP,
+//							MY_UUID_SPP);
+//				} else {
+//					tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
+//							NAME_TABLET, MY_UUID_TABLET);
+//				}
+//			} catch (IOException e) {
+//				Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
+//			}
+//			mmServerSocket = tmp;
+//		}
 
 		public AcceptThread() {
 			BluetoothServerSocket tmp = null;
@@ -465,12 +465,18 @@ public class BluetoothChatService {
 
 		public void run() {
 			Log.i(TAG, "BEGIN mConnectedThread");
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[10000];
 			int bytes;
 
 			// Keep listening to the InputStream while connected
 			while (true) {
 				try {
+					try {
+						Thread.sleep(1000);
+					} catch(InterruptedException ex) {
+						Thread.currentThread().interrupt();
+					}	// moved to test out difference
+					
 					// Read from the InputStream
 					bytes = mmInStream.read(buffer);
 
@@ -478,11 +484,11 @@ public class BluetoothChatService {
 					mHandler.obtainMessage(MainActivity.MESSAGE_READ, bytes, -1, buffer)
 					.sendToTarget();
 
-					try {
-						Thread.sleep(1000);
-					} catch(InterruptedException ex) {
-						Thread.currentThread().interrupt();
-					}              
+//					try {
+//						Thread.sleep(1000);
+//					} catch(InterruptedException ex) {
+//						Thread.currentThread().interrupt();
+//					}
 				} catch (IOException e) {
 					Log.e(TAG, "disconnected", e);
 					connectionLost();
