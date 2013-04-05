@@ -19,7 +19,7 @@
         android:theme="@android:style/Theme.Holo.Light" >
         <activity
             android:name="appliedradar.bluetooth.gui.MainActivity"
-            android:configChanges="orientation|screenSize" 
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_main_activity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

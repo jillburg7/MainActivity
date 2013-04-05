@@ -10,7 +10,6 @@
     <string name="device_search">Search for Devices</string>
     <string name="device_pair">Paired Devices</string>
     <string name="device_connect">Discovered Devices</string>
-    
     <string name="collect_data">Collect</string>
     <string name="load_data">File Archive</string>
     <string name="save_data">Save</string>
@@ -18,49 +17,46 @@
     <string name="plot_data">Plot Raw Data</string>
     <string name="plot_FFT">Plot FFT Data</string>
     <string name="statistics_log">Statistics</string>
-    
     <string name="collect_save">Collect/Save</string>
     <string name="stop_collecting">Stop Collecting</string>
     <string name="load_new">Load</string>
-    
+
     <!-- Used on unexecutable layout-large & layout-normal XML files -->
     <string name="start">Start</string>
     <string name="stop">Stop</string>
 
-    
-<!-- Device List Layout Strings -->
+    <!-- Device List Layout Strings -->
     <string name="title_activity_device_list_activty">Device List Activity</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="title_item_list">Items</string>
     <string name="hello_world">Hello empty screen! :D</string>
 
-    
-<!-- Display Archive Layout Strings -->
+    <!-- Display Archive Layout Strings -->
     <string name="title_activity_display_archive">Data File Archive</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Hint: </string>
     <string name="button_open">Open File Selected</string>
     <string name="title_file_list">Files</string>
 
-    
-<!-- Settings Layout Strings -->
+    <!-- Settings Layout Strings -->
     <string name="title_activity_settings">Settings</string>
     <string name="bluetoothToggle">Bluetooth</string>
     <string name="bluetoothSettings">Bluetooth Settings: </string>
     <string name="captureTime">Capture Time</string>
     <string name="currentSetting">Current Setting: </string>
     <string name="bandwidthSetting">Bandwidth</string>
-    
     <string name="currentRampTime">Ramp Time</string>
     <string name="currentCaptureTime"></string>
     <string name="currentBandwidth"></string>
     <string name="rampTime">Get Ramp Time</string>
     <string name="sweepType">Get Sweep Type</string>
-    
     <string name="changeCaptureTime">Change Capture Time</string>
     <string name="changeBandwidth">Change Bandwidth</string>
     <string name="changeRampTime">Change Ramp Time</string>
     <string name="readState">Read State Specifications</string>
     <string name="seekbar_from_touch">from touch</string>
+    
+    
+    
 
 </resources>
