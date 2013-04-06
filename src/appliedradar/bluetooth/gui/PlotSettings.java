@@ -15,9 +15,9 @@ import android.util.Log;
 public class PlotSettings {
 
 	/**
-	 * sampling frequency
+	 * sampling frequency in Hz
 	 */
-	private final int fs = 44100;
+	private final int fs = 44100;	// put in settings so user can change
 
 	/**
 	 * last x-value, (starting x-value = 0)

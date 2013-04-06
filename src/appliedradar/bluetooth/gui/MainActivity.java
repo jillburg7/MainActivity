@@ -143,8 +143,6 @@ public class MainActivity extends Activity {
 		}
 		if (mChartView == null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
-			//			mChartView = ChartFactory.getLineChartView(this, getMyData(),
-			//					getMyRenderer());
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
 					mRenderer);
 			layout.addView(mChartView);

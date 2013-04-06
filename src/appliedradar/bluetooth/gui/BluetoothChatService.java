@@ -28,17 +28,17 @@ public class BluetoothChatService {
 
 	// Name for the SDP record when creating server socket
 	private static final String NAME = "BluetoothChat";
-	private static final String NAME_SPP = "BluetoothChatSecure";
-	private static final String NAME_TABLET = "BluetoothChatInsecure";
+//	private static final String NAME_SPP = "BluetoothChatSecure";
+//	private static final String NAME_TABLET = "BluetoothChatInsecure";
 
 	// Unique UUID for this application
-	private static final UUID MY_UUID_TABLET = 
-			//    		UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");		// SPP : use with Radar Kit 
-			UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");	// INSECURE : use with mobile devices
+	private static final UUID MY_UUID = 
+	    		UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");		// SPP : use with Radar Kit 
+	//			UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");	// INSECURE : use with mobile devices
 	//			UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");	// SECURE : similar to insecure, but don't recommend using
-	private static final UUID MY_UUID_SPP = 
-			UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");
-
+//	private static final UUID MY_UUID = 
+//			UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");
+	
 	//INSECURE	"8ce255c0-200a-11e0-ac64-0800200c9a66"
 	//SECURE	"fa87c0d0-afac-11de-8a39-0800200c9a66"
 	//SPP		"0001101-0000-1000-8000-00805F9B34FB"
@@ -282,7 +282,7 @@ public class BluetoothChatService {
 //			try {
 //				if (secure) {
 //					tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SPP,
-//							MY_UUID_SPP);
+//							MY_UUID);
 //				} else {
 //					tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
 //							NAME_TABLET, MY_UUID_TABLET);
@@ -298,8 +298,9 @@ public class BluetoothChatService {
 
 			// Create a new listening server socket
 			try {
+				
 				tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME,
-						MY_UUID_TABLET);
+						MY_UUID);
 			} catch (IOException e) {
 				Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
 			}
@@ -381,13 +382,13 @@ public class BluetoothChatService {
 			// Get a BluetoothSocket for a connection with the
 			// given BluetoothDevice
 			try {
-				if (secure) {
+//				if (secure) {
 					tmp = device.createRfcommSocketToServiceRecord(
-							MY_UUID_SPP);
-				} else {
-					tmp = device.createInsecureRfcommSocketToServiceRecord(
-							MY_UUID_TABLET);
-				}
+							MY_UUID);
+//				} else {
+//					tmp = device.createInsecureRfcommSocketToServiceRecord(
+//							MY_UUID);
+//				}
 			} catch (IOException e) {
 				Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e);
 			}

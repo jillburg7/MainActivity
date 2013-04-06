@@ -6,26 +6,30 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-public class DisplayArchive extends Activity {
+public class DisplayArchive extends Activity implements OnItemSelectedListener {
 
 	// Debugging
 	private static final String TAG = "DisplayArchiveActivity";
 	private static final boolean D = true;
-	
+
 	private File[] mFileList;
-	
+
 	public static String EXTRA_FILE_INFO = "file_info";
 
 	@Override
@@ -36,25 +40,51 @@ public class DisplayArchive extends Activity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_display_archive);
 
-		
+
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-//		File internalMemory = Environment.getExternalStorageDirectory();
+
 		File internalMemory = new File("/mnt/sdcard/FMCW File Archive");
-		
+		if (internalMemory.exists() && internalMemory.isDirectory()) {	//STUFF I CHANGED Here
+			mFileList = internalMemory.listFiles();
+		} else {
+			createDirIfNotExists("/FMCW File Archive");
+		}
+		//MAKES FILES VIEWABLE to Here
+		sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
+				Uri.parse("file://" + Environment.getExternalStorageDirectory()))); 
+
 		mFileList = internalMemory.listFiles();
 		ArrayAdapter<File> fileAdapter = new ArrayAdapter<File>(this, R.layout.file_name, mFileList);
 
-		// Find and set up the ListView for archived .txt files
+		// returns number of bytes in this file
+		internalMemory.length();
+	
+		// Find and set up the ListView for FMCW files
 		ListView fileListView = (ListView) findViewById(R.id.files_archived);
 		fileListView.setAdapter(fileAdapter);
+//		OnItemSelectedListener listener = null;
+//		fileListView.setOnItemSelectedListener(mFileClickListener);
 		fileListView.setOnItemClickListener(mFileClickListener);
 
-		// If there are paired devices, add each one to the ArrayAdapter
+		// If there are files in directory, add each one to the ArrayAdapter
 		if (mFileList.length > 0) 
 			findViewById(R.id.title_file_list).setVisibility(View.VISIBLE);
 
+	}
+
+	public static boolean createDirIfNotExists(String path) {//STUFF I CHANGED  Here
+		boolean ret = true;
+
+		File file = new File(Environment.getExternalStorageDirectory() + path);
+		if (!file.exists()) {
+			if (!file.mkdirs()) {
+				Log.e("TravellerLog :: ", "Problem creating Image folder");
+				ret = false;
+			}
+		}
+		return ret;
 	}
 
 	@Override
@@ -83,7 +113,7 @@ public class DisplayArchive extends Activity {
 			// more details, see the Navigation pattern on Android Design:
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			
+
 			finish();
 			//NavUtils.navigateUpFromSameTask(this);
 			//return true;
@@ -98,7 +128,6 @@ public class DisplayArchive extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
 			String fileInfo = ((TextView) arg1).getText().toString();
-
 			// Create the result Intent and include the MAC address
 			Intent intent = new Intent();
 			intent.putExtra(EXTRA_FILE_INFO, fileInfo);
@@ -106,8 +135,23 @@ public class DisplayArchive extends Activity {
 			// Set result and finish this Activity
 			setResult(Activity.RESULT_OK, intent);
 			finish();
-			
+
 		}
 
 	};
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 }
