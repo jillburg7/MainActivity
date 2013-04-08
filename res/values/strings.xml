@@ -37,6 +37,8 @@
     <string name="search_hint">Hint: </string>
     <string name="button_open">Open File Selected</string>
     <string name="title_file_list">Files</string>
+    <string name="choose_file">Choose a file:</string>
+    <string name="file_info">File Information:</string>
 
     <!-- Settings Layout Strings -->
     <string name="title_activity_settings">Settings</string>
@@ -55,6 +57,8 @@
     <string name="changeRampTime">Change Ramp Time</string>
     <string name="readState">Read State Specifications</string>
     <string name="seekbar_from_touch">from touch</string>
+   
+    
     
     
     

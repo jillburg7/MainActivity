@@ -1,11 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".DisplayArchive" >
 
-    <TextView android:id="@+id/title_file_list"
+ <!--    <TextView android:id="@+id/title_file_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/title_file_list"
@@ -14,16 +14,82 @@
         android:textColor="#fff"
         android:paddingLeft="5dp" />
     
+
+    
     <ListView android:id="@+id/files_archived"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stackFromBottom="true"
-        android:layout_weight="1" />
-    
-	<Button
-        android:id="@+id/button_open"
-        android:layout_width="234dp"
-        android:layout_height="wrap_content"
-        android:text="@string/button_open" />
+        android:layout_weight="1" /> 
 
+	 -->
+	
+	
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_file"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:splitMotionEvents="true"
+        android:baselineAligned="false" >
+        
+        <!-- File List -->
+		<ListView android:id="@+id/list1"
+				android:layout_width="0dip"
+				android:layout_height="match_parent"
+				android:layout_weight="1" />
+	
+		 <!-- Selected File Information "List" -->
+		<LinearLayout android:id="@+id/list2"
+			android:orientation="vertical"
+			android:layout_width="0dip"
+			android:layout_height="match_parent"
+			android:layout_weight="1" >
+	
+            <TextView
+                android:id="@+id/information"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/file_info"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+			
+            <LinearLayout
+                android:id="@+id/file_info"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+                
+                 <!-- Information Titles -->
+                <TextView
+	                android:id="@+id/textView2"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1" 
+	                android:textIsSelectable="true"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+                
+				<!-- Information List w/ respect to Information Titles -->
+	            <TextView
+	                android:id="@+id/textView3"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1" 
+	                android:textIsSelectable="true"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />     
+            </LinearLayout>
+            
+             <!-- Open File Button -->
+            <Button
+		        android:id="@+id/button_open"
+		        android:layout_width="234dp"
+		        android:layout_height="wrap_content"
+		        android:onClick="openFile"
+		        android:text="@string/button_open" />
+		</LinearLayout>
+	</LinearLayout>
+    
 </LinearLayout>

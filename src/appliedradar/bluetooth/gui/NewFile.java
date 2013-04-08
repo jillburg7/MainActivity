@@ -11,16 +11,28 @@ import android.os.Environment;
 
 public class NewFile {
 
+	
+	/**
+	 * 
+	 * @return date & time
+	 */
 	public String timeStamp() {
 		Date myDate = new Date();
 		return (DateFormat.getDateInstance().format(myDate) + " " + DateFormat.getTimeInstance().format(myDate));
 	}
 
+	
+	/**
+	 * 
+	 * @param context
+	 * @param string
+	 * @throws IOException
+	 */
 	public void createFile(Context c, String string) throws IOException{
 		String root = Environment.getExternalStorageDirectory().toString();
 		File myDir = new File(root + "/FMCW File Archive");
 		
-		String fname = timeStamp() + ".txt";
+		String fname = timeStamp() + ".txt";	// name of file
 		File file = new File (myDir, fname);
 		if (file.exists ()){
 			file.delete (); 
@@ -36,22 +48,3 @@ public class NewFile {
 	}
 }
 
-
-//	public void createFile(Context c, String string) throws IOException{
-//		String FILENAME = timeStamp();
-//		
-//		FileOutputStream fos = c.openFileOutput(FILENAME, Context.MODE_PRIVATE);
-//		fos.write(string.getBytes());
-//		fos.close();
-//	}
-
-
-
-// currently creates a folder on the actual sdcard,
-// but it doesn't allow anything to be placed inside of it
-/*	//	String external_sd = Environment.getExternalStorageDirectory().toString();
-//	File myDir = new File(external_sd + "/saved_data");  
-File myDir = new File("/mnt/external_sd" + "/saved_data");  
-
-//File myDir = new File("/mnt/external_sd/saved_data"); 
-*/		

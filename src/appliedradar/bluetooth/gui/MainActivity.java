@@ -410,7 +410,7 @@ public class MainActivity extends Activity {
 	 * @param view the button that was pressed
 	 */
 	public void openArchive(View view) {
-		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
 		Intent archiveIntent = new Intent(this, DisplayArchive.class);
 		startActivityForResult(archiveIntent, REQUEST_FILE_INFO);
 	}

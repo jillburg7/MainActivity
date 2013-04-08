@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DisplayArchive extends Activity implements OnItemSelectedListener {
 
@@ -29,6 +30,8 @@ public class DisplayArchive extends Activity implements OnItemSelectedListener {
 	private static final boolean D = true;
 
 	private File[] mFileList;
+	String fileName;
+
 
 	public static String EXTRA_FILE_INFO = "file_info";
 
@@ -45,9 +48,9 @@ public class DisplayArchive extends Activity implements OnItemSelectedListener {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-		File internalMemory = new File("/mnt/sdcard/FMCW File Archive");
-		if (internalMemory.exists() && internalMemory.isDirectory()) {	//STUFF I CHANGED Here
-			mFileList = internalMemory.listFiles();
+		File fileDir = new File("/mnt/sdcard/FMCW File Archive");
+		if (fileDir.exists() && fileDir.isDirectory()) {	//STUFF I CHANGED Here
+			mFileList = fileDir.listFiles();
 		} else {
 			createDirIfNotExists("/FMCW File Archive");
 		}
@@ -55,24 +58,86 @@ public class DisplayArchive extends Activity implements OnItemSelectedListener {
 		sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
 				Uri.parse("file://" + Environment.getExternalStorageDirectory()))); 
 
-		mFileList = internalMemory.listFiles();
-		ArrayAdapter<File> fileAdapter = new ArrayAdapter<File>(this, R.layout.file_name, mFileList);
 
-		// returns number of bytes in this file
-		internalMemory.length();
-	
-		// Find and set up the ListView for FMCW files
-		ListView fileListView = (ListView) findViewById(R.id.files_archived);
-		fileListView.setAdapter(fileAdapter);
-//		OnItemSelectedListener listener = null;
-//		fileListView.setOnItemSelectedListener(mFileClickListener);
-		fileListView.setOnItemClickListener(mFileClickListener);
+//		for(int i = 0; i < mFileList.length; i++) {
+//			fileName = mFileList[i].getName();
+//		}
+		ListView list1 = (ListView) findViewById(R.id.list1);
+
+		ArrayAdapter<File> fileAdapter = new ArrayAdapter<File>(this, R.layout.file_name, mFileList);
+		list1.setAdapter(fileAdapter);
+		list1.setOnItemClickListener(mFileClickListener);
+		
+		
+//		// returns number of bytes in this file
+//		String fileSize = "" + fileDir.length();
+//
+//		// Find and set up the ListView for FMCW files
+//		ListView fileListView = (ListView) findViewById(R.id.files_archived);
+//		fileListView.setAdapter(fileAdapter);
+//		fileListView.setOnItemClickListener(mFileClickListener);
 
 		// If there are files in directory, add each one to the ArrayAdapter
-		if (mFileList.length > 0) 
-			findViewById(R.id.title_file_list).setVisibility(View.VISIBLE);
+//		if (mFileList.length > 0) 
+//			findViewById(R.id.title_file_list).setVisibility(View.VISIBLE);
 
 	}
+
+
+	// The on-click listener for all files in the ListViews
+	private OnItemClickListener mFileClickListener = new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView<?> parentPath, View view, int position, long id) {
+			fileName = ((TextView) view).getText().toString();
+			File file = mFileList[position];
+
+			TextView infoLabels = (TextView) findViewById(R.id.textView2);
+			TextView info = (TextView) findViewById(R.id.textView3);
+
+
+//			String absolutePath = file.getAbsolutePath();
+//	        "AbsolutePath:    " + AbsolutePath + "\n"
+			String path = file.getPath();
+			String parent = file.getParent();
+			String name = file.getName();
+			String size = "" + file.length();
+			FileInfo information = new FileInfo(path);
+
+			infoLabels.setText(	"Parent Path:" + "\n" + "Name:" + "\n" + "Date Created:" + "\n" + "Size:" );
+			info.setText( 	parent + "\n" + name + "\n" + information.getDateCreated() + "\n" + size);
+		}
+
+	};
+
+	public void openFile(View view) {
+		
+
+		Toast toast = Toast.makeText(getApplicationContext(), fileName, Toast.LENGTH_SHORT);
+		toast.show();
+		
+		// Create the result Intent and include the file name
+		Intent intent = new Intent();
+		intent.putExtra(EXTRA_FILE_INFO, fileName);
+
+		// Set result and finish this Activity
+		setResult(Activity.RESULT_OK, intent);
+		finish();
+	}
+	
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+
+
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+
+	}
+	
 
 	public static boolean createDirIfNotExists(String path) {//STUFF I CHANGED  Here
 		boolean ret = true;
@@ -121,37 +186,5 @@ public class DisplayArchive extends Activity implements OnItemSelectedListener {
 		return super.onOptionsItemSelected(item);
 	}
 
-	// The on-click listener for all files in the ListViews
-	private OnItemClickListener mFileClickListener = new OnItemClickListener() {
 
-		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-				long arg3) {
-			String fileInfo = ((TextView) arg1).getText().toString();
-			// Create the result Intent and include the MAC address
-			Intent intent = new Intent();
-			intent.putExtra(EXTRA_FILE_INFO, fileInfo);
-
-			// Set result and finish this Activity
-			setResult(Activity.RESULT_OK, intent);
-			finish();
-
-		}
-
-	};
-
-	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
-		
-		
-	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
 }
