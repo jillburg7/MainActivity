@@ -112,13 +112,13 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	
 	// button to read State, test puruposes ONLY
 	public void readState(View view) {
-		String currentState = myCommand.readCurrentState(0);
-		Log.i(TAG, "Pressed read state button");
-		
-		Intent intent = new Intent();
-		intent.putExtra(EXTRA_RADAR_COMMAND, currentState);
-		setResult(Activity.RESULT_OK, intent);
-		finish();
+//		String currentState = myCommand.readCurrentState(0);
+//		Log.i(TAG, "Pressed read state button");
+//		
+//		Intent intent = new Intent();
+//		intent.putExtra(EXTRA_RADAR_COMMAND, currentState);
+//		setResult(Activity.RESULT_OK, intent);
+//		finish();
 	}
 	
 	

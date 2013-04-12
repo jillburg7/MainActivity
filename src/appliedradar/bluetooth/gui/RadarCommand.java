@@ -14,16 +14,16 @@ import android.util.Log;
 public class RadarCommand {
 	// for debugging
 	private static final String TAG = "RadarCommand";
-		
+
 	private ArrayList<Double> arrayValues;
-	
+
 	// default radar settings
 	public static String CAPTURE_TIME;
 	public static String BANDWIDTH;
 	public static String RAMP_TIME;
 	public static int CURRENT_STATE;
 
-	
+
 	/** Used for testing ... doesn't do anything fun */
 	public String readCommand(String returnCommand) {
 		return returnCommand;
@@ -43,7 +43,7 @@ public class RadarCommand {
 		}
 		return arrayValues;
 	}
-	
+
 	/**
 	 * more converting... probably very redundant process - will fix soon :)
 	 */
@@ -56,64 +56,71 @@ public class RadarCommand {
 			arrayValues.add(value);
 		}
 	}
-	
-	
-	/** Command to START collecting data - used Main Activity */
-	public String startCollect() {
-		return "FREQ:SWEEP:RUN$\n";
+
+
+	/** Command to get current starting freq */
+	public String getstartfreq() {
+		return "FREQ:SWEEP:START?$\n";
 	}
-	
-	/** Command to KILL data collection - used Main Activity */
-	public String stopCollect() {
-		return "FREQ:SWEEP:KILL$\n";
+
+	/** Command to set current starting freq */
+	public String setstartfreq(int input) {
+		return "FREQ:SWEEP:START " + String.valueOf(input) + "$\n";
 	}
-	
+
+	/** Command to get current stoping freq */
+	public String getstopfreq() {
+		return "FREQ:SWEEP:STOP?$\n";
+	}
+
+	/** Command to set current stoping freq */
+	public String setstopfreq(int input) {
+		return "FREQ:SWEEP:STOP " + String.valueOf(input) + "$\n";
+	}
+
+	/** Command to get current sweep type */
+	public String getsweeptype() {
+		return "FREQ:SWEEP:TYPE?$\n";
+	}
+
+	/** Command to set current sweep type */
+	public String setsweeptype(int input) {
+		return "FREQ:SWEEP:TYPE " + String.valueOf(input) + "$\n";
+	}
+
 	/** Command to get current ramp time setting */
 	public String getRampTime() {
-		return "FMCW:SWEEP:RAMPTIME?$\n";
+		return "FREQ:SWEEP:RAMPTIME?$\n";
 	}
 
 	/** Command to set the ramp time to something other than the default */
 	public String setRampTime(int input) { 
-		return "FMCW:SWEEP:RAMPTIME " + String.valueOf(input) + "$\n";	// user input
+		return "FREQ:SWEEP:RAMPTIME " + String.valueOf(input) + "$\n";// user input
 	}
 
-	
-	/** 
-	 * NO LONGER A COMMAND
-	 */
-	public String getBandwidth() {
-		return "FMCW:LFMBW?$\n";
-	}
-	
-	/** 
-	 * NO LONGER A COMMAND
-	 */
-	public String setBandwidth(int input) {
-		return "FMCW:LFMBW " + String.valueOf(input) + "$\n";	// user input
-	}
-	
-	/** 
-	 * NO LONGER A COMMAND
-	 * Command to get current capture time setting
-	 */
-	public String getCaptureTime() {
-		return "FMCW:CAPTURETIME?$\n";
+	/** Command to START collecting data - used Main Activity */
+	public String startCollect() {
+		return "FREQ:SWEEP:RUN$\n";
 	}
 
-	/** 
-	 * NO LONGER A COMMAND
-	 * command to set current capture time setting
-	 */
-	public String setCaptureTime(int input) {
-		return "FMCW:CAPTURETIME " + String.valueOf(input) + "$\n";	// user input
+	/** Command to KILL data collection - used Main Activity */
+	public String stopCollect() {
+		return "FREQ:SWEEP:KILL$\n";
 	}
-	
-	/** 
-	 * NO LONGER A COMMAND
-	 */
-	public String readCurrentState(int state) {
-		return "SYST:READSTATE? " + state + "$\n";
+
+	/** Command to get current ref div */
+	public String getrefdiv() {
+		return "FREQ:REF:DIV?$\n";
 	}
-	
+
+	/** Command to set current ref div */
+	public String setrefdiv(int input) {
+		return "FREQ:REF:DIV " + String.valueOf(input) + "$\n";
+	}
+
+	/** Command to trigger */
+	public String trigger(int input) {
+		return "FREQ:SWEEP:TRIGGER$\n";
+	}
+
 } // end of RadarCommand

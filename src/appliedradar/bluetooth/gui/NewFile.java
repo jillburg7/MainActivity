@@ -9,8 +9,15 @@ import java.util.Date;
 import android.content.Context;
 import android.os.Environment;
 
-public class NewFile {
+public class NewFile extends FileInfo {
 
+	
+	public NewFile() {}
+	
+	public NewFile(String path) {
+		super(path);
+	}
+	
 	
 	/**
 	 * 
@@ -30,7 +37,7 @@ public class NewFile {
 	 */
 	public void createFile(Context c, String string) throws IOException{
 		String root = Environment.getExternalStorageDirectory().toString();
-		File myDir = new File(root + "/FMCW File Archive");
+		File myDir = new File(root + "/FMCW File Archive");	// name of directory
 		
 		String fname = timeStamp() + ".txt";	// name of file
 		File file = new File (myDir, fname);

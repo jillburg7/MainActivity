@@ -55,6 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/file_info"
+                android:visibility="invisible"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 			
             <LinearLayout
@@ -88,7 +89,18 @@
 		        android:layout_width="234dp"
 		        android:layout_height="wrap_content"
 		        android:onClick="openFile"
-		        android:text="@string/button_open" />
+		        android:text="@string/button_open"
+		        android:visibility="invisible" />
+            
+              <!-- Delete File Button -->
+            <Button
+		        android:id="@+id/button_delete"
+		        android:layout_width="234dp"
+		        android:layout_height="wrap_content"
+		        android:onClick="deleteFile"
+		        android:text="@string/button_delete"
+		        android:visibility="invisible" />
+
 		</LinearLayout>
 	</LinearLayout>
     

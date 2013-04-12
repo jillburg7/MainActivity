@@ -16,24 +16,24 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DisplayArchive extends Activity implements OnItemSelectedListener {
+public class DisplayArchive extends Activity {
 
 	// Debugging
 	private static final String TAG = "DisplayArchiveActivity";
 	private static final boolean D = true;
 
 	private File[] mFileList;
-	String fileName;
-
-
+	private String[] mFiles;
+	private String filePath;
+	private String fileName;
 	public static String EXTRA_FILE_INFO = "file_info";
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +51,7 @@ public class DisplayArchive extends Activity implements OnItemSelectedListener {
 		File fileDir = new File("/mnt/sdcard/FMCW File Archive");
 		if (fileDir.exists() && fileDir.isDirectory()) {	//STUFF I CHANGED Here
 			mFileList = fileDir.listFiles();
+			mFiles = fileDir.list();
 		} else {
 			createDirIfNotExists("/FMCW File Archive");
 		}
@@ -59,36 +60,40 @@ public class DisplayArchive extends Activity implements OnItemSelectedListener {
 				Uri.parse("file://" + Environment.getExternalStorageDirectory()))); 
 
 
-//		for(int i = 0; i < mFileList.length; i++) {
-//			fileName = mFileList[i].getName();
-//		}
+		//		for(int i = 0; i < mFileList.length; i++) {
+		//			fileName = mFileList[i].getName();
+		//		}
 		ListView list1 = (ListView) findViewById(R.id.list1);
 
+		ArrayAdapter<String> fileNames = new ArrayAdapter<String>(this, R.layout.file_name, mFiles);
+		
 		ArrayAdapter<File> fileAdapter = new ArrayAdapter<File>(this, R.layout.file_name, mFileList);
-		list1.setAdapter(fileAdapter);
+		list1.setAdapter(fileNames);
 		list1.setOnItemClickListener(mFileClickListener);
 		
 		
-//		// returns number of bytes in this file
-//		String fileSize = "" + fileDir.length();
-//
-//		// Find and set up the ListView for FMCW files
-//		ListView fileListView = (ListView) findViewById(R.id.files_archived);
-//		fileListView.setAdapter(fileAdapter);
-//		fileListView.setOnItemClickListener(mFileClickListener);
+//		list1.setOnItemSelectedListener(mFileSelectedListener);
+
+		//		// returns number of bytes in this file
+		//		String fileSize = "" + fileDir.length();
+		//
+		//		// Find and set up the ListView for FMCW files
+		//		ListView fileListView = (ListView) findViewById(R.id.files_archived);
+		//		fileListView.setAdapter(fileAdapter);
+		//		fileListView.setOnItemClickListener(mFileClickListener);
 
 		// If there are files in directory, add each one to the ArrayAdapter
-//		if (mFileList.length > 0) 
-//			findViewById(R.id.title_file_list).setVisibility(View.VISIBLE);
+		//		if (mFileList.length > 0) 
+		//			findViewById(R.id.title_file_list).setVisibility(View.VISIBLE);
 
 	}
 
 
 	// The on-click listener for all files in the ListViews
 	private OnItemClickListener mFileClickListener = new OnItemClickListener() {
-
 		@Override
 		public void onItemClick(AdapterView<?> parentPath, View view, int position, long id) {
+//			filePath = ((TextView) view).getText().toString();
 			fileName = ((TextView) view).getText().toString();
 			File file = mFileList[position];
 
@@ -96,48 +101,85 @@ public class DisplayArchive extends Activity implements OnItemSelectedListener {
 			TextView info = (TextView) findViewById(R.id.textView3);
 
 
-//			String absolutePath = file.getAbsolutePath();
-//	        "AbsolutePath:    " + AbsolutePath + "\n"
-			String path = file.getPath();
+			//			String absolutePath = file.getAbsolutePath();
+			//	        "AbsolutePath:    " + AbsolutePath + "\n"
+//			String path = file.getPath();
+			filePath = file.getPath();
 			String parent = file.getParent();
-			String name = file.getName();
+//			String name = file.getName();
+		//	fileName = file.getName();
 			String size = "" + file.length();
-			FileInfo information = new FileInfo(path);
+			FileInfo information = new FileInfo(filePath);
 
 			infoLabels.setText(	"Parent Path:" + "\n" + "Name:" + "\n" + "Date Created:" + "\n" + "Size:" );
-			info.setText( 	parent + "\n" + name + "\n" + information.getDateCreated() + "\n" + size);
-		}
+			info.setText( 	parent + "\n" + fileName + "\n" + information.getDateCreated() + "\n" + size);
 
+			findViewById(R.id.button_open).setVisibility(View.VISIBLE);
+			findViewById(R.id.button_delete).setVisibility(View.VISIBLE);
+			findViewById(R.id.information).setVisibility(View.VISIBLE);
+		}
 	};
 
 	public void openFile(View view) {
-		
 
 		Toast toast = Toast.makeText(getApplicationContext(), fileName, Toast.LENGTH_SHORT);
 		toast.show();
-		
+
 		// Create the result Intent and include the file name
 		Intent intent = new Intent();
-		intent.putExtra(EXTRA_FILE_INFO, fileName);
+		intent.putExtra(EXTRA_FILE_INFO, filePath);
 
 		// Set result and finish this Activity
 		setResult(Activity.RESULT_OK, intent);
 		finish();
 	}
-	
-	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
 
+	public void deleteFile(View view) {
 
 	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
 
-	}
-	
+
+	/*private OnItemSelectedListener mFileSelectedListener = new OnItemSelectedListener() {
+		@Override
+		public void onItemSelected(AdapterView<?> parentPath, View view, int position, long id) {
+			
+			Log.e("onItemSelected", "here!");
+			filePath = ((TextView) view).getText().toString();
+			File file = mFileList[position];
+
+			TextView infoLabels = (TextView) findViewById(R.id.textView2);
+			TextView info = (TextView) findViewById(R.id.textView3);
+
+
+			//			String absolutePath = file.getAbsolutePath();
+			//	        "AbsolutePath:    " + AbsolutePath + "\n"
+			String path = file.getPath();
+			String parent = file.getParent();
+			//		String name = file.getName();
+			fileName = file.getName();
+			String size = "" + file.length();
+			FileInfo information = new FileInfo(path);
+
+			infoLabels.setText(	"Parent Path:" + "\n" + "Name:" + "\n" + "Date Created:" + "\n" + "Size:" );
+			info.setText( 	parent + "\n" + fileName + "\n" + information.getDateCreated() + "\n" + size);
+
+			findViewById(R.id.button_open).setVisibility(View.VISIBLE);
+			findViewById(R.id.button_delete).setVisibility(View.VISIBLE);
+			findViewById(R.id.information).setVisibility(View.VISIBLE);
+
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> arg0) {
+			// TODO Auto-generated method stub
+			findViewById(R.id.button_open).setVisibility(View.INVISIBLE);
+			findViewById(R.id.button_delete).setVisibility(View.INVISIBLE);
+			findViewById(R.id.information).setVisibility(View.INVISIBLE);
+		}
+	};
+*/
+
 
 	public static boolean createDirIfNotExists(String path) {//STUFF I CHANGED  Here
 		boolean ret = true;
@@ -185,6 +227,8 @@ public class DisplayArchive extends Activity implements OnItemSelectedListener {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+
 
 
 }

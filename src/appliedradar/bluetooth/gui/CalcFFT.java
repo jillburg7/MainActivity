@@ -9,12 +9,12 @@ package appliedradar.bluetooth.gui;
  */
 public class CalcFFT {
 
-	/**
-	 * The array of FFT data
-	 */
-	private double[] fftData;
+//	/**
+//	 * The array of FFT data
+//	 */
+//	protected double[] fftData;
 
-	
+
 	/**
 	 * Calculates the FFT of an array
 	 * @param inputArray	Input array
@@ -38,7 +38,7 @@ public class CalcFFT {
 		else
 			realData = new double[n];	// initializes array
 
-		// may cause lag in code is there are a lot of elements to copy from the input array to the new array
+		// may cause lag in code if there are a lot of elements to copy from the input array to the new array
 		for(int i = 0; i < inputArray.length; i++)
 			realData[i] = inputArray[i];
 
@@ -52,6 +52,9 @@ public class CalcFFT {
 		int n2 = (n / 2);
 		int nu1 = nu - 1;
 		double tReal, tImag, p, arg, c, s;
+		
+		// Here I check if I'm going to do the direct transform or the inverse
+		// transform.
 		double constant = -2 * Math.PI;
 
 		// First phase - calculation:
@@ -95,12 +98,13 @@ public class CalcFFT {
 			k++;
 		}
 
-		fftData = new double[n];	// initializes array that will soon store FFT data
+		double[] fftData = new double[n];	// initializes array that will soon store FFT data
 
 		// Magnitude of real & imaginary parts of the fftData
 		for(int i = 0; i < fftData.length; i++) {
 			fftData[i] = Math.sqrt(Math.pow(realData[i], 2) + Math.pow(imagData[i], 2));
-			fftData[i] = 20*Math.log10(fftData[i]);		// Power in dB of |fftData|
+			if (fftData[i] != 0)
+				fftData[i] = 20*Math.log10(fftData[i]);		// Power in dB of |fftData|
 		}
 		return fftData;		// output of FFT calculation
 	}
