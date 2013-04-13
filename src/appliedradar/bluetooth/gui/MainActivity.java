@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import appliedradar.bluetooth.gui.FileInfo.Kind;
 
 
 public class MainActivity extends Activity {
@@ -71,7 +72,14 @@ public class MainActivity extends Activity {
 
 	// List of data collected from Radar kit
 	private ArrayList<Double> dataCollected;
+
+	// Raw data to using for plotting Raw
 	private double[] dataToPlot;
+	// FFT data to use for plotting Range
+	private double[] fftData;
+
+	// Type of data to save
+	private boolean saveFFT = false;
 
 	// aChartEngine Objects for plotting and using Line Graph Renderer/Settings
 	GraphicalView mChartView;
@@ -79,8 +87,8 @@ public class MainActivity extends Activity {
 	XYMultipleSeriesRenderer mRenderer;
 	PlotSettings plot = new PlotSettings();
 
-	
-	
+
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -151,18 +159,18 @@ public class MainActivity extends Activity {
 			// want to redraw
 		}
 	}
-	
+
 	/** Saves resource states when orientation is changed instead of being reset */
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
-	    super.onConfigurationChanged(newConfig);
+		super.onConfigurationChanged(newConfig);
 
-	    // Checks the orientation of the screen
-	    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-	        Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-	    } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-	        Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
-	    }
+		// Checks the orientation of the screen
+		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+		} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+			Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	private void setupChat() {
@@ -274,11 +282,12 @@ public class MainActivity extends Activity {
 				break;
 			case MESSAGE_READ:
 				byte[] readBuf = (byte[]) msg.obj;
+				
 				// construct a string from the valid bytes in the buffer
 				String readMessage = new String(readBuf, 0, msg.arg1);
-				
-		//		Double test = new Double(readMessage);	// 	WHAT IS THE RESULT OF THIS ??
-				
+
+				//		Double test = new Double(readMessage);	// 	WHAT IS THE RESULT OF THIS ??
+
 				// handles comma spliting for data as well other messages from Radar Kit
 				handleStringMsg(readMessage);
 				break;
@@ -296,7 +305,7 @@ public class MainActivity extends Activity {
 		}
 	};
 
-	
+
 
 
 
@@ -395,10 +404,6 @@ public class MainActivity extends Activity {
 		}
 		else {
 			dataCollected = myCommand.parseCommand(msg);
-//			for(int i=0; i<dataCollected.size(); i++) {
-//				double values = dataCollected.get(i);
-//				Log.i(TAG, i + " = " + values);
-//			}
 			dataControl(dataCollected);
 			plotData();
 		}
@@ -410,7 +415,7 @@ public class MainActivity extends Activity {
 	 * @param view the button that was pressed
 	 */
 	public void openArchive(View view) {
-//		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
+		//		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
 		Intent archiveIntent = new Intent(this, DisplayArchive.class);
 		startActivityForResult(archiveIntent, REQUEST_FILE_INFO);
 	}
@@ -433,7 +438,7 @@ public class MainActivity extends Activity {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
 			String line;
-				
+
 			while ((line = br.readLine()) != null) {
 				int comma = line.indexOf(',');
 
@@ -453,7 +458,7 @@ public class MainActivity extends Activity {
 		} 
 		catch (IOException e) {
 			Log.e("loadData()", "IOError");		// You'll need to add proper error handling here
-			
+
 		}	
 		dataControl(contents);
 		plotData();
@@ -468,6 +473,13 @@ public class MainActivity extends Activity {
 		dataToPlot = new double[size];
 		for(int i = 0; i < size; i++)
 			dataToPlot[i] = dataList.get(i);
+		
+		int avg = 0;
+		for(int i = 0; i <size; i++) 
+			avg += dataToPlot[i];
+		avg = avg/size;
+		for(int i = 0; i<size; i++)
+			dataToPlot[i] -= avg;
 	}
 
 
@@ -514,19 +526,23 @@ public class MainActivity extends Activity {
 	public void plotFFT(View view) {	
 		try {
 			fftPlot();
+			saveFFT = true;
 		} 
 		catch(NullPointerException e) {
 			Log.e("PlotFFTButton", "no data to plot");
 		}	
 	}
-	
+
+
+
 	/**
 	 * Calculates FFT data
 	 */
 	public void fftPlot() {
 		CalcFFT calculate = new CalcFFT();
-		double[] fftData = calculate.fft(dataToPlot);
+		fftData = calculate.fft(dataToPlot);
 
+		
 		mRenderer = plot.getFFTRenderer();
 
 		if (mChartView != null) {
@@ -558,12 +574,23 @@ public class MainActivity extends Activity {
 	 * @param data	Data to save in File Archive
 	 */	
 	public void saveFile() {	
-		String stringToSave = "";
+		String stringToSave = new String();
 		try{
+			Kind kind = Kind.RAW;
 			for (int i = 0; i<dataToPlot.length; i++) 
 				stringToSave += dataToPlot[i] + "\n";
+
+			if (saveFFT){
+				for (int i = 0; i<fftData.length; i++) 
+					stringToSave += fftData[i] + "\n";
+				kind = Kind.RANGE;
+				saveFFT = false;
+			}
 			NewFile save = new NewFile();
+			save.setKind(kind);
 			save.createFile(this, stringToSave);
+
+
 		}
 		catch(IOException e){
 			Log.e("MainActivity", "IOError");
@@ -581,8 +608,8 @@ public class MainActivity extends Activity {
 		// MAKE SURE THIS WORKS!
 		//saveFile(); // Saves file perminently
 	}	
-	
-	
+
+
 	/**
 	 * Signals to start collecting data from Radar kit.
 	 * @param butt1		Should only save this data temporarily (up to user if they want to saved perminentally)					

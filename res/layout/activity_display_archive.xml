@@ -58,6 +58,7 @@
                 android:visibility="invisible"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 			
+            <!-- General File Details -->
             <LinearLayout
                 android:id="@+id/file_info"
                 android:orientation="horizontal"
@@ -76,6 +77,32 @@
 				<!-- Information List w/ respect to Information Titles -->
 	            <TextView
 	                android:id="@+id/textView3"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1" 
+	                android:textIsSelectable="true"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />     
+            </LinearLayout>
+            
+            <!-- General File Details -->
+            <LinearLayout
+                android:id="@+id/radar_params"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+                
+                <!-- Radar Parameter Labels -->
+                <TextView
+	                android:id="@+id/paramLabels"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1" 
+	                android:textIsSelectable="true"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+                
+				<!-- Radar Parameter Details -->
+	            <TextView
+	                android:id="@+id/paramDetails"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:layout_weight="1" 

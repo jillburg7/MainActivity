@@ -11,23 +11,23 @@ import android.os.Environment;
 
 public class NewFile extends FileInfo {
 
+	private String root;
+	private File myDir;
+	private String name;
+	private Kind fileKind;
 	
-	public NewFile() {}
-	
-	public NewFile(String path) {
-		super(path);
+	public NewFile() {
+		root = Environment.getExternalStorageDirectory().toString(); 
+		myDir = new File(root + "/FMCW File Archive");	// name of directory
+		fileName();
+		fileKind = dataKind;
 	}
 	
-	
-	/**
-	 * 
-	 * @return date & time
-	 */
-	public String timeStamp() {
-		Date myDate = new Date();
-		return (DateFormat.getDateInstance().format(myDate) + " " + DateFormat.getTimeInstance().format(myDate));
-	}
 
+	private void fileName(){
+		Date date = dateCreated;
+		name = DateFormat.getDateInstance(DateFormat.SHORT).format(date) + "_" + dataKind;
+	}
 	
 	/**
 	 * 
@@ -36,10 +36,8 @@ public class NewFile extends FileInfo {
 	 * @throws IOException
 	 */
 	public void createFile(Context c, String string) throws IOException{
-		String root = Environment.getExternalStorageDirectory().toString();
-		File myDir = new File(root + "/FMCW File Archive");	// name of directory
 		
-		String fname = timeStamp() + ".txt";	// name of file
+		String fname = created + "_" + dataKind;	// name of file 
 		File file = new File (myDir, fname);
 		if (file.exists ()){
 			file.delete (); 

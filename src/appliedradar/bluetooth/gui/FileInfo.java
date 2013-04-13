@@ -5,57 +5,77 @@ import java.text.DateFormat;
 import java.util.Date;
 
 
-public class FileInfo extends File {
+public class FileInfo {// extends File {
 
-	private Kind dataKind;
-	private Date dateCreated;
-	private Date lastModified;
+	protected Kind dataKind;
+	protected Date dateCreated;
+	protected String created;
 	private Date lastOpened;
-	private static String somethingNeededHere;
-	
+	//	private static String somethingNeededHere;
+
 	public enum Kind{ RAW, RANGE };
-	
+
 	public FileInfo() {
-		super(somethingNeededHere);
+		dateCreated();
+		created = getDateCreated();
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param path
 	 */
 	public FileInfo(String path) {
-		super(path);
-		// TODO Auto-generated constructor stub
-		
+		dateCreated = new Date(new File(path).lastModified());
+		created = getDateCreated();
+
+	}
+
+	/**
+	 * 
+	 * @return date & time
+	 */
+	public Date getTimeStamp() {
+		Date myDate = new Date();
+		return myDate;
+	}
+
+	private void dateCreated() {
+		dateCreated = getTimeStamp();
+	}
+
+
+
+	/**
+	 * 
+	 * @return
+	 */
+	private String getDateCreated() {
+		return (DateFormat.getDateInstance(DateFormat.FULL).format(dateCreated) + " " +
+				DateFormat.getTimeInstance(DateFormat.SHORT).format(dateCreated));
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getKind() {
+		return "" + dataKind;
+	}
+
+	/**
+	 * 
+	 * @param someKind the Kind of data being Saved
+	 */
+	public void setKind(Kind someKind) {
+		dataKind = someKind;
+	}
+	
+	
+	/**
+	 * File header - first few lines of file will be parameter
+	 */
+	public void fileHeader() {
 		
 	}
 
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Date dateCreated() {
-		Date created = new Date(this.lastModified());
-		return created;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getDateCreated() {
-		Date created = new Date(this.lastModified());
-        String date = DateFormat.getDateInstance(DateFormat.FULL).format(created) + " " + DateFormat.getTimeInstance(DateFormat.SHORT).format(created);
-		return date;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Kind getKind() {
-		return dataKind;
-	}
-	
 }

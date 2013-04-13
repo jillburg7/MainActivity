@@ -33,6 +33,7 @@ public class DisplayArchive extends Activity {
 	private String filePath;
 	private String fileName;
 	public static String EXTRA_FILE_INFO = "file_info";
+	private int toDelete;
 
 
 	@Override
@@ -60,14 +61,11 @@ public class DisplayArchive extends Activity {
 				Uri.parse("file://" + Environment.getExternalStorageDirectory()))); 
 
 
-		//		for(int i = 0; i < mFileList.length; i++) {
-		//			fileName = mFileList[i].getName();
-		//		}
 		ListView list1 = (ListView) findViewById(R.id.list1);
 
 		ArrayAdapter<String> fileNames = new ArrayAdapter<String>(this, R.layout.file_name, mFiles);
 		
-		ArrayAdapter<File> fileAdapter = new ArrayAdapter<File>(this, R.layout.file_name, mFileList);
+//		ArrayAdapter<File> fileAdapter = new ArrayAdapter<File>(this, R.layout.file_name, mFileList);
 		list1.setAdapter(fileNames);
 		list1.setOnItemClickListener(mFileClickListener);
 		
@@ -96,27 +94,37 @@ public class DisplayArchive extends Activity {
 //			filePath = ((TextView) view).getText().toString();
 			fileName = ((TextView) view).getText().toString();
 			File file = mFileList[position];
-
+			
 			TextView infoLabels = (TextView) findViewById(R.id.textView2);
 			TextView info = (TextView) findViewById(R.id.textView3);
-
-
-			//			String absolutePath = file.getAbsolutePath();
-			//	        "AbsolutePath:    " + AbsolutePath + "\n"
+			TextView paramLabels = (TextView) findViewById(R.id.paramLabels);
+			TextView paramDetails = (TextView) findViewById(R.id.paramDetails);
+			
+//			String absolutePath = file.getAbsolutePath();
+//	        "AbsolutePath:    " + AbsolutePath + "\n"
 //			String path = file.getPath();
 			filePath = file.getPath();
 			String parent = file.getParent();
 //			String name = file.getName();
-		//	fileName = file.getName();
+//			String date = file.lastModified();
 			String size = "" + file.length();
 			FileInfo information = new FileInfo(filePath);
 
-			infoLabels.setText(	"Parent Path:" + "\n" + "Name:" + "\n" + "Date Created:" + "\n" + "Size:" );
-			info.setText( 	parent + "\n" + fileName + "\n" + information.getDateCreated() + "\n" + size);
+			infoLabels.setText("Parent Path:" + "\n" + "Name:" + "\n" + 
+								"Date Created:" + "\n" + "Size:" + "\n" + "Kind: ");
+			info.setText(	parent + "\n" + fileName + "\n" + 
+							information.created + "\n" + 
+							size + "\n" + 
+							information.getKind() + "\n");
 
+			paramLabels.setText("Parameter:");
+			paramDetails.setText("Important stuff goes here");
+			
 			findViewById(R.id.button_open).setVisibility(View.VISIBLE);
 			findViewById(R.id.button_delete).setVisibility(View.VISIBLE);
 			findViewById(R.id.information).setVisibility(View.VISIBLE);
+			
+			toDelete = position;
 		}
 	};
 
@@ -135,7 +143,11 @@ public class DisplayArchive extends Activity {
 	}
 
 	public void deleteFile(View view) {
-
+		Toast toast = Toast.makeText(getApplicationContext(), "Deleting " + fileName + "...", Toast.LENGTH_SHORT);
+		toast.show();
+		
+		File file = mFileList[toDelete];
+		file.delete();
 	}
 
 
