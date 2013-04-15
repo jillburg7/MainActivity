@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+    <issue id="ButtonStyle">
+        <ignore path="res/layout-large/main.xml" />
+    </issue>
     <issue id="NewApi">
         <ignore path="src/appliedradar/bluetooth/gui/Bluetooth_GUI.java" />
         <ignore path="src/appliedradar/bluetooth/gui/DisplayArchive.java" />

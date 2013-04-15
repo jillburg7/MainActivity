@@ -2,23 +2,59 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    
+
     <LinearLayout
         android:id="@+id/button_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal" >
+      <!-- android:attr = ?android:attr/buttonBarStyle -->    
+
+	 <Button
+            android:id="@+id/start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="startCollect"
+            android:text="@string/collect_data"
+            android:textSize="17sp"
+            android:visibility="visible" />
 
         <Button
+            android:id="@+id/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="stopCollect"
+            android:text="@string/stop_collecting"
+            android:textSize="17sp"
+            android:visibility="gone" />
+        
+        <Button
+            android:id="@+id/collect_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/collect_save"
+            android:textSize="17sp"
+            android:onClick="collectSave" />
+
+        <Button
+            android:id="@+id/button_load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="openArchive"
+            android:text="@string/load_data"
+            android:textSize="17sp" />
+		
+<!--         <Button
             android:id="@+id/start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="startCollect"
             android:text="@string/start"
-            android:textSize="22sp" />
-
+            android:textSize="22sp"  />
+		 style="?android:attr/buttonBarButtonStyle"
+        
         <Button
             android:id="@+id/stop"
             android:layout_width="wrap_content"
@@ -33,21 +69,22 @@
             android:layout_height="wrap_content"
             android:onClick="openArchive"
             android:text="@string/load_data"
-            android:textSize="22sp" />
-        
-<!--         <Button 
+            android:textSize="22sp" /> -->
+
+        <!--
+             <Button 
             android:id="@+id/plot_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/load_new"
             android:textSize="20sp"
-            android:onClick="plotData" /> -->
-        
+            android:onClick="plotData" />
+        -->
+
     </LinearLayout>
 
-    
-<!-- aChartEngine -->
-    
+    <!-- aChartEngine -->
+
     <RelativeLayout
         android:id="@+id/chart"
         android:layout_width="match_parent"
@@ -55,15 +92,14 @@
         android:layout_below="@+id/button_group"
         android:orientation="vertical" >
     </RelativeLayout>
-    
 
     <LinearLayout
-        android:orientation="horizontal"
         android:id="@+id/plotButtonGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true" >
+        android:orientation="horizontal" >
 
         <Button
             android:id="@+id/plot_button"
@@ -71,7 +107,7 @@
             android:layout_height="wrap_content"
             android:onClick="plotButton"
             android:text="@string/plot_data"
-            android:textSize="22sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/plotFFT_button"
@@ -79,15 +115,15 @@
             android:layout_height="wrap_content"
             android:onClick="plotFFT"
             android:text="@string/plot_FFT"
-            android:textSize="22sp"  />
-        
+            android:textSize="16sp" />
+
         <Button
-	        android:id="@+id/button_save"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:onClick="saveFile"
-	        android:text="@string/save_data"
-	        android:textSize="22sp"  /> 
+            android:id="@+id/button_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="saveFile"
+            android:text="@string/save_data"
+            android:textSize="17sp" />
     </LinearLayout>
 
 </RelativeLayout>

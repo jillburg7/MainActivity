@@ -18,6 +18,7 @@ public class FileInfo {// extends File {
 	public FileInfo() {
 		dateCreated();
 		created = getDateCreated();
+//		created = getFileDate();
 	}
 
 	/**
@@ -27,6 +28,7 @@ public class FileInfo {// extends File {
 	public FileInfo(String path) {
 		dateCreated = new Date(new File(path).lastModified());
 		created = getDateCreated();
+//		created = getFileDate();
 
 	}
 
@@ -37,6 +39,11 @@ public class FileInfo {// extends File {
 	public Date getTimeStamp() {
 		Date myDate = new Date();
 		return myDate;
+	}
+	
+	public String getFileDate() {
+		int date = DateFormat.YEAR_FIELD + DateFormat.MONTH_FIELD + DateFormat.DATE_FIELD;
+		return ("" + date + "_" + dataKind);
 	}
 
 	private void dateCreated() {
@@ -50,7 +57,7 @@ public class FileInfo {// extends File {
 	 * @return
 	 */
 	private String getDateCreated() {
-		return (DateFormat.getDateInstance(DateFormat.FULL).format(dateCreated) + " " +
+		return (DateFormat.getDateInstance(DateFormat.SHORT).format(dateCreated) + " " +
 				DateFormat.getTimeInstance(DateFormat.SHORT).format(dateCreated));
 	}
 
