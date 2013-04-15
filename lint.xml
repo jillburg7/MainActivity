@@ -2,6 +2,9 @@
 <lint>
     <issue id="ButtonStyle">
         <ignore path="res/layout-large/main.xml" />
+        <ignore path="res/layout-normal/main.xml" />
+        <ignore path="res/layout-xlarge/main.xml" />
+        <ignore path="res/layout/main.xml" />
     </issue>
     <issue id="NewApi">
         <ignore path="src/appliedradar/bluetooth/gui/Bluetooth_GUI.java" />

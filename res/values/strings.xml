@@ -14,8 +14,8 @@
     <string name="load_data">File Archive</string>
     <string name="save_data">Save</string>
     <string name="share_data">Share</string>
-    <string name="plot_data">Plot Raw Data</string>
-    <string name="plot_FFT">Plot FFT Data</string>
+    <string name="plot_data">Plot Raw</string>
+    <string name="plot_FFT">Plot Range</string>
     <string name="statistics_log">Statistics</string>
     <string name="collect_save">Collect/Save</string>
     <string name="stop_collecting">Stop Collecting</string>
