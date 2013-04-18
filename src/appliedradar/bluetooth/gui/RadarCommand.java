@@ -100,7 +100,7 @@ public class RadarCommand {
 
 	/** Command to START collecting data - used Main Activity */
 	public String startCollect() {
-		return "FREQ:SWEEP:RUN$\n";
+		return "syst:capt 512$";
 	}
 
 	/** Command to KILL data collection - used Main Activity */

@@ -481,6 +481,7 @@ public class BluetoothChatService {
 					// Read from the InputStream
 					bytes = mmInStream.read(buffer);
 
+					Log.i("BTService", "BT data received!!");
 					for(int j = 0; j < bytes; j++) {
 						byte value = buffer[j];
 						dataBuffer.add(value);

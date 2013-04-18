@@ -27,7 +27,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import appliedradar.bluetooth.gui.FileInfo.Kind;
 
 
 public class MainActivity extends Activity {
@@ -87,8 +86,10 @@ public class MainActivity extends Activity {
 	XYMultipleSeriesRenderer mRenderer;
 	PlotSettings plot = new PlotSettings();
 
-
-
+	/** Array of type shot for incoming radar kit data */
+	private short[] raw;
+	
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -284,12 +285,12 @@ public class MainActivity extends Activity {
 				byte[] readBuf = (byte[]) msg.obj;
 				
 				// construct a string from the valid bytes in the buffer
-				String readMessage = new String(readBuf, 0, msg.arg1);
+				//String readMessage = new String(readBuf, 0, msg.arg1);
 
 				//		Double test = new Double(readMessage);	// 	WHAT IS THE RESULT OF THIS ??
 
 				// handles comma spliting for data as well other messages from Radar Kit
-				handleStringMsg(readMessage);
+				handleStringMsg(readBuf);
 				break;
 			case MESSAGE_DEVICE_NAME:
 				// save the connected device's name
@@ -392,8 +393,8 @@ public class MainActivity extends Activity {
 		mChatService.connect(device, false);
 	}
 
-
-	private void handleStringMsg(String msg) {
+	/** Jill's code for separating data/parameter settings */
+	private void handleStringMsgPrev(String msg) {
 		int comma = msg.indexOf(',');
 
 		// readCommand sends string from radar to be "parsed" (does nothing),
@@ -407,6 +408,45 @@ public class MainActivity extends Activity {
 			dataControl(dataCollected);
 			plotData();
 		}
+	}
+	
+	/** new */
+	private void handleStringMsg(byte[] msg) {
+	//	byte[] byteArray = new byte[msg.length()];
+	//	byteArray = msg.getBytes();
+		int n = 0;
+//		short[] shorts = new short[msg.length/2];
+
+		raw = new short[msg.length/2];
+		for(int i = 0; i < msg.length; i+=2) {
+			raw[n] = (short)((msg[i] << 8) + (msg[i+1] & 0xff));
+			n++;
+		}
+		
+		int avg = 0;
+		for(int i = 0; i <n; i++) 
+			avg += raw[i];
+		avg = avg/n;
+		for(int i = 0; i<n; i++)
+			raw[i] -= avg;
+		
+		plotData();
+	}
+	
+	/** Evan's code */
+	private void handleStringMsgE(String msg) {
+//		List<String> data = new ArrayList<String>();
+//		//for(int z = 0; z < msg.length()/2; z = z+2){
+//		data = Arrays.asList(java.util.Arrays.toString(msg.split("(?<=\\G.)")));
+//		//}
+//		double value = 0;
+//		for(int x = 0; x < data.size(); x++){
+//			value = Double.parseDouble(data.get(x));
+//			dataCollected.add(value);
+//		}
+//		
+//		short[] shorts = new short[msg.length()/2];
+//		ByteBuffer.wrap(msg.getBytes()).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(shorts);
 	}
 
 
@@ -449,7 +489,7 @@ public class MainActivity extends Activity {
 					contents.add(value);
 				}
 				else {
-					handleStringMsg(line);
+					//handleStringMsg(line);
 					Log.i(TAG, "handleStringMsg()");
 					break;
 				}
@@ -496,14 +536,17 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Plots raw data on graph
+	 * Plots raw data of type double on graph
 	 */
 	public void plotData() {
 		mDataset = new XYMultipleSeriesDataset();
 		XYSeries dataSeries = new XYSeries("Tablet Data");
 
-		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
-			dataSeries.add(i, dataToPlot[i]);
+//		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
+//			dataSeries.add(i, dataToPlot[i]);
+		
+		for (int i=0; i<raw.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
+			dataSeries.add(i, raw[i]);
 		mDataset.addSeries(dataSeries);
 
 		mRenderer = plot.getMyDefaultRenderer();
@@ -517,7 +560,7 @@ public class MainActivity extends Activity {
 			mChartView.repaint();
 		}
 	}
-
+	
 
 	/**
 	 * Plot FFT Button
@@ -540,8 +583,14 @@ public class MainActivity extends Activity {
 	 */
 	public void fftPlot() {
 		CalcFFT calculate = new CalcFFT();
-		fftData = calculate.fft(dataToPlot);
+//		fftData = calculate.fft(dataToPlot);	// to plot data that is an array of type double[]
 
+		double [] rawDoub = new double[raw.length];
+		for(int i = 0; i < raw.length; i ++) {
+			rawDoub[i] = raw[i];
+		}
+
+		fftData = calculate.fft(rawDoub);
 		
 		mRenderer = plot.getFFTRenderer();
 
@@ -575,28 +624,68 @@ public class MainActivity extends Activity {
 	 */	
 	public void saveFile() {	
 		String stringToSave = new String();
+//		try{
+//			Kind kind = Kind.RAW;
+//			for (int i = 0; i<dataToPlot.length; i++) 
+//				stringToSave += dataToPlot[i] + "\n";
+//
+//			if (saveFFT){
+//				for (int i = 0; i<fftData.length; i++) 
+//					stringToSave += fftData[i] + "\n";
+//				kind = Kind.RANGE;
+//				saveFFT = false;
+//			}
+//			NewFile save = new NewFile();
+//			save.setKind(kind);
+//			save.createFile(this, stringToSave);
+//		}
+//		catch(IOException e){
+//			Log.e("MainActivity", "IOError");
+//		}
+		
 		try{
-			Kind kind = Kind.RAW;
-			for (int i = 0; i<dataToPlot.length; i++) 
-				stringToSave += dataToPlot[i] + "\n";
-
-			if (saveFFT){
+			Log.e("SaveFile()", "saved your file.....this time");
+//			Kind kind = Kind.RAW;
+			String kind = "";
+			if (!saveFFT){
+				for (int i = 0; i<raw.length; i++) 
+					stringToSave += raw[i] + "\n";
+				kind = "RAW";
+			}
+			else{
 				for (int i = 0; i<fftData.length; i++) 
 					stringToSave += fftData[i] + "\n";
-				kind = Kind.RANGE;
+				kind = "RANGE";
 				saveFFT = false;
 			}
 			NewFile save = new NewFile();
 			save.setKind(kind);
 			save.createFile(this, stringToSave);
-
-
+			Toast.makeText(this, "File Saved!", Toast.LENGTH_SHORT).show();
+		} catch(Exception f){
+			Log.e("SaveFile()", "iSuck");
 		}
-		catch(IOException e){
-			Log.e("MainActivity", "IOError");
-		}
+		
 	}
 
+	
+
+	/**
+	 * Signals to start collecting data from Radar kit.
+	 * @param butt1		Should only save this data temporarily (up to user if they want to saved perminentally)					
+	 */
+	public void startCollect(View butt1) {
+		try {
+			sendMessage(myCommand.startCollect());
+			Log.d(TAG, "start collecting data...");
+		}
+		catch (Exception e) {
+			Log.e("startCollect Button", "nothing to collect :(");
+		}
+		//		butt1.setVisibility(0);			// goes invisible onClick and stopCollect button should show up.
+	}
+
+	
 	/**
 	 * Signals to start collecting data from Radar kit. 
 	 * The raw data will be saved automatically.
@@ -608,18 +697,7 @@ public class MainActivity extends Activity {
 		// MAKE SURE THIS WORKS!
 		//saveFile(); // Saves file perminently
 	}	
-
-
-	/**
-	 * Signals to start collecting data from Radar kit.
-	 * @param butt1		Should only save this data temporarily (up to user if they want to saved perminentally)					
-	 */
-	public void startCollect(View butt1) {
-		sendMessage(myCommand.startCollect());
-		Log.d(TAG, "start collecting data...");
-		//		butt1.setVisibility(0);			// goes invisible onClick and stopCollect button should show up.
-	}
-
+	
 	public void stopCollect(View butt1_5) {
 		sendMessage(myCommand.stopCollect());
 		Log.d(TAG, "...stop collecting data");

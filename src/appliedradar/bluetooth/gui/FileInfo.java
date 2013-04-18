@@ -8,6 +8,7 @@ import java.util.Date;
 public class FileInfo {// extends File {
 
 	protected Kind dataKind;
+	protected String dataKindStr;
 	protected Date dateCreated;
 	protected String created;
 	private Date lastOpened;
@@ -41,9 +42,11 @@ public class FileInfo {// extends File {
 		return myDate;
 	}
 	
-	public String getFileDate() {
-		int date = DateFormat.YEAR_FIELD + DateFormat.MONTH_FIELD + DateFormat.DATE_FIELD;
-		return ("" + date + "_" + dataKind);
+	public String getFileName() {
+//		int date = DateFormat.YEAR_FIELD + DateFormat.MONTH_FIELD + DateFormat.DATE_FIELD;
+		String date = DateFormat.getDateInstance(DateFormat.MEDIUM).format(dateCreated);
+		String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(dateCreated);
+		return (date + "_" + time + "_" + dataKindStr);
 	}
 
 	private void dateCreated() {
@@ -77,6 +80,9 @@ public class FileInfo {// extends File {
 		dataKind = someKind;
 	}
 	
+	public void setKind(String someKind) {
+		dataKindStr = someKind;
+	}
 	
 	/**
 	 * File header - first few lines of file will be parameter

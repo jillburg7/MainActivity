@@ -1,5 +1,7 @@
 package appliedradar.bluetooth.gui;
 
+import android.util.Log;
+
 /**
  * Algorithm to calculate the FFT of an input data array of type double[].
  * Precondition: Accepts only one input of type double[] that holds the values of
@@ -15,6 +17,18 @@ public class CalcFFT {
 //	protected double[] fftData;
 
 
+	public double[] fft(short[] shortInput) {
+		try {
+			double[] array = fft(shortInput);
+			return array;
+		}
+		catch (Exception e) {
+			Log.e("CalcFFT.java", "I don't know how to function properly, grrrr...");
+			return null;
+		}
+	}
+	
+	
 	/**
 	 * Calculates the FFT of an array
 	 * @param inputArray	Input array

@@ -68,7 +68,7 @@
 
         <Button
             android:id="@+id/plot_button"
-            android:layout_width="90dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="plotButton"
             android:text="@string/plot_data"
@@ -84,11 +84,20 @@
 
         <Button
             android:id="@+id/button_save"
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="saveFile"
             android:text="@string/save_data"
             android:textSize="12sp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:textSize= "12sp"
+        android:text="Norm_Layout" />
 
 </RelativeLayout>

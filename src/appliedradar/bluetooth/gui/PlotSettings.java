@@ -10,9 +10,20 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.graphics.Color;
+import android.graphics.RectF;
 import android.util.Log;
 
-public class PlotSettings {
+public class PlotSettings {// extends GraphicalView {
+
+
+//	public PlotSettings(Context context, AbstractChart chart) {
+////		super(context, chart);
+//		// TODO Auto-generated constructor stub
+//	}
+
+	/** The zoom buttons rectangle. */
+	private RectF mZoomR = new RectF();
+
 
 	/**
 	 * sampling frequency in Hz
@@ -33,17 +44,18 @@ public class PlotSettings {
 		List<double[]> values = new ArrayList<double[]>(1);	// y-axis values
 
 		// Need to have just as many x values as y values
-		xAxis.add(new double[fftData.length]);	
-		values.add(new double[fftData.length]);
+		xAxis.add(new double[fftData.length/2]);	
+		values.add(new double[fftData.length/2]);
 
 		// Linearly-spaced x-axis values for data points, increment must be constant 
 		double increment = (endValue)/fftData.length;	// half of sampling freq/length of data
-		for(int i =0; i < fftData.length; i++) {
+		for(int i =0; i < (fftData.length/2); i++) {
 			xAxis.get(0)[i] = i * increment;
 			values.get(0)[i] = fftData[i];
 		}
-		
-		Log.e("PlotSettings", "here!");
+
+		Log.i("PlotSettings", "length of dataB4 = " + fftData.length);
+		Log.e("PlotSettings", "length of dataFFT = " + values.get(0).length);
 		// for the buildDataset method call:
 		rangeData = dataBuilder(titles, xAxis, values);
 		return rangeData;
@@ -74,8 +86,37 @@ public class PlotSettings {
 		}
 	}
 
-	
-	
+
+
+/*	@Override
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
+		//canvas.getClipBounds(mRect);
+//		int top = mRect.top;
+//		int left = mRect.left;
+//		int width = mRect.width();
+//		int height = mRect.height();
+//		if (mRenderer.isInScroll()) {
+//			top = 0;
+//			left = 0;
+//			width = getMeasuredWidth();
+//			height = getMeasuredHeight();
+//		}
+		mChart.draw(canvas, left, top, width, height, mPaint);
+		if (mRenderer != null && mRenderer.isZoomEnabled() && mRenderer.isZoomButtonsVisible()) {
+			mPaint.setColor(ZOOM_BUTTONS_COLOR);
+			zoomSize = Math.max(zoomSize, Math.min(width, height) / 7);
+			mZoomR.set(left + width - zoomSize * 3, top + height - zoomSize * 0.775f, left + width, top
+					+ height);
+			canvas.drawRoundRect(mZoomR, zoomSize / 3, zoomSize / 3, mPaint);
+			float buttonY = top + height - zoomSize * 0.625f;
+			canvas.drawBitmap(zoomInImage, left + width - zoomSize * 2.75f, buttonY, null);
+			canvas.drawBitmap(zoomOutImage, left + width - zoomSize * 1.75f, buttonY, null);
+			canvas.drawBitmap(fitZoomImage, left + width - zoomSize * 0.75f, buttonY, null);
+		}
+		mDrawn = true;
+	}*/
+
 
 	/**
 	 * Default dataset for initial app start-up
