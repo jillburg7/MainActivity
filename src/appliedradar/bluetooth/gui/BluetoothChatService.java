@@ -41,9 +41,7 @@ public class BluetoothChatService {
 	//	private static final UUID MY_UUID = 
 	//			UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");
 
-	//INSECURE	"8ce255c0-200a-11e0-ac64-0800200c9a66"
-	//SECURE	"fa87c0d0-afac-11de-8a39-0800200c9a66"
-	//SPP		"0001101-0000-1000-8000-00805F9B34FB"
+	
 
 	// Member fields
 	private final BluetoothAdapter mAdapter;
@@ -109,15 +107,6 @@ public class BluetoothChatService {
 			mAcceptThread = new AcceptThread();
 			mAcceptThread.start();
 		}
-
-		//		if (mSecureAcceptThread == null) {
-		//			mSecureAcceptThread = new AcceptThread(true);
-		//			mSecureAcceptThread.start();
-		//		}
-		//		if (mInsecureAcceptThread == null) {
-		//			mInsecureAcceptThread = new AcceptThread(false);
-		//			mInsecureAcceptThread.start();
-		//		}
 	}
 
 	/**
@@ -206,16 +195,6 @@ public class BluetoothChatService {
 			mAcceptThread = null;
 		}
 
-		//		if (mSecureAcceptThread != null) {
-		//			mSecureAcceptThread.cancel();
-		//			mSecureAcceptThread = null;
-		//		}
-		//
-		//		if (mInsecureAcceptThread != null) {
-		//			mInsecureAcceptThread.cancel();
-		//			mInsecureAcceptThread = null;
-		//		}
-
 		setState(STATE_NONE);
 	}
 
@@ -276,24 +255,6 @@ public class BluetoothChatService {
 		private final BluetoothServerSocket mmServerSocket;
 		private String mSocketType;
 
-		//		public AcceptThread(boolean secure) {
-		//			BluetoothServerSocket tmp = null;
-		//			mSocketType = secure ? "SPP":"Insecure: TABLET";
-		//
-		//			// Create a new listening server socket
-		//			try {
-		//				if (secure) {
-		//					tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SPP,
-		//							MY_UUID);
-		//				} else {
-		//					tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
-		//							NAME_TABLET, MY_UUID_TABLET);
-		//				}
-		//			} catch (IOException e) {
-		//				Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
-		//			}
-		//			mmServerSocket = tmp;
-		//		}
 
 		public AcceptThread() {
 			BluetoothServerSocket tmp = null;
@@ -387,10 +348,6 @@ public class BluetoothChatService {
 				//				if (secure) {
 				tmp = device.createRfcommSocketToServiceRecord(
 						MY_UUID);
-				//				} else {
-				//					tmp = device.createInsecureRfcommSocketToServiceRecord(
-				//							MY_UUID);
-				//				}
 			} catch (IOException e) {
 				Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e);
 			}
@@ -475,13 +432,15 @@ public class BluetoothChatService {
 			byte[] end = {69, 78, 68, 13, 10};
 			byte[] test = new byte[5];
 			boolean breakout = true;
+			
 			// Keep listening to the InputStream while connected
 			while (true) {
 				try {
-					// Read from the InputStream
+					// Read from the InputStream6t
 					bytes = mmInStream.read(buffer);
 
-					Log.i("BTService", "BT data received!!");
+					Log.i("BTService", "BT data received!!");	// to let us know if we can still communicate to radar
+
 					for(int j = 0; j < bytes; j++) {
 						byte value = buffer[j];
 						dataBuffer.add(value);

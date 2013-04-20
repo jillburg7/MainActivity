@@ -29,8 +29,6 @@ public class FileInfo {// extends File {
 	public FileInfo(String path) {
 		dateCreated = new Date(new File(path).lastModified());
 		created = getDateCreated();
-//		created = getFileDate();
-
 	}
 
 	/**

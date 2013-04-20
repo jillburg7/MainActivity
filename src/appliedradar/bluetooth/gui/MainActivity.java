@@ -283,14 +283,8 @@ public class MainActivity extends Activity {
 				break;
 			case MESSAGE_READ:
 				byte[] readBuf = (byte[]) msg.obj;
-				
-				// construct a string from the valid bytes in the buffer
-				//String readMessage = new String(readBuf, 0, msg.arg1);
-
-				//		Double test = new Double(readMessage);	// 	WHAT IS THE RESULT OF THIS ??
-
-				// handles comma spliting for data as well other messages from Radar Kit
-				handleStringMsg(readBuf);
+				Log.i("MESSAGE_READ", "Received stuff main");
+				handleMsg(readBuf); //
 				break;
 			case MESSAGE_DEVICE_NAME:
 				// save the connected device's name
@@ -410,44 +404,38 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	// boolean to decide whether we are receiving data or radar parameters (upon request)
+	private boolean commandInfo = false;
+	
+	
 	/** new */
-	private void handleStringMsg(byte[] msg) {
-	//	byte[] byteArray = new byte[msg.length()];
-	//	byteArray = msg.getBytes();
+	private void handleMsg(byte[] msg) {
 		int n = 0;
-//		short[] shorts = new short[msg.length/2];
 
 		raw = new short[msg.length/2];
-		for(int i = 0; i < msg.length; i+=2) {
+		for(int i = 0; i < (msg.length - 1); i+=2) {
 			raw[n] = (short)((msg[i] << 8) + (msg[i+1] & 0xff));
 			n++;
 		}
 		
-		int avg = 0;
-		for(int i = 0; i <n; i++) 
-			avg += raw[i];
-		avg = avg/n;
-		for(int i = 0; i<n; i++)
-			raw[i] -= avg;
-		
-		plotData();
+		int length = raw.length;
+		if (commandInfo == false) {
+			int avg = 0;
+			for(int i = 0; i < length; i++) 
+				avg += raw[i];
+			avg = avg/length;
+			for(int i = 0; i< length; i++)
+				raw[i] -= avg;
+			plotData();
+		}
+		else {
+			for(int i = 0; i < length; i++)
+				Log.i("Command Return", "Returned: " + raw[i]);
+			commandInfo = false;
+		}
+	
 	}
 	
-	/** Evan's code */
-	private void handleStringMsgE(String msg) {
-//		List<String> data = new ArrayList<String>();
-//		//for(int z = 0; z < msg.length()/2; z = z+2){
-//		data = Arrays.asList(java.util.Arrays.toString(msg.split("(?<=\\G.)")));
-//		//}
-//		double value = 0;
-//		for(int x = 0; x < data.size(); x++){
-//			value = Double.parseDouble(data.get(x));
-//			dataCollected.add(value);
-//		}
-//		
-//		short[] shorts = new short[msg.length()/2];
-//		ByteBuffer.wrap(msg.getBytes()).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(shorts);
-	}
 
 
 	/**
@@ -455,7 +443,7 @@ public class MainActivity extends Activity {
 	 * @param view the button that was pressed
 	 */
 	public void openArchive(View view) {
-		//		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
 		Intent archiveIntent = new Intent(this, DisplayArchive.class);
 		startActivityForResult(archiveIntent, REQUEST_FILE_INFO);
 	}
@@ -669,7 +657,6 @@ public class MainActivity extends Activity {
 	}
 
 	
-
 	/**
 	 * Signals to start collecting data from Radar kit.
 	 * @param butt1		Should only save this data temporarily (up to user if they want to saved perminentally)					
@@ -692,8 +679,8 @@ public class MainActivity extends Activity {
 	 * @param butt2 button pressed
 	 */
 	public void collectSave(View butt2) {
-		sendMessage(myCommand.startCollect());
-
+		sendMessage(myCommand.getRampTime());
+		commandInfo = true;
 		// MAKE SURE THIS WORKS!
 		//saveFile(); // Saves file perminently
 	}	
