@@ -406,7 +406,8 @@ public class MainActivity extends Activity {
 	
 	// boolean to decide whether we are receiving data or radar parameters (upon request)
 	private boolean commandInfo = false;
-	
+	private boolean getdefaults = false;
+	private int defaultarray = 0;
 	
 	/** new */
 	private void handleMsg(byte[] msg) {
@@ -431,13 +432,83 @@ public class MainActivity extends Activity {
 		else {
 			for(int i = 0; i < length; i++)
 				Log.i("Command Return", "Returned: " + raw[i]);
-			commandInfo = false;
+			//beging evan additions//
+			if (getdefaults == true){   //Loop to get all defaults at once
+				if(defaultarray < 5){
+					getDefaults(defaultarray, msg);
+					defaultarray++;
+					commandInfo = true;
+					defaultCommands();
+				}
+			} else {					   //Loop to get single default
+				getDefaults(defaultarray, msg);
+				//end evan additions//
+				commandInfo = false;
+			}
 		}
-	
 	}
 	
+	String[] defaults = new String[5];   
+	// 1. Ramptime
+	// 2. Start Freq
+	// 3. Stop Freq
+	// 4. Sweep Type
+	// 5. Ref Div
+
+	public void getDefaults(int defaultarray, byte[] msg){
+		String arrayele = new String(msg);
+		defaults[defaultarray] = arrayele;
+		
+		for (int i = 0; i < defaults.length; i++)
+			Log.i("Parameters", "Returned string array " + defaults[i]);
+		if (defaultarray == 4){				//Check to make sure all defaults are gotten. Otherwise gets the missing one.
+			getdefaults = false;
+			if (defaults[0] == null){
+				defaultarray = 0;
+				commandInfo = true;
+				defaultCommands();
+			} else if (defaults[1] == null){
+				defaultarray = 1;
+				commandInfo = true;
+				defaultCommands();
+			} else if (defaults[2] == null){
+				defaultarray = 2;
+				commandInfo = true;
+				defaultCommands();
+			} else if (defaults[3] == null){
+				defaultarray = 3;
+				commandInfo = true;
+				defaultCommands();
+			} else if (defaults[4] == null){
+				defaultarray = 4;
+				commandInfo = true;
+				defaultCommands();
+			}
+		}
+	}
 
 
+	public void defaultCommands(){
+		switch(defaultarray){
+		case 0:
+			sendMessage(myCommand.getRampTime());
+			break;
+		case 1:
+			sendMessage(myCommand.getstartfreq());
+			break;
+		case 2:
+			sendMessage(myCommand.getstopfreq());
+			break;
+		case 3:
+			sendMessage(myCommand.getsweeptype());
+			break;
+		case 4:
+			sendMessage(myCommand.getrefdiv());
+			break;
+		}
+	}
+		
+		
 	/**
 	 * 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
 	 * @param view the button that was pressed
@@ -650,7 +721,7 @@ public class MainActivity extends Activity {
 			save.setKind(kind);
 			save.createFile(this, stringToSave);
 			Toast.makeText(this, "File Saved!", Toast.LENGTH_SHORT).show();
-		} catch(Exception f){
+		} catch(Exception e) {
 			Log.e("SaveFile()", "iSuck");
 		}
 		
@@ -679,8 +750,10 @@ public class MainActivity extends Activity {
 	 * @param butt2 button pressed
 	 */
 	public void collectSave(View butt2) {
-		sendMessage(myCommand.getRampTime());
+//		sendMessage(myCommand.getRampTime());
 		commandInfo = true;
+		getdefaults = true;
+		defaultCommands();
 		// MAKE SURE THIS WORKS!
 		//saveFile(); // Saves file perminently
 	}	
