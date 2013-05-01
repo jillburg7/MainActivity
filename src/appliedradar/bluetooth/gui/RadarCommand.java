@@ -51,7 +51,7 @@ public class RadarCommand {
 		arrayValues = new ArrayList<Double>();
 		double value;
 		int elements = stringList.size();
-		for (int i=0; i<elements; i++) {
+		for (int i = 0; i < elements; i++) {
 			value = Double.parseDouble(stringList.get(i));
 			arrayValues.add(value);
 		}
@@ -60,44 +60,48 @@ public class RadarCommand {
 
 	/** Command to get current starting freq */
 	public String getstartfreq() {
-		return "FREQ:SWEEP:START?$\n";
+		return "FREQ:SWEEP:START?$";
 	}
 
 	/** Command to set current starting freq */
 	public String setstartfreq(int input) {
-		return "FREQ:SWEEP:START " + String.valueOf(input) + "$\n";
+		return "FREQ:SWEEP:START " + String.valueOf(input) + "$";
 	}
 
 	/** Command to get current stoping freq */
 	public String getstopfreq() {
-		return "FREQ:SWEEP:STOP?$\n";
+		return "FREQ:SWEEP:STOP?$";
 	}
 
 	/** Command to set current stoping freq */
 	public String setstopfreq(int input) {
-		return "FREQ:SWEEP:STOP " + String.valueOf(input) + "$\n";
+		return "FREQ:SWEEP:STOP " + String.valueOf(input) + "$";
 	}
 
 	/** Command to get current sweep type */
 	public String getsweeptype() {
-		return "FREQ:SWEEP:TYPE?$\n";
+		return "FREQ:SWEEP:TYPE?$";
 	}
 
 	/** Command to set current sweep type */
 	public String setsweeptype(int input) {
-		return "FREQ:SWEEP:TYPE " + String.valueOf(input) + "$\n";
+		return "FREQ:SWEEP:TYPE " + String.valueOf(input) + "$";
 	}
 
 	/** Command to get current ramp time setting */
 	public String getRampTime() {
-		return "FREQ:SWEEP:RAMPTIME?$\n";
+		return "FREQ:SWEEP:RAMPTIME?$";
 	}
 
 	/** Command to set the ramp time to something other than the default */
 	public String setRampTime(int input) { 
-		return "FREQ:SWEEP:RAMPTIME " + String.valueOf(input) + "$\n";// user input
+		return "FREQ:SWEEP:RAMPTIME " + String.valueOf(input) + "$";// user input
 	}
 
+	/** Command to set the ramp time to something other than the default */
+	public String setRampTime(String input) { 
+		return "FREQ:SWEEP:RAMPTIME " + input + "$";// user input
+	}
 	/** Command to START collecting data - used Main Activity */
 	public String startCollect() {
 		return "syst:capt 512$";
@@ -105,22 +109,22 @@ public class RadarCommand {
 
 	/** Command to KILL data collection - used Main Activity */
 	public String stopCollect() {
-		return "FREQ:SWEEP:KILL$\n";
+		return "FREQ:SWEEP:KILL$";
 	}
 
 	/** Command to get current ref div */
 	public String getrefdiv() {
-		return "FREQ:REF:DIV?$\n";
+		return "FREQ:REF:DIV?$";
 	}
 
 	/** Command to set current ref div */
 	public String setrefdiv(int input) {
-		return "FREQ:REF:DIV " + String.valueOf(input) + "$\n";
+		return "FREQ:REF:DIV " + String.valueOf(input) + "$";
 	}
 
 	/** Command to trigger */
 	public String trigger(int input) {
-		return "FREQ:SWEEP:TRIGGER$\n";
+		return "FREQ:SWEEP:TRIGGER$";
 	}
 
 } // end of RadarCommand

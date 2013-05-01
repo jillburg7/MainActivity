@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity" >
 
-	<Button
-        android:id="@+id/rampTime"
+    <Button
+        android:id="@+id/getRampTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -14,147 +14,78 @@
         android:text="@string/rampTime" />
 
     <Button
-        android:id="@+id/readState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/LinearLayout"
-        android:onClick="readState"
-        android:text="@string/readState" />
-
-    <Button
         android:id="@+id/sweepType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/rampTime"
+        android:layout_toRightOf="@+id/getRampTime"
         android:onClick="getSweepType"
         android:text="@string/sweepType" />
-    
-	<LinearLayout
-	    android:id="@+id/LinearLayout"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true"
-	    android:orientation="vertical" >
-	    
-	    <TextView
-	        android:id="@+id/captureTimeOptions"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/captureTime"
-	        android:textAppearance="?android:attr/textAppearanceLarge" />
-	    
-		<TextView
-	        android:id="@+id/captureTimeSetting"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/currentSetting"
-	        android:textAppearance="?android:attr/textAppearanceMedium" />
-	    
-		<SeekBar
-	        android:id="@+id/seekBar1"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:max="10000"
-	        android:progress="5000" />
-	    
-		<TextView
-		    android:id="@+id/progress"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:textAppearance="?android:attr/textAppearanceMedium"
-		    android:visibility="visible" />
 
-		<TextView
-		    android:id="@+id/bandwidthOptions"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:text="@string/bandwidthSetting"
-		    android:textAppearance="?android:attr/textAppearanceLarge" />
-	
-	    <TextView
-	        android:id="@+id/bandwidthSetting"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/currentSetting"
-	        android:textAppearance="?android:attr/textAppearanceMedium" />
-	    
-	    <TextView
-		    android:id="@+id/bandwidth"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:textAppearance="?android:attr/textAppearanceMedium"
-		    android:visibility="visible" />
-	</LinearLayout>
-
-
-	
-</RelativeLayout>
-	
-
-
-
-
-
-
-<!--     <TextView
-        android:id="@+id/bluetoothSettings"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="86dp"
-        android:text="@string/bluetoothSettings"
-        android:textSize="24sp" />
+        android:orientation="vertical"
+        android:layout_below="@+id/getRampTime" >
 
-    <Switch
-        android:id="@+id/BTswitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/bluetoothSettings"
-        android:text="@string/bluetoothToggle"
-        android:textSize="20sp"
-        tools:ignore="NewApi" /> -->
-
-
-
-
-<!--     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/readState"
-        android:layout_below="@+id/seekBar1"
-        android:orientation="horizontal" >
-
-        <ListView
-            android:id="@+id/in"
+        <Button
+            android:id="@+id/setRampTime"
             android:layout_width="wrap_content"
-            android:layout_height="416dp"
-            android:layout_weight="1"
-            android:stackFromBottom="true"
-            android:transcriptMode="alwaysScroll" >
-            android:layout_above="@+id/layout"
-        </ListView>
-		<LinearLayout
-		    android:id="@+id/layout"
-		    android:orientation="horizontal"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"  >
-	        android:layout_below="@+id/in" 
-	        
-	        <EditText 
-	            android:id="@+id/edit_text_out"
-	            android:layout_width="0dip"
-	            android:layout_height="wrap_content"
-	            android:layout_weight="1"
-	            android:layout_gravity="bottom" />
-	        android:layout_below="@+id/in" 
-	        
-	        <Button android:id="@+id/button_send"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/send" />
-	        android:layout_below="@+id/in" 
-	    </LinearLayout>
-	 </LinearLayout> -->
+            android:layout_height="wrap_content"
+            android:onClick="setRampTime"
+            android:text="@string/setRampTime" />
+        
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" />
+
+        <Button
+            android:id="@+id/send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="72dp"
+            android:onClick="send"
+            android:text="@string/send2" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/captureTimeOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/captureTime"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/captureTimeSetting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/currentSetting"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <SeekBar
+            android:id="@+id/seekBar1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10000"
+            android:progress="5000" />
+
+        <TextView
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="visible" />
+    </LinearLayout>
+    
+</RelativeLayout>

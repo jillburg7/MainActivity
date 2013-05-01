@@ -2,11 +2,13 @@ package appliedradar.bluetooth.gui;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 
 public class FileInfo {// extends File {
 
+	protected String fileName;
 	protected Kind dataKind;
 	protected String dataKindStr;
 	protected Date dateCreated;
@@ -52,6 +54,20 @@ public class FileInfo {// extends File {
 	}
 
 
+	public String setfileName() {
+	    // date and time
+		final Calendar c = Calendar.getInstance();
+		int mYear = c.get(Calendar.YEAR);
+		int mMonth = c.get(Calendar.MONTH);
+		int mDay = c.get(Calendar.DAY_OF_MONTH);
+		int mHour = c.get(Calendar.HOUR_OF_DAY);
+		int mMinute = c.get(Calendar.MINUTE);
+		
+		
+//		StringBuilder string = new StringBuilder().append();
+		return fileName;
+	}
+	
 
 	/**
 	 * 

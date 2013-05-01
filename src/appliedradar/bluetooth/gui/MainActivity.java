@@ -53,6 +53,8 @@ public class MainActivity extends Activity {
 	public static final int REQUEST_RADAR_INFO = 4;
 	public static final int REQUEST_FILE_INFO = 5;
 
+	public static char[] chardefs = null;
+
 	// Name of the connected device
 	private String mConnectedDeviceName = null;
 	// Array adapter for the conversation thread
@@ -88,8 +90,12 @@ public class MainActivity extends Activity {
 
 	/** Array of type shot for incoming radar kit data */
 	private short[] raw;
-	
-	
+
+	// boolean to decide whether we are receiving data or radar parameters (upon request)
+	private boolean commandInfo = false;
+	private boolean getdefaults = false;
+	private int defaultarray = 0;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -387,49 +393,31 @@ public class MainActivity extends Activity {
 		mChatService.connect(device, false);
 	}
 
-	/** Jill's code for separating data/parameter settings */
-	private void handleStringMsgPrev(String msg) {
-		int comma = msg.indexOf(',');
 
-		// readCommand sends string from radar to be "parsed" (does nothing),
-		// just returns string to MainActivity to display in LogCat window.
-		if (comma == -1) {
-			String returned = myCommand.readCommand(msg);
-			Log.i(TAG, returned);			//used to display in log the message after it is parced
-		}
-		else {
-			dataCollected = myCommand.parseCommand(msg);
-			dataControl(dataCollected);
-			plotData();
-		}
-	}
-	
-	// boolean to decide whether we are receiving data or radar parameters (upon request)
-	private boolean commandInfo = false;
-	private boolean getdefaults = false;
-	private int defaultarray = 0;
-	
+
+
 	/** new */
 	private void handleMsg(byte[] msg) {
-		int n = 0;
+		int n = 0; 	// size of new byte array corresponding to 2-bytes of data per value 
+		// using bit-manipulation :
 
 		raw = new short[msg.length/2];
 		for(int i = 0; i < (msg.length - 1); i+=2) {
-			raw[n] = (short)((msg[i] << 8) + (msg[i+1] & 0xff));
-			n++;
+			raw[n] = (short)((msg[i] << 8) + (msg[i+1] & 0xff));	// bit-manipulation
+			n++; 
 		}
-		
+
 		int length = raw.length;
-		if (commandInfo == false) {
+		if (commandInfo == false) {	// if its is not radar parameter information => data
 			int avg = 0;
 			for(int i = 0; i < length; i++) 
 				avg += raw[i];
 			avg = avg/length;
 			for(int i = 0; i< length; i++)
 				raw[i] -= avg;
-			plotData();
+			plotData();	
 		}
-		else {
+		else {	// otherwise it is radar parameters settings (requested)
 			for(int i = 0; i < length; i++)
 				Log.i("Command Return", "Returned: " + raw[i]);
 			//beging evan additions//
@@ -437,17 +425,17 @@ public class MainActivity extends Activity {
 				if(defaultarray < 5){
 					getDefaults(defaultarray, msg);
 					defaultarray++;
-					commandInfo = true;
+					commandInfo = true;	// 
 					defaultCommands();
 				}
 			} else {					   //Loop to get single default
 				getDefaults(defaultarray, msg);
 				//end evan additions//
-				commandInfo = false;
+				commandInfo = false;	//
 			}
 		}
 	}
-	
+
 	String[] defaults = new String[5];   
 	// 1. Ramptime
 	// 2. Start Freq
@@ -455,10 +443,15 @@ public class MainActivity extends Activity {
 	// 4. Sweep Type
 	// 5. Ref Div
 
+	/**
+	 * 
+	 * @param defaultarray
+	 * @param msg
+	 */
 	public void getDefaults(int defaultarray, byte[] msg){
 		String arrayele = new String(msg);
 		defaults[defaultarray] = arrayele;
-		
+
 		for (int i = 0; i < defaults.length; i++)
 			Log.i("Parameters", "Returned string array " + defaults[i]);
 		if (defaultarray == 4){				//Check to make sure all defaults are gotten. Otherwise gets the missing one.
@@ -487,7 +480,9 @@ public class MainActivity extends Activity {
 		}
 	}
 
-
+	/**
+	 * 
+	 */
 	public void defaultCommands(){
 		switch(defaultarray){
 		case 0:
@@ -507,14 +502,13 @@ public class MainActivity extends Activity {
 			break;
 		}
 	}
-		
-		
+
+
 	/**
 	 * 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
 	 * @param view the button that was pressed
 	 */
 	public void openArchive(View view) {
-//		Toast.makeText(this, "Selected Load Data", Toast.LENGTH_SHORT).show();
 		Intent archiveIntent = new Intent(this, DisplayArchive.class);
 		startActivityForResult(archiveIntent, REQUEST_FILE_INFO);
 	}
@@ -572,7 +566,7 @@ public class MainActivity extends Activity {
 		dataToPlot = new double[size];
 		for(int i = 0; i < size; i++)
 			dataToPlot[i] = dataList.get(i);
-		
+
 		int avg = 0;
 		for(int i = 0; i <size; i++) 
 			avg += dataToPlot[i];
@@ -601,9 +595,9 @@ public class MainActivity extends Activity {
 		mDataset = new XYMultipleSeriesDataset();
 		XYSeries dataSeries = new XYSeries("Tablet Data");
 
-//		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
-//			dataSeries.add(i, dataToPlot[i]);
-		
+		//		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
+		//			dataSeries.add(i, dataToPlot[i]);
+
 		for (int i=0; i<raw.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
 			dataSeries.add(i, raw[i]);
 		mDataset.addSeries(dataSeries);
@@ -619,7 +613,7 @@ public class MainActivity extends Activity {
 			mChartView.repaint();
 		}
 	}
-	
+
 
 	/**
 	 * Plot FFT Button
@@ -642,7 +636,7 @@ public class MainActivity extends Activity {
 	 */
 	public void fftPlot() {
 		CalcFFT calculate = new CalcFFT();
-//		fftData = calculate.fft(dataToPlot);	// to plot data that is an array of type double[]
+		//		fftData = calculate.fft(dataToPlot);	// to plot data that is an array of type double[]
 
 		double [] rawDoub = new double[raw.length];
 		for(int i = 0; i < raw.length; i ++) {
@@ -650,7 +644,7 @@ public class MainActivity extends Activity {
 		}
 
 		fftData = calculate.fft(rawDoub);
-		
+
 		mRenderer = plot.getFFTRenderer();
 
 		if (mChartView != null) {
@@ -661,6 +655,7 @@ public class MainActivity extends Activity {
 		} else {
 			mChartView.repaint();
 		}
+		//		ActivityManager.getMyMemoryState(null);
 	}
 
 
@@ -683,28 +678,10 @@ public class MainActivity extends Activity {
 	 */	
 	public void saveFile() {	
 		String stringToSave = new String();
-//		try{
-//			Kind kind = Kind.RAW;
-//			for (int i = 0; i<dataToPlot.length; i++) 
-//				stringToSave += dataToPlot[i] + "\n";
-//
-//			if (saveFFT){
-//				for (int i = 0; i<fftData.length; i++) 
-//					stringToSave += fftData[i] + "\n";
-//				kind = Kind.RANGE;
-//				saveFFT = false;
-//			}
-//			NewFile save = new NewFile();
-//			save.setKind(kind);
-//			save.createFile(this, stringToSave);
-//		}
-//		catch(IOException e){
-//			Log.e("MainActivity", "IOError");
-//		}
-		
+
 		try{
 			Log.e("SaveFile()", "saved your file.....this time");
-//			Kind kind = Kind.RAW;
+			//			Kind kind = Kind.RAW;
 			String kind = "";
 			if (!saveFFT){
 				for (int i = 0; i<raw.length; i++) 
@@ -724,10 +701,10 @@ public class MainActivity extends Activity {
 		} catch(Exception e) {
 			Log.e("SaveFile()", "iSuck");
 		}
-		
+
 	}
 
-	
+
 	/**
 	 * Signals to start collecting data from Radar kit.
 	 * @param butt1		Should only save this data temporarily (up to user if they want to saved perminentally)					
@@ -743,21 +720,21 @@ public class MainActivity extends Activity {
 		//		butt1.setVisibility(0);			// goes invisible onClick and stopCollect button should show up.
 	}
 
-	
+
 	/**
 	 * Signals to start collecting data from Radar kit. 
 	 * The raw data will be saved automatically.
 	 * @param butt2 button pressed
 	 */
 	public void collectSave(View butt2) {
-//		sendMessage(myCommand.getRampTime());
+		//		sendMessage(myCommand.getRampTime());
 		commandInfo = true;
 		getdefaults = true;
 		defaultCommands();
 		// MAKE SURE THIS WORKS!
 		//saveFile(); // Saves file perminently
 	}	
-	
+
 	public void stopCollect(View butt1_5) {
 		sendMessage(myCommand.stopCollect());
 		Log.d(TAG, "...stop collecting data");

@@ -56,12 +56,15 @@
     <string name="changeCaptureTime">Change Capture Time</string>
     <string name="changeBandwidth">Change Bandwidth</string>
     <string name="changeRampTime">Change Ramp Time</string>
-    <string name="readState">Read State Specifications</string>
+    <string name="setRampTime">Set Ramp Time</string>
     <string name="seekbar_from_touch">from touch</string>
    
     
     
-    
-    
+    <!-- Dialogs -->
+	<string name="alert_dialog_ok">OK</string>
+	<string name="alert_dialog_cancel">Cancel</string>
+	<string name="alert_dialog_two_buttons_title"> user input :)</string>
+	<string name="send2">Send</string>
 
 </resources>
