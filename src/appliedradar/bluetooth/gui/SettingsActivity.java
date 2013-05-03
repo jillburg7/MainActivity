@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -16,21 +17,36 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SettingsActivity extends Activity implements OnSeekBarChangeListener {
 	// Debug-use
 	private static final String TAG = "SettingsActivity";
-
+	private static final boolean D = true;
+	
 	public static final String EXTRA_RADAR_COMMAND = "default_capture_time";  
+	
+	/**
+	 * 
+	 */
+	static final String RAMP_TIME = "ramptime";
+	static final String START_FREQ = "startFreq";
+	static final String STOP_FREQ = "stopFreq";
+	static final String SWEEP_TYPE = "sweepType";
+	static final String REF_DIV = "refDiv";
 
 	public String mCaptureTime;
 	public String mBandwidth;
-	public String mRampTime;
+	public int mRampTime;
+	public int mStartFreq;
+	public int mStopFreq;
+	public int mSweepType;
+	public int mRefDiv;
 
 	SeekBar mSeekBar;
 	TextView mProgressText;
 	TextView mBandwidthText;
-	DialogFragment jiggs;
+	DialogFragment userInput;
 
 	// Dialog display
 	private TextView mDialogDisplay;
@@ -40,11 +56,8 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		onRestoreInstanceState(savedInstanceState);
-		//		addPreferencesFromResource(R.xml.preferences);
-
 		setContentView(R.layout.activity_settings);
-
+		
 		mDialogDisplay = (TextView) findViewById(R.id.textView);
 
 		// Show the Up button in the action bar.
@@ -54,12 +67,81 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		mSeekBar.setOnSeekBarChangeListener(this);
 		mProgressText = (TextView)findViewById(R.id.progress);
 
-//		mBandwidthText = (TextView)findViewById(R.id.bandwidth);
-
+		
+		 // Check whether we're recreating a previously destroyed instance
+	    if (savedInstanceState != null) {
+	        // Restore value of members from saved state
+	    	mRampTime = savedInstanceState.getInt(RAMP_TIME);
+//	        mCurrentLevel = savedInstanceState.getInt(STATE_LEVEL);
+	    } else {
+	        // Probably initialize members with default values for a new instance
+	    	mRampTime = 0;
+	    }
+		
 		updateDisplay();
-
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		if(D) Log.e(TAG, "++ ON START ++");
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+	    // Save the user's current parameters state
+	    savedInstanceState.putInt(RAMP_TIME, mRampTime);
+//	    savedInstanceState.putInt(START_FREQ, mStartFreq);
+	   
+	    // Always call the superclass so it can save the view hierarchy state
+	    super.onSaveInstanceState(savedInstanceState);
+	}
+	
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+    
+	@Override
+	public synchronized void onPause() {
+		super.onPause();
+		if(D) Log.e(TAG, "- ON PAUSE -");
+	}
+    
+	@Override
+	public void onStop() {
+		super.onStop();
+		if(D) Log.e(TAG, "-- ON STOP --");
+	}
+	
+	/** Saves resource states when orientation is changed instead of being reset */
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+
+		// Checks the orientation of the screen
+		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+		} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+			Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if(D) Log.e(TAG, "--- ON DESTROY ---");
+	}
+
+	
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+	  super.onRestoreInstanceState(savedInstanceState);
+	  // Restore UI state from the savedInstanceState.
+	  // This bundle has also been passed to onCreate.
+	  mRampTime = savedInstanceState.getInt(RAMP_TIME);
+	}
+	
 	/**
 	 * Dialog Fragments for user input
 	 */
@@ -114,7 +196,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	    // Do stuff here.
 	    Log.i("FragmentAlertDialog", "Positive click!");
 	    Editable value = input.getText();
-	    mRampTime = value.toString();
+	    mRampTime = Integer.parseInt(value.toString());
 	    updateDisplay();
 	}
 
@@ -181,6 +263,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		Intent intent2 = new Intent();
 		intent2.putExtra(EXTRA_RADAR_COMMAND, rampTime);
 		setResult(Activity.RESULT_OK, intent2);
+//		startMainActivity(intent2);
 //		finish();
 	}
 	
@@ -229,7 +312,10 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 
 
 
-
+    public void startMainActivity(Intent todo) {
+        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
 
 
 
@@ -238,7 +324,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	 * @param view	button clicked
 	 */
 	public void setRampTime(View view) {
-		jiggs = new MyAlertDialogFragment();
+		userInput = new MyAlertDialogFragment();
 		showDialog();
 	}
 

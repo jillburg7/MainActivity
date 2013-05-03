@@ -113,7 +113,7 @@ public class RadarCommand {
 	}
 
 	/** Command to get current ref div */
-	public String getrefdiv() {
+	public String getRefDiv() {
 		return "FREQ:REF:DIV?$";
 	}
 

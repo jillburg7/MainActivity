@@ -93,10 +93,9 @@ public class MainActivity extends Activity {
 
 	// boolean to decide whether we are receiving data or radar parameters (upon request)
 	private boolean commandInfo = false;
-	// 
-	private boolean getDefaults = false;
-	private int defaultarray = 0;
-	
+	/**
+	 * 
+	 */
 	public String receiveBuffer;
 
 
@@ -415,7 +414,6 @@ public class MainActivity extends Activity {
 
 		int length = raw.length;
 		
-		
 		if (commandInfo == false) {	// if its is not radar parameter information => data
 			int avg = 0;
 			for(int i = 0; i < length; i++) 
@@ -428,28 +426,12 @@ public class MainActivity extends Activity {
 		else {					// otherwise it is radar parameter settings (requested)
 			int msgCount = 0;
 			receiveBuffer = new String(msg);
-			Log.i("Parameter"+ msgCount++, new String(msg));
+			Log.i("Parameter"+ msgCount, new String(msg));
 			currentParameters[msgCount++] = receiveBuffer; 
 			if (msgCount == 4) {
 				msgCount = 0;
 				commandInfo = false;
 			}
-//			for(int i = 0; i < length; i++)
-//				Log.i("Command Return", "Returned: " + raw[i]);		// ??????????
-//			//beginning evan additions//
-//			if (getDefaults == true) {   	// Loop to get all defaults at once
-//				if(defaultarray < 5) {
-//					getDefaults(defaultarray, msg);
-//					defaultarray++;
-//					commandInfo = true;	// ?????????????????????
-//					defaultCommands();
-//				}
-//			} else {					   // Loop to get single default
-//				Log.i("RampTime", new String(msg));
-////				getDefaults(defaultarray, msg);
-//				//end evan additions//
-//				commandInfo = false;	//
-//			}
 		}
 	}
 
@@ -473,66 +455,20 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 	}
-	
-	String[] defaults = new String[5];   
+
 	// 1. Ramptime
 	// 2. Start Freq
 	// 3. Stop Freq
 	// 4. Sweep Type
 	// 5. Ref Div
 
+
 	/**
-	 * 
-	 * @param defaultarray
-	 * @param msg
+	 * Transmits commands to radar kit to get current parameter settings
+	 * Should call this method once a Bluetooth connection has been established from this
+	 * device. One command is sent at a time and will wait till the application receives
+	 * the respective data before another command is sent.
 	 */
-	public void getDefaults(int defaultarray, byte[] msg){
-		String arrayele = new String(msg);	// Converts byte array to String
-		defaults[defaultarray] = arrayele;	// Adds String to the array of String's which
-										// contains the specified parameters settings in respective array indexes
-
-		for (int i = 0; i < defaults.length; i++)
-			Log.i("Parameters", "Returned string array " + defaults[i]);
-		if (defaultarray == 4){				//Check to make sure all defaults are gotten. Otherwise gets the missing one.
-			getDefaults = false;
-			if (defaults[0] == null){
-				defaultarray = 0;
-				commandInfo = true;
-				defaultCommands();
-			} else if (defaults[1] == null){
-				defaultarray = 1;
-				commandInfo = true;
-				defaultCommands();
-			} else if (defaults[2] == null){
-				defaultarray = 2;
-				commandInfo = true;
-				defaultCommands();
-			} else if (defaults[3] == null){
-				defaultarray = 3;
-				commandInfo = true;
-				defaultCommands();
-			} else if (defaults[4] == null){
-				defaultarray = 4;
-				commandInfo = true;
-				defaultCommands();
-			}
-		}
-	}
-	
-	public void getDefaultsJill (byte[] msg, int position) {
-		String parameter = new String(msg);	// Converts byte array to String
-		defaults[position] = parameter;		// Adds String to the array of String's which
-											// contains the specified parameters settings in 
-											// respective array indexes
-		
-		// testing; print out in log
-		for (int i = 0; i < defaults.length; i++)
-			Log.i("Parameters", "Returned string array " + defaults[i]);
-//		if (position == 4) {
-//			getDefaults =
-//		}
-	}
-
 	public void getDefaultParameters() {
 		commandInfo = true;
 		sendMessage(myCommand.getRampTime());
@@ -543,33 +479,7 @@ public class MainActivity extends Activity {
 		pause();
 		sendMessage(myCommand.getSweepType());
 		pause();
-		sendMessage(myCommand.getrefdiv());
-	}
-	
-	/**
-	 * Transmits commands to radar kit to get current parameter settings
-	 * Should call this method once a Bluetooth connection has been established from this
-	 * device. One command is sent at a time and will wait till the application receives
-	 * the respective data before another command is sent.
-	 */
-	public void defaultCommands(){
-		switch(defaultarray){
-		case 0:
-			sendMessage(myCommand.getRampTime());
-			break;
-		case 1:
-			sendMessage(myCommand.getStartFreq());
-			break;
-		case 2:
-			sendMessage(myCommand.getStopFreq());
-			break;
-		case 3:
-			sendMessage(myCommand.getSweepType());
-			break;
-		case 4:
-			sendMessage(myCommand.getrefdiv());
-			break;
-		}
+		sendMessage(myCommand.getRefDiv());
 	}
 
 
@@ -779,6 +689,7 @@ public class MainActivity extends Activity {
 	 * @param butt1		Should only save this data temporarily (up to user if they want to saved perminentally)					
 	 */
 	public void startCollect(View butt1) {
+		commandInfo = false;
 		try {
 			sendMessage(myCommand.startCollect());
 			Log.d(TAG, "start collecting data...");
