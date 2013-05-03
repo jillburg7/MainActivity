@@ -97,7 +97,8 @@ public class MainActivity extends Activity {
 	 * 
 	 */
 	public String receiveBuffer;
-
+	private int msgCount = 0;
+	public String[] currentParameters;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -338,9 +339,7 @@ public class MainActivity extends Activity {
 			if (resultCode == Activity.RESULT_OK) {
 				String radar =  data.getExtras().getString(SettingsActivity.EXTRA_RADAR_COMMAND);
 				Log.d(TAG, "breakpoint");
-				sendMessage(radar);
-//				String buffer = readBuffer();
-				
+				sendMessage(radar);				
 			}
 			break;
 		case REQUEST_FILE_INFO:
@@ -399,7 +398,7 @@ public class MainActivity extends Activity {
 	}
 
 
-	public String[] currentParameters = new String[5];
+	
 
 	/** new */
 	private void handleMsg(byte[] msg) {
@@ -421,47 +420,45 @@ public class MainActivity extends Activity {
 			avg = avg/length;
 			for(int i = 0; i< length; i++)
 				raw[i] -= avg;
-			plotData();	
+			plotData();
 		}
 		else {					// otherwise it is radar parameter settings (requested)
-			int msgCount = 0;
+			if(msgCount == 0)
+				currentParameters = new String[5];
+			
 			receiveBuffer = new String(msg);
-			Log.i("Parameter"+ msgCount, new String(msg));
 			currentParameters[msgCount++] = receiveBuffer; 
-			if (msgCount == 4) {
+			
+			for (int i = 0; i < 5; i++)
+				Log.i("CurrentParameters", "i = " + i + ",   "+ currentParameters[i]);
+			
+			if (msgCount == 4) {	// lucky if you get all 5... 
 				msgCount = 0;
 				commandInfo = false;
 			}
+//			if (currentParameters != null) {}
+			
 		}
 	}
 
-	public String readBuffer() {
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String temp = "test";
-		receiveBuffer = "";
-		return temp;
-	}
+//	currentParameters String array; respective data for the indices:
+	// [0] Ramptime
+	// [1] Start Freq
+	// [2] Stop Freq
+	// [3] Sweep Type
+	// [4] Ref Div
 	
+	/**
+	 * Adds a 
+	 */
 	public void pause() {
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-	// 1. Ramptime
-	// 2. Start Freq
-	// 3. Stop Freq
-	// 4. Sweep Type
-	// 5. Ref Div
-
 
 	/**
 	 * Transmits commands to radar kit to get current parameter settings
@@ -483,6 +480,8 @@ public class MainActivity extends Activity {
 	}
 
 
+	
+	
 	/**
 	 * 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
 	 * @param view the button that was pressed
