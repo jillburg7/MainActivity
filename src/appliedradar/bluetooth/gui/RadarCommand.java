@@ -59,32 +59,32 @@ public class RadarCommand {
 
 
 	/** Command to get current starting freq */
-	public String getstartfreq() {
+	public String getStartFreq() {
 		return "FREQ:SWEEP:START?$";
 	}
 
 	/** Command to set current starting freq */
-	public String setstartfreq(int input) {
+	public String setStartFreq(int input) {
 		return "FREQ:SWEEP:START " + String.valueOf(input) + "$";
 	}
 
 	/** Command to get current stoping freq */
-	public String getstopfreq() {
+	public String getStopFreq() {
 		return "FREQ:SWEEP:STOP?$";
 	}
 
 	/** Command to set current stoping freq */
-	public String setstopfreq(int input) {
+	public String setStopFreq(int input) {
 		return "FREQ:SWEEP:STOP " + String.valueOf(input) + "$";
 	}
 
 	/** Command to get current sweep type */
-	public String getsweeptype() {
+	public String getSweepType() {
 		return "FREQ:SWEEP:TYPE?$";
 	}
 
 	/** Command to set current sweep type */
-	public String setsweeptype(int input) {
+	public String setSweepType(int input) {
 		return "FREQ:SWEEP:TYPE " + String.valueOf(input) + "$";
 	}
 
@@ -118,7 +118,7 @@ public class RadarCommand {
 	}
 
 	/** Command to set current ref div */
-	public String setrefdiv(int input) {
+	public String setRefDiv(int input) {
 		return "FREQ:REF:DIV " + String.valueOf(input) + "$";
 	}
 

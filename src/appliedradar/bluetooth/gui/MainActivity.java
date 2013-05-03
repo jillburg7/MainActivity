@@ -93,8 +93,11 @@ public class MainActivity extends Activity {
 
 	// boolean to decide whether we are receiving data or radar parameters (upon request)
 	private boolean commandInfo = false;
-	private boolean getdefaults = false;
+	// 
+	private boolean getDefaults = false;
 	private int defaultarray = 0;
+	
+	public String receiveBuffer;
 
 
 	@Override
@@ -257,6 +260,7 @@ public class MainActivity extends Activity {
 	private final void setStatus(CharSequence subTitle) {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle(subTitle);
+//		getDefaultParameters();
 	}
 
 
@@ -336,6 +340,8 @@ public class MainActivity extends Activity {
 				String radar =  data.getExtras().getString(SettingsActivity.EXTRA_RADAR_COMMAND);
 				Log.d(TAG, "breakpoint");
 				sendMessage(radar);
+//				String buffer = readBuffer();
+				
 			}
 			break;
 		case REQUEST_FILE_INFO:
@@ -394,7 +400,7 @@ public class MainActivity extends Activity {
 	}
 
 
-
+	public String[] currentParameters = new String[5];
 
 	/** new */
 	private void handleMsg(byte[] msg) {
@@ -408,6 +414,8 @@ public class MainActivity extends Activity {
 		}
 
 		int length = raw.length;
+		
+		
 		if (commandInfo == false) {	// if its is not radar parameter information => data
 			int avg = 0;
 			for(int i = 0; i < length; i++) 
@@ -417,25 +425,55 @@ public class MainActivity extends Activity {
 				raw[i] -= avg;
 			plotData();	
 		}
-		else {	// otherwise it is radar parameters settings (requested)
-			for(int i = 0; i < length; i++)
-				Log.i("Command Return", "Returned: " + raw[i]);
-			//beging evan additions//
-			if (getdefaults == true){   //Loop to get all defaults at once
-				if(defaultarray < 5){
-					getDefaults(defaultarray, msg);
-					defaultarray++;
-					commandInfo = true;	// 
-					defaultCommands();
-				}
-			} else {					   //Loop to get single default
-				getDefaults(defaultarray, msg);
-				//end evan additions//
-				commandInfo = false;	//
+		else {					// otherwise it is radar parameter settings (requested)
+			int msgCount = 0;
+			receiveBuffer = new String(msg);
+			Log.i("Parameter"+ msgCount++, new String(msg));
+			currentParameters[msgCount++] = receiveBuffer; 
+			if (msgCount == 4) {
+				msgCount = 0;
+				commandInfo = false;
 			}
+//			for(int i = 0; i < length; i++)
+//				Log.i("Command Return", "Returned: " + raw[i]);		// ??????????
+//			//beginning evan additions//
+//			if (getDefaults == true) {   	// Loop to get all defaults at once
+//				if(defaultarray < 5) {
+//					getDefaults(defaultarray, msg);
+//					defaultarray++;
+//					commandInfo = true;	// ?????????????????????
+//					defaultCommands();
+//				}
+//			} else {					   // Loop to get single default
+//				Log.i("RampTime", new String(msg));
+////				getDefaults(defaultarray, msg);
+//				//end evan additions//
+//				commandInfo = false;	//
+//			}
 		}
 	}
 
+	public String readBuffer() {
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String temp = "test";
+		receiveBuffer = "";
+		return temp;
+	}
+	
+	public void pause() {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	String[] defaults = new String[5];   
 	// 1. Ramptime
 	// 2. Start Freq
@@ -449,13 +487,14 @@ public class MainActivity extends Activity {
 	 * @param msg
 	 */
 	public void getDefaults(int defaultarray, byte[] msg){
-		String arrayele = new String(msg);
-		defaults[defaultarray] = arrayele;
+		String arrayele = new String(msg);	// Converts byte array to String
+		defaults[defaultarray] = arrayele;	// Adds String to the array of String's which
+										// contains the specified parameters settings in respective array indexes
 
 		for (int i = 0; i < defaults.length; i++)
 			Log.i("Parameters", "Returned string array " + defaults[i]);
 		if (defaultarray == 4){				//Check to make sure all defaults are gotten. Otherwise gets the missing one.
-			getdefaults = false;
+			getDefaults = false;
 			if (defaults[0] == null){
 				defaultarray = 0;
 				commandInfo = true;
@@ -479,9 +518,39 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
+	
+	public void getDefaultsJill (byte[] msg, int position) {
+		String parameter = new String(msg);	// Converts byte array to String
+		defaults[position] = parameter;		// Adds String to the array of String's which
+											// contains the specified parameters settings in 
+											// respective array indexes
+		
+		// testing; print out in log
+		for (int i = 0; i < defaults.length; i++)
+			Log.i("Parameters", "Returned string array " + defaults[i]);
+//		if (position == 4) {
+//			getDefaults =
+//		}
+	}
 
+	public void getDefaultParameters() {
+		commandInfo = true;
+		sendMessage(myCommand.getRampTime());
+		pause();
+		sendMessage(myCommand.getStartFreq());
+		pause();
+		sendMessage(myCommand.getStopFreq());
+		pause();
+		sendMessage(myCommand.getSweepType());
+		pause();
+		sendMessage(myCommand.getrefdiv());
+	}
+	
 	/**
-	 * 
+	 * Transmits commands to radar kit to get current parameter settings
+	 * Should call this method once a Bluetooth connection has been established from this
+	 * device. One command is sent at a time and will wait till the application receives
+	 * the respective data before another command is sent.
 	 */
 	public void defaultCommands(){
 		switch(defaultarray){
@@ -489,13 +558,13 @@ public class MainActivity extends Activity {
 			sendMessage(myCommand.getRampTime());
 			break;
 		case 1:
-			sendMessage(myCommand.getstartfreq());
+			sendMessage(myCommand.getStartFreq());
 			break;
 		case 2:
-			sendMessage(myCommand.getstopfreq());
+			sendMessage(myCommand.getStopFreq());
 			break;
 		case 3:
-			sendMessage(myCommand.getsweeptype());
+			sendMessage(myCommand.getSweepType());
 			break;
 		case 4:
 			sendMessage(myCommand.getrefdiv());
@@ -727,10 +796,12 @@ public class MainActivity extends Activity {
 	 * @param butt2 button pressed
 	 */
 	public void collectSave(View butt2) {
+		getDefaultParameters();
+		
 		//		sendMessage(myCommand.getRampTime());
-		commandInfo = true;
-		getdefaults = true;
-		defaultCommands();
+//		commandInfo = true;
+//		getDefaults = true;
+//		defaultCommands();
 		// MAKE SURE THIS WORKS!
 		//saveFile(); // Saves file perminently
 	}	

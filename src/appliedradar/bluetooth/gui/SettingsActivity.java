@@ -40,6 +40,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+//		onRestoreInstanceState(savedInstanceState);
 		//		addPreferencesFromResource(R.xml.preferences);
 
 		setContentView(R.layout.activity_settings);
@@ -180,14 +181,11 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		Intent intent2 = new Intent();
 		intent2.putExtra(EXTRA_RADAR_COMMAND, rampTime);
 		setResult(Activity.RESULT_OK, intent2);
-		finish();
+//		finish();
 	}
 	
 	public void send(View view) {
-//		int input = Integer.parseInt(mRampTime);
-//		myCommand.setRampTime(input);
 		Intent intent = new Intent();
-//		intent2.putExtra(EXTRA_RADAR_COMMAND, myCommand.setRampTime(input));
 		intent.putExtra(EXTRA_RADAR_COMMAND, myCommand.setRampTime(mRampTime));
 		setResult(Activity.RESULT_OK, intent);
 		finish();
