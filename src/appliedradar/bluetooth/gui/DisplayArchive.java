@@ -44,7 +44,6 @@ public class DisplayArchive extends Activity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_display_archive);
 
-
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -149,48 +148,6 @@ public class DisplayArchive extends Activity {
 		File file = mFileList[toDelete];
 		file.delete();
 	}
-
-
-
-	/*private OnItemSelectedListener mFileSelectedListener = new OnItemSelectedListener() {
-		@Override
-		public void onItemSelected(AdapterView<?> parentPath, View view, int position, long id) {
-			
-			Log.e("onItemSelected", "here!");
-			filePath = ((TextView) view).getText().toString();
-			File file = mFileList[position];
-
-			TextView infoLabels = (TextView) findViewById(R.id.textView2);
-			TextView info = (TextView) findViewById(R.id.textView3);
-
-
-			//			String absolutePath = file.getAbsolutePath();
-			//	        "AbsolutePath:    " + AbsolutePath + "\n"
-			String path = file.getPath();
-			String parent = file.getParent();
-			//		String name = file.getName();
-			fileName = file.getName();
-			String size = "" + file.length();
-			FileInfo information = new FileInfo(path);
-
-			infoLabels.setText(	"Parent Path:" + "\n" + "Name:" + "\n" + "Date Created:" + "\n" + "Size:" );
-			info.setText( 	parent + "\n" + fileName + "\n" + information.getDateCreated() + "\n" + size);
-
-			findViewById(R.id.button_open).setVisibility(View.VISIBLE);
-			findViewById(R.id.button_delete).setVisibility(View.VISIBLE);
-			findViewById(R.id.information).setVisibility(View.VISIBLE);
-
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> arg0) {
-			// TODO Auto-generated method stub
-			findViewById(R.id.button_open).setVisibility(View.INVISIBLE);
-			findViewById(R.id.button_delete).setVisibility(View.INVISIBLE);
-			findViewById(R.id.information).setVisibility(View.INVISIBLE);
-		}
-	};
-*/
 
 
 	public static boolean createDirIfNotExists(String path) {//STUFF I CHANGED  Here

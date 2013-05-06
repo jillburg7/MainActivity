@@ -6,17 +6,13 @@
         android:title="@string/menu_settings"
         android:orderInCategory="100"
         android:showAsAction="never" >
-    	<menu>
-    	    <!-- <item 
-    	        android:id="@+id/freq_settings"
-        		android:title="@string/freq_settings" />   	   -->
-    	</menu>
 	</item>
 	
-    <item android:id="@+id/menu_item_share"
+    <!-- Share button - not implemented -->
+<!--     <item android:id="@+id/menu_item_share"
         android:showAsAction="ifRoom"
         android:title="Share"
-        android:actionProviderClass="android.widget.ShareActionProvider" />
+        android:actionProviderClass="android.widget.ShareActionProvider" /> -->
     
 	<item 
 	    android:id="@+id/bt_settings"

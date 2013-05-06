@@ -47,65 +47,81 @@ public class MainActivity extends Activity {
 	public static final String TOAST = "toast";
 
 	// Intent request codes
-
 	private static final int REQUEST_CONNECT_DEVICE = 2;
 	private static final int REQUEST_ENABLE_BT = 3;
 	public static final int REQUEST_RADAR_INFO = 4;
 	public static final int REQUEST_FILE_INFO = 5;
 
-	public static char[] chardefs = null;
 
-	// Name of the connected device
+	/** Name of the connected device */
 	private String mConnectedDeviceName = null;
+
+	/** String buffer for outgoing messages */
+	private StringBuffer mOutStringBuffer;
+	/** Local Bluetooth adapter */
+	private BluetoothAdapter mBluetoothAdapter = null;
+	/** Member object for the chat services */
+	private BluetoothChatService mChatService = null;
 	// Array adapter for the conversation thread
 	private ArrayAdapter<String> mConversationArrayAdapter;
-	// String buffer for outgoing messages
-	private StringBuffer mOutStringBuffer;
-	// Local Bluetooth adapter
-	private BluetoothAdapter mBluetoothAdapter = null;
-	// Member object for the chat services
-	private BluetoothChatService mChatService = null;
 	//END OF BT INITIALIZERS
 
-
-	// RadarCommand Class object that controls the context of commands sent to the Radar Kit
-	public RadarCommand myCommand = new RadarCommand();
-
-	// List of data collected from Radar kit
-	private ArrayList<Double> dataCollected;
-
-	// Raw data to using for plotting Raw
-	private double[] dataToPlot;
-	// FFT data to use for plotting Range
-	private double[] fftData;
-
-	// Type of data to save
+	/** Type of data to save */
 	private boolean saveFFT = false;
 
 	// aChartEngine Objects for plotting and using Line Graph Renderer/Settings
 	GraphicalView mChartView;
 	XYMultipleSeriesDataset mDataset;
 	XYMultipleSeriesRenderer mRenderer;
+	
+	/**	Class to set data, rendering, and plot axis settings - uses aChartEngine content */
 	PlotSettings plot = new PlotSettings();
 
-	/** Array of type shot for incoming radar kit data */
+	/** RadarCommand Class object that controls the context of commands sent to the kit */
+	public RadarCommand myCommand = new RadarCommand();
+
+	// List of data collected from Radar kit
+	private ArrayList<Double> dataCollected;
+
+
+	/** Raw data to using for plotting Raw */
+	private double[] dataToPlot;
+	/** FFT data to use for plotting Range  */
+	private double[] fftData;
+	
+	/** Array of type short (16-bit signed integer) for incoming radar kit data */
 	private short[] raw;
 
-	// boolean to decide whether we are receiving data or radar parameters (upon request)
+	/** Whether application is receiving data or parameters settings (upon request) */
 	private boolean commandInfo = false;
-	/**
-	 * 
-	 */
+	
+	/** Command buffer to parameter settings */
 	public String receiveBuffer;
+	
+	/**
+	 * To count the number of parameters received for querying for the five default (or 
+	 * current) radar parameter settings.
+	 * Should receive exactly 5 parameters, therefore msgCount should only reach a max 
+	 * value of 4 at anytime. (Once it reaches 4, currentParameters array is filled and 
+	 * contains the 5 default/current parameter settings.
+	 */
 	private int msgCount = 0;
-	public String[] currentParameters;
+	
+	/**
+	 * String array to hold the 5 default/current parameter settings of the radar kit that
+	 * this application/device has setup a Bluetooth connection with.
+	 */
+	public static String[] currentParameters;
 
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// Set up the window layout
 		setContentView(R.layout.main);
+		
 		// Get local Bluetooth adapter
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -118,15 +134,14 @@ public class MainActivity extends Activity {
 		mRenderer = plot.getMyDefaultRenderer();
 		mDataset = plot.getMyDefaultData();
 
-
+		// checks to see if chart is empty
 		if (mChartView == null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
 					mRenderer);
 			layout.addView(mChartView);
 		} else {
-			mChartView.repaint(); // use this whenever data has changed and you
-			// want to redraw
+			mChartView.repaint(); // use this whenever data has changed and want to redraw
 		}
 	}
 
@@ -142,11 +157,11 @@ public class MainActivity extends Activity {
 			startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
 			// Otherwise, setup the chat session
 		} else {
-			if (mChatService == null) setupChat();
+			if (mChatService == null) 
+				setupChat();
 		}
-		if (mChartView != null) {
+		if (mChartView != null)
 			mChartView.repaint();
-		}
 	}
 
 	@Override
@@ -159,14 +174,14 @@ public class MainActivity extends Activity {
 				mChatService.start();
 			}
 		}
+		// checks if chart is empty - if so, add chart to GUI. [Otherwise, update.]
 		if (mChartView == null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
 					mRenderer);
 			layout.addView(mChartView);
 		} else {
-			mChartView.repaint(); // use this whenever data has changed and you
-			// want to redraw
+			mChartView.repaint(); // use this whenever data has changed and want to redraw
 		}
 	}
 
@@ -184,9 +199,10 @@ public class MainActivity extends Activity {
 	}
 
 	private void setupChat() {
+		// Logs that communication between devices is being intialized
 		Log.d(TAG, "setupChat()");
 
-		mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
+//		mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
 
 		// Initialize the BluetoothChatService to perform bluetooth connections
 		mChatService = new BluetoothChatService(this, mHandler);
@@ -215,6 +231,10 @@ public class MainActivity extends Activity {
 		if(D) Log.e(TAG, "--- ON DESTROY ---");
 	}
 
+	/**
+	 * Makes this device discoverable by other Bluetooth devices within range for a 
+	 * limited amount of time specified.
+	 */
 	private void ensureDiscoverable() {
 		if(D) Log.d(TAG, "ensure discoverable");
 		if (mBluetoothAdapter.getScanMode() !=
@@ -227,7 +247,7 @@ public class MainActivity extends Activity {
 
 
 	/**
-	 * Sends a message.
+	 * Sends a message to the device connected via Bluetooth.
 	 * @param message  A string of text to send.
 	 */
 	public void sendMessage(String message) {
@@ -243,20 +263,19 @@ public class MainActivity extends Activity {
 			byte[] send = message.getBytes();
 			mChatService.write(send);
 
-			// Reset out string buffer to zero and clear the edit text field
+			// Reset out string buffer to zero
 			mOutStringBuffer.setLength(0);
-			//mOutEditText.setText(mOutStringBuffer);
 		}
 	}
 
 
-	// Status of Bluetooth connection is set in ActionBar
+	/** Status of Bluetooth connection is set in ActionBar */
 	private final void setStatus(int resId) {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle(resId);
 	}
 
-	// Status of Bluetooth connection is set in ActionBar
+	/** Status of Bluetooth connection is set in ActionBar */
 	private final void setStatus(CharSequence subTitle) {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle(subTitle);
@@ -264,7 +283,7 @@ public class MainActivity extends Activity {
 	}
 
 
-	// The Handler that gets information back from the BluetoothChatService
+	/** The Handler that gets information back from the BluetoothChatService */
 	public final Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -273,27 +292,31 @@ public class MainActivity extends Activity {
 				if(D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
 				switch (msg.arg1) {
 				case BluetoothChatService.STATE_CONNECTED:
+					// updates Bluetooth connection status with the connected device name
 					setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-					mConversationArrayAdapter.clear();
+//					mConversationArrayAdapter.clear();
 					break;
 				case BluetoothChatService.STATE_CONNECTING:
-					setStatus(R.string.title_connecting);
+					setStatus(R.string.title_connecting);	// updates status in ActionBar
 					break;
 				case BluetoothChatService.STATE_LISTEN:
 				case BluetoothChatService.STATE_NONE:
-					setStatus(R.string.title_not_connected);
+					setStatus(R.string.title_not_connected);// updates status in ActionBar
 					break;
 				}
 				break;
 			case MESSAGE_WRITE:
+				// Transmit data from this device to the connected Bluetooth device
 				byte[] writeBuf = (byte[]) msg.obj;
 				// construct a string from the buffer
 				String writeMessage = new String(writeBuf);
+				// Log Command sent to connect SPP device
 				Log.i(TAG, "Tablet:  " + writeMessage);
 				break;
 			case MESSAGE_READ:
+				// Read data received from device connected via Bluetooth
 				byte[] readBuf = (byte[]) msg.obj;
-				Log.i("MESSAGE_READ", "Received stuff main");
+				Log.i("MESSAGE_READ", "Received data in MainActivity...");
 				handleMsg(readBuf); //
 				break;
 			case MESSAGE_DEVICE_NAME:
@@ -313,7 +336,10 @@ public class MainActivity extends Activity {
 
 
 
-
+	/**
+	 * When another activity returns to the MainActivity and it has important information
+	 * to pass to this activity (i.e. result(s) of previous activity).
+	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(D) Log.d(TAG, "onActivityResult " + resultCode);
@@ -337,30 +363,24 @@ public class MainActivity extends Activity {
 			break;
 		case REQUEST_RADAR_INFO:
 			if (resultCode == Activity.RESULT_OK) {
+				// Command to send to radar kit over Bluetooth to change parameter settings
 				String radar =  data.getExtras().getString(SettingsActivity.EXTRA_RADAR_COMMAND);
-				Log.d(TAG, "breakpoint");
-				sendMessage(radar);				
+//				Log.d(TAG, "breakpoint");
+				sendMessage(radar);	// command to send to set parameters
 			}
 			break;
 		case REQUEST_FILE_INFO:
 			if (resultCode == Activity.RESULT_OK) 
-				loadFile(data);
+				loadFile(data);	// File/data within that file to open (user-requested)
 			break;
 		}
 	}
 
 
-	// Action Bar displays options when Menu item in Action bar is clicked
+	// Action Bar displays options when Menu item in Action bar is clicked 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main_menu, menu);
-
-		// Locate MenuItem with ShareActionProvider
-		MenuItem menuItem = menu.findItem(R.id.menu_item_share);
-
-		// Fetch and store ShareActionProvider
-		//		mShareActionProvider = (ShareActionProvider) menuItem
-		//				.getActionProvider();
 		return true;
 	}
 
@@ -387,7 +407,10 @@ public class MainActivity extends Activity {
 		return false;
 	}
 
-
+	/**
+	 * Device to attempt a Bluetooth connection to
+	 * @param data Device's information to connect to
+	 */
 	private void connectDevice(Intent data) {
 		// Get the device MAC address
 		String address = data.getExtras().getString(DeviceListActivty.EXTRA_DEVICE_ADDRESS);
@@ -400,7 +423,14 @@ public class MainActivity extends Activity {
 
 	
 
-	/** new */
+	/**
+	 * Handles the incoming data via the Bluetooth connection (from the
+	 * {@link BluetoothChatService} class). If the data is value which correspond to 
+	 * parameter settings, then the boolean commandInfo will be true and data will be 
+	 * handled accordingly. If commandInfo is false, then the incoming data value correspond
+	 * to data that was just collected by the radar, in which this device is connected too.
+	 * @param msg
+	 */
 	private void handleMsg(byte[] msg) {
 		int n = 0; 	// size of new byte array corresponding to 2-bytes of data per value 
 		// using bit-manipulation :
@@ -436,8 +466,6 @@ public class MainActivity extends Activity {
 				msgCount = 0;
 				commandInfo = false;
 			}
-//			if (currentParameters != null) {}
-			
 		}
 	}
 
@@ -448,9 +476,7 @@ public class MainActivity extends Activity {
 	// [3] Sweep Type
 	// [4] Ref Div
 	
-	/**
-	 * Adds a 
-	 */
+	/** Adds a delay in between commands sent consecutively after each. */
 	public void pause() {
 		try {
 			Thread.sleep(500);
@@ -502,10 +528,11 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Reads data out of text file line-by-line and stores value in an ArrayList
-	 * @param fileName
+	 * @param fileName Name of the file to open and load data into chart
 	 */
 	public void loadData(String fileName) {
 		ArrayList<Double> contents = new ArrayList<Double>();
+		ArrayList<Double> shortA = new ArrayList<Double>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
 			String line;
@@ -519,6 +546,7 @@ public class MainActivity extends Activity {
 					double value = Double.parseDouble(line);
 					contents.add(value);
 				}
+//				line.
 				else {
 					//handleStringMsg(line);
 					Log.i(TAG, "handleStringMsg()");
@@ -556,11 +584,12 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Plots raw data on chart.
-	 * @param plotMe
+	 * @param view button clicked
 	 */
-	public void plotButton(View plotMe) {
+	public void plotButton(View view) {
 		try {
 			plotData();
+			saveFFT = false;
 		} catch(NullPointerException e) {
 			Log.e("PlotButton", "no data to plot");
 		}
@@ -573,11 +602,11 @@ public class MainActivity extends Activity {
 		mDataset = new XYMultipleSeriesDataset();
 		XYSeries dataSeries = new XYSeries("Tablet Data");
 
-		//		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
-		//			dataSeries.add(i, dataToPlot[i]);
+		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
+			dataSeries.add(i, dataToPlot[i]);
 
-		for (int i=0; i<raw.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
-			dataSeries.add(i, raw[i]);
+//		for (int i=0; i<raw.length; i++)		// short[] - USE THIS!
+//			dataSeries.add(i, raw[i]);
 		mDataset.addSeries(dataSeries);
 
 		mRenderer = plot.getMyDefaultRenderer();
@@ -595,7 +624,7 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Plot FFT Button
-	 * @param view	button pressed
+	 * @param view	button clicked
 	 */
 	public void plotFFT(View view) {	
 		try {
@@ -608,20 +637,19 @@ public class MainActivity extends Activity {
 	}
 
 
-
 	/**
 	 * Calculates FFT data
 	 */
 	public void fftPlot() {
 		CalcFFT calculate = new CalcFFT();
-		//		fftData = calculate.fft(dataToPlot);	// to plot data that is an array of type double[]
+		fftData = calculate.fft(dataToPlot);	// to plot data that is an array of type double[]
 
-		double [] rawDoub = new double[raw.length];
-		for(int i = 0; i < raw.length; i ++) {
-			rawDoub[i] = raw[i];
-		}
-
-		fftData = calculate.fft(rawDoub);
+//		double [] rawDoub = new double[raw.length];
+//		for(int i = 0; i < raw.length; i ++) {
+//			rawDoub[i] = raw[i];
+//		}
+//
+//		fftData = calculate.fft(rawDoub);
 
 		mRenderer = plot.getFFTRenderer();
 
@@ -661,25 +689,31 @@ public class MainActivity extends Activity {
 			Log.e("SaveFile()", "saved your file.....this time");
 			//			Kind kind = Kind.RAW;
 			String kind = "";
-			if (!saveFFT){
+			if (saveFFT == false){
 				for (int i = 0; i<raw.length; i++) 
 					stringToSave += raw[i] + "\n";
 				kind = "RAW";
 			}
-			else{
+			else{	// saveFFT = true
 				for (int i = 0; i<fftData.length; i++) 
 					stringToSave += fftData[i] + "\n";
 				kind = "RANGE";
-				saveFFT = false;
+//				saveFFT = false;
 			}
+			// Creates a new file
 			NewFile save = new NewFile();
-			save.setKind(kind);
+			
+			// not implemented yet.
+//			save.dataParameters(currentParameters);
+			
+			save.setKind(kind);	// to specify if data is RAW or FFT data
 			save.createFile(this, stringToSave);
+			
+			// to notify user that their data was saved successfully in archive
 			Toast.makeText(this, "File Saved!", Toast.LENGTH_SHORT).show();
 		} catch(Exception e) {
-			Log.e("SaveFile()", "iSuck");
+			Log.e("SaveFile()", "File Not Saved");
 		}
-
 	}
 
 
@@ -696,7 +730,6 @@ public class MainActivity extends Activity {
 		catch (Exception e) {
 			Log.e("startCollect Button", "nothing to collect :(");
 		}
-		//		butt1.setVisibility(0);			// goes invisible onClick and stopCollect button should show up.
 	}
 
 
@@ -705,17 +738,18 @@ public class MainActivity extends Activity {
 	 * The raw data will be saved automatically.
 	 * @param butt2 button pressed
 	 */
+	
+	/**
+	 * This button is currently implemented to get the five default/current parameters
+	 *  when clicked and stores them into the string array called currentParameters.
+	 * @param butt2 Button clicked
+	 */
 	public void collectSave(View butt2) {
 		getDefaultParameters();
-		
-		//		sendMessage(myCommand.getRampTime());
-//		commandInfo = true;
-//		getDefaults = true;
-//		defaultCommands();
-		// MAKE SURE THIS WORKS!
-		//saveFile(); // Saves file perminently
+
 	}	
 
+	// NOT IMPLEMENTED.
 	public void stopCollect(View butt1_5) {
 		sendMessage(myCommand.stopCollect());
 		Log.d(TAG, "...stop collecting data");

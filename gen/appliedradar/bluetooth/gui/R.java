@@ -17,8 +17,8 @@ public final class R {
     }
     public static final class id {
         public static final int LinearLayout=0x7f080010;
-        public static final int binary_file=0x7f080033;
-        public static final int bt_settings=0x7f080028;
+        public static final int binary_file=0x7f080032;
+        public static final int bt_settings=0x7f080027;
         public static final int button_delete=0x7f08000a;
         public static final int button_group=0x7f08001a;
         public static final int button_load=0x7f08001e;
@@ -29,18 +29,17 @@ public final class R {
         public static final int captureTimeSetting=0x7f080012;
         public static final int chart=0x7f08001f;
         public static final int collect_save=0x7f08001d;
-        public static final int compressed_file=0x7f080034;
-        public static final int connect_scan=0x7f08002a;
-        public static final int discoverable=0x7f080029;
-        public static final int doppler_plot=0x7f08002e;
-        public static final int fft_plot=0x7f08002f;
+        public static final int compressed_file=0x7f080033;
+        public static final int connect_scan=0x7f080029;
+        public static final int discoverable=0x7f080028;
+        public static final int doppler_plot=0x7f08002d;
+        public static final int fft_plot=0x7f08002e;
         public static final int file_info=0x7f080003;
         public static final int getRampTime=0x7f08000b;
         public static final int information=0x7f080002;
         public static final int list1=0x7f080000;
         public static final int list2=0x7f080001;
-        public static final int matlab_file=0x7f080035;
-        public static final int menu_item_share=0x7f080027;
+        public static final int matlab_file=0x7f080034;
         public static final int menu_settings=0x7f080025;
         public static final int new_devices=0x7f080018;
         public static final int paired_devices=0x7f080016;
@@ -49,13 +48,13 @@ public final class R {
         public static final int plotButtonGroup=0x7f080020;
         public static final int plotFFT_button=0x7f080022;
         public static final int plot_button=0x7f080021;
-        public static final int plotting_menu=0x7f08002b;
+        public static final int plotting_menu=0x7f08002a;
         public static final int progress=0x7f080014;
         public static final int radar_params=0x7f080006;
-        public static final int range_plot=0x7f08002d;
-        public static final int raw_plot=0x7f08002c;
-        public static final int sar_plot=0x7f080030;
-        public static final int saving_menu=0x7f080031;
+        public static final int range_plot=0x7f08002c;
+        public static final int raw_plot=0x7f08002b;
+        public static final int sar_plot=0x7f08002f;
+        public static final int saving_menu=0x7f080030;
         public static final int search=0x7f080026;
         public static final int seekBar1=0x7f080013;
         public static final int send=0x7f08000f;
@@ -67,7 +66,7 @@ public final class R {
         public static final int textView1=0x7f080024;
         public static final int textView2=0x7f080004;
         public static final int textView3=0x7f080005;
-        public static final int text_file=0x7f080032;
+        public static final int text_file=0x7f080031;
         public static final int title_new_devices=0x7f080017;
         public static final int title_paired_devices=0x7f080015;
     }

@@ -29,6 +29,12 @@ public class NewFile extends FileInfo {
 //		name = getFileDate();
 //	}
 	
+	public void dataParameters(String[] parameters){
+		// add parameters to first few lines to file. 
+		// include in file information in the FileInfo text view in the file archive
+	}
+	
+	
 	/**
 	 * 
 	 * @param context

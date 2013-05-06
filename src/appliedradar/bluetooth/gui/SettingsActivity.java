@@ -25,6 +25,8 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	private static final boolean D = true;
 	
 	public static final String EXTRA_RADAR_COMMAND = "default_capture_time";  
+
+//	private final Handler handler = MainActivity.mHandler;
 	
 	/**
 	 * 
@@ -186,25 +188,41 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	}
 	
 	
+	/**
+	 * Calls the dialog to display options for user input
+	 */
 	void showDialog() {
 	    DialogFragment newFragment = MyAlertDialogFragment.newInstance(
 	            R.string.alert_dialog_two_buttons_title);
 	    newFragment.show(getFragmentManager(), "dialog");
 	}
 
+	/**
+	 * The 'OK' button to accept the (user) input and resume the activity which called 
+	 * the dialog to the foreground.
+	 * @param input input that was entered by the user in the EditText view
+	 */
 	public void doPositiveClick(EditText input) {
-	    // Do stuff here.
-	    Log.i("FragmentAlertDialog", "Positive click!");
+	    Log.i("FragmentAlertDialog", "OK! User-input accepted"); // Logs 'OK' button click
 	    Editable value = input.getText();
-	    mRampTime = Integer.parseInt(value.toString());
-	    updateDisplay();
+	    mRampTime = Integer.parseInt(value.toString()); // converts input to integer type
+	    updateDisplay();	// updates the TextView to display user input
 	}
 
+	/**
+	 * The 'Cancel' button to reject/ignore the (user) input and resume the activity which
+	 * called the dialog to the foreground.
+	 */
 	public void doNegativeClick() {
-	    // Do other stuff here.
-	    Log.i("FragmentAlertDialog", "Negative click!");
+	    Log.i("FragmentAlertDialog", "Canceled Dialog Fragment!"); // Logs 'Cancel' button click
 	}
 	
+	/**
+	 * To update the textview display with the current parameters to be set
+	 */
+	private void updateDisplay() {
+		mDialogDisplay.setText(new StringBuilder().append(mRampTime));
+	}
 	
 	
 	
@@ -242,13 +260,11 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	}
 
 
-	private void updateDisplay() {
-		mDialogDisplay.setText(new StringBuilder().append(mRampTime));
-	}
 
+// EVANS CODE - not sure what it's supposed to due
 	public void updateTextView() {
 		final TextView defaults = (TextView)findViewById(R.id.textView);
-		defaults.setText(String.valueOf(MainActivity.chardefs));
+		defaults.setText(new StringBuilder().append(MainActivity.currentParameters));
 	}
 	
 	
@@ -260,6 +276,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		//			String currentValues = myCommand.getCurrentCaptureTime();
 		Log.i(TAG, "Pressed 'Ramp Time' button");
 		String rampTime = "FREQ:SWEEP:RAMPTIME?$";
+//		mHandler.sendMessage(rampTime);
 		Intent intent2 = new Intent();
 		intent2.putExtra(EXTRA_RADAR_COMMAND, rampTime);
 		setResult(Activity.RESULT_OK, intent2);
