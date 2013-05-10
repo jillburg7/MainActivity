@@ -3,42 +3,115 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingsActivity" >
-
-    <Button
-        android:id="@+id/getRampTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+    
+    
+	<LinearLayout
+	    android:id="@+id/query_commands"
+	    android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:onClick="getRampTime"
-        android:text="@string/rampTime" />
-
-    <Button
-        android:id="@+id/sweepType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/getRampTime"
-        android:onClick="getSweepType"
-        android:text="@string/sweepType" />
-
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/getRampTime" >
+	    android:orientation="horizontal" >
+	    
+	    <Button
+	        android:id="@+id/ramp_time"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:onClick="getRampTime"
+	        android:text="@string/ramp_time" />
+	    
+	    <Button
+	        android:id="@+id/start_freq"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:onClick="getStartFreq"
+	        android:text="@string/start_freq" />
+	    
+   	    <Button
+	        android:id="@+id/stop_freq"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:onClick="getStopFreq"
+	        android:text="@string/stop_freq" />
+   	    	
+	    <Button
+	        android:id="@+id/sweep_type"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:onClick="getSweepType"
+	        android:text="@string/sweep_type" />
+	    
+   	    <Button
+	        android:id="@+id/ref_div"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:onClick="getRefDiv"
+	        android:text="@string/ref_div" />
+	</LinearLayout>
+	
+	<TextView
+		android:id="@+id/parameters"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/query_commands"
+		android:saveEnabled="true"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textIsSelectable="true" />
+	
+    <LinearLayout
+        android:id="@+id/commands"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/parameters" >
 
         <Button
-            android:id="@+id/setRampTime"
+            android:id="@+id/set_ramp_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="setRampTime"
-            android:text="@string/setRampTime" />
+            android:text="@string/set_ramp_time" />
         
-        <TextView
-            android:id="@+id/textView"
+		<Button
+            android:id="@+id/set_start_freq"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="setStartFreq"
+            android:text="@string/set_start_freq" />
+		
+        <Button
+            android:id="@+id/set_stop_freq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="setStopFreq"
+            android:text="@string/set_stop_freq" />
+        
+		<Button
+			android:id="@+id/set_sweep_type"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="setSweepType"
+			android:text="@string/set_sweep_type" />
+        
+       <Button
+            android:id="@+id/set_ref_div"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="setRefDiv"
+            android:text="@string/set_ref_div" />
+    </LinearLayout>
+    
+	<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/commands" >
+        
+    <TextView
+            android:id="@+id/value_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        	android:saveEnabled="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textIsSelectable="true" />
 
@@ -57,7 +130,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:visibility="gone" >
 
         <TextView
             android:id="@+id/captureTimeOptions"

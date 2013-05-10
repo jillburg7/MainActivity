@@ -28,7 +28,7 @@ public class PlotSettings {// extends GraphicalView {
 	/**
 	 * sampling frequency in Hz
 	 */
-	private final int fs = 44100;	// put in settings so user can change
+	private final int fs = 22050; // 44100;	// put in settings so user can change
 
 	/**
 	 * last x-value, (starting x-value = 0)
@@ -55,7 +55,7 @@ public class PlotSettings {// extends GraphicalView {
 		}
 
 		Log.i("PlotSettings", "length of dataB4 = " + fftData.length);
-		Log.e("PlotSettings", "length of dataFFT = " + values.get(0).length);
+		Log.i("PlotSettings", "length of dataFFT = " + values.get(0).length);
 		// for the buildDataset method call:
 		rangeData = dataBuilder(titles, xAxis, values);
 		return rangeData;

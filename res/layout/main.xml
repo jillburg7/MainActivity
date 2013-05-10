@@ -13,6 +13,14 @@
         android:orientation="horizontal" >
 
         <Button
+            android:id="@+id/getParameters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="getParameters"
+            android:text="@string/get_parameters"
+            android:textSize="12sp" />
+        
+        <Button
             android:id="@+id/start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,14 +29,6 @@
             android:visibility="visible"
             android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="stopCollect"
-            android:text="@string/stop_collecting"
-            android:visibility="gone"
-            android:textSize="12sp" />
         
         <Button
             android:id="@+id/collect_save"

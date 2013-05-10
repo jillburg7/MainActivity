@@ -436,7 +436,7 @@ public class BluetoothChatService {
 			// Keep listening to the InputStream while connected
 			while (true) {
 				try {
-					// Read from the InputStream6t
+					// Read from the InputStream
 					bytes = mmInStream.read(buffer);
 
 					Log.i("BTService", "BT data received!!");	// to let us know if we can still communicate to radar

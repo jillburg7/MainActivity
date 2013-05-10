@@ -71,7 +71,7 @@ public class RangeCalc {
 	 * 		sampleNumber * ((44100/2)/28224)
 	 */
 	private void convertToHertz() {
-		int samplesPerSecond = 44100;
+		int samplesPerSecond = 22000;
 		int fftDataLength = fftData.length;
 		double hertz = ((samplesPerSecond/2)/fftDataLength);
 		convertToMeters(hertz);

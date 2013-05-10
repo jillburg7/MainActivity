@@ -365,7 +365,7 @@ public class MainActivity extends Activity {
 			if (resultCode == Activity.RESULT_OK) {
 				// Command to send to radar kit over Bluetooth to change parameter settings
 				String radar =  data.getExtras().getString(SettingsActivity.EXTRA_RADAR_COMMAND);
-//				Log.d(TAG, "breakpoint");
+				commandInfo = true;
 				sendMessage(radar);	// command to send to set parameters
 			}
 			break;
@@ -531,54 +531,35 @@ public class MainActivity extends Activity {
 	 * @param fileName Name of the file to open and load data into chart
 	 */
 	public void loadData(String fileName) {
-		ArrayList<Double> contents = new ArrayList<Double>();
-		ArrayList<Double> shortA = new ArrayList<Double>();
+		ArrayList<Short> shortA = new ArrayList<Short>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
 			String line;
 
 			while ((line = br.readLine()) != null) {
-				int comma = line.indexOf(',');
-
-				// readCommand sends string from radar to be "parsed" (does nothing),
-				// just returns string to MainActivity to display in LogCat window.
-				if (comma == -1) {
-					double value = Double.parseDouble(line);
-					contents.add(value);
-				}
-//				line.
-				else {
-					//handleStringMsg(line);
-					Log.i(TAG, "handleStringMsg()");
-					break;
-				}
+					short value = Short.parseShort(line);
+					shortA.add(value);
+//				}
 			}
 			br.close();
 		} 
 		catch (IOException e) {
-			Log.e("loadData()", "IOError");		// You'll need to add proper error handling here
+			Log.e("loadData()", "Reading data out of file");		// You'll need to add proper error handling here
 
 		}	
-		dataControl(contents);
+		toShortArray(shortA);
 		plotData();
 	}
-
+	
 	/**
-	 * ArrayList is be copied into an array of type double to use for processing
-	 * @param dataList	ArrayList to copy
+	 * ArrayList is be copied into an array of type short to use forplotting & processing
+	 * @param fileData	ArrayList to copy
 	 */
-	public void dataControl(ArrayList<Double> dataList) {
-		int size = dataList.size();
-		dataToPlot = new double[size];
+	public void toShortArray(ArrayList<Short> fileData) {
+		int size = fileData.size();
+		raw = new short[size];
 		for(int i = 0; i < size; i++)
-			dataToPlot[i] = dataList.get(i);
-
-		int avg = 0;
-		for(int i = 0; i <size; i++) 
-			avg += dataToPlot[i];
-		avg = avg/size;
-		for(int i = 0; i<size; i++)
-			dataToPlot[i] -= avg;
+			raw[i] = fileData.get(i);
 	}
 
 
@@ -601,12 +582,12 @@ public class MainActivity extends Activity {
 	public void plotData() {
 		mDataset = new XYMultipleSeriesDataset();
 		XYSeries dataSeries = new XYSeries("Tablet Data");
+//
+//		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
+//			dataSeries.add(i, dataToPlot[i]);
 
-		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
-			dataSeries.add(i, dataToPlot[i]);
-
-//		for (int i=0; i<raw.length; i++)		// short[] - USE THIS!
-//			dataSeries.add(i, raw[i]);
+		for (int i=0; i<raw.length; i++)		// short[] - USE THIS!
+			dataSeries.add(i, raw[i]);
 		mDataset.addSeries(dataSeries);
 
 		mRenderer = plot.getMyDefaultRenderer();
@@ -615,6 +596,7 @@ public class MainActivity extends Activity {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, mDataset,
 					mRenderer);
+			layout.removeAllViews();
 			layout.addView(mChartView);
 		} else {
 			mChartView.repaint();
@@ -642,14 +624,14 @@ public class MainActivity extends Activity {
 	 */
 	public void fftPlot() {
 		CalcFFT calculate = new CalcFFT();
-		fftData = calculate.fft(dataToPlot);	// to plot data that is an array of type double[]
+//		fftData = calculate.fft(dataToPlot);	// to plot data that is an array of type double[]
 
-//		double [] rawDoub = new double[raw.length];
-//		for(int i = 0; i < raw.length; i ++) {
-//			rawDoub[i] = raw[i];
-//		}
-//
-//		fftData = calculate.fft(rawDoub);
+		double [] rawDoub = new double[raw.length];
+		for(int i = 0; i < raw.length; i ++) {
+			rawDoub[i] = raw[i];
+		}
+
+		fftData = calculate.fft(rawDoub);
 
 		mRenderer = plot.getFFTRenderer();
 
@@ -657,6 +639,7 @@ public class MainActivity extends Activity {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, plot.getFrequencyAxis(fftData),
 					mRenderer);
+			layout.removeAllViews();
 			layout.addView(mChartView);
 		} else {
 			mChartView.repaint();
@@ -704,7 +687,7 @@ public class MainActivity extends Activity {
 			NewFile save = new NewFile();
 			
 			// not implemented yet.
-//			save.dataParameters(currentParameters);
+			save.dataParameters(currentParameters);
 			
 			save.setKind(kind);	// to specify if data is RAW or FFT data
 			save.createFile(this, stringToSave);
@@ -745,14 +728,29 @@ public class MainActivity extends Activity {
 	 * @param butt2 Button clicked
 	 */
 	public void collectSave(View butt2) {
-		getDefaultParameters();
-
+		commandInfo = false;
+		try {
+			sendMessage(myCommand.startCollect());
+			Log.d(TAG, "start collecting data...");
+		}
+		catch (Exception e) {
+			Log.e("startCollect Button", "nothing to collect :(");
+		}
+		// try to save collected data
+		try {
+			saveFile();
+		}
+		catch(NullPointerException e) {
+			Log.e("SaveButton", "failed to save collected data");
+		}
 	}	
 
-	// NOT IMPLEMENTED.
-	public void stopCollect(View butt1_5) {
-		sendMessage(myCommand.stopCollect());
-		Log.d(TAG, "...stop collecting data");
+	/**
+	 * Queries the radar kit's current parameter settings via Bluetooth connection
+	 * @param button
+	 */
+	public void getParameters(View button) {
+		getDefaultParameters();
 	}
 
 

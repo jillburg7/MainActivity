@@ -24,12 +24,12 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	private static final String TAG = "SettingsActivity";
 	private static final boolean D = true;
 	
-	public static final String EXTRA_RADAR_COMMAND = "default_capture_time";  
+	public static final String EXTRA_RADAR_COMMAND = "extras";  
 
 //	private final Handler handler = MainActivity.mHandler;
 	
 	/**
-	 * 
+	 * data tags
 	 */
 	static final String RAMP_TIME = "ramptime";
 	static final String START_FREQ = "startFreq";
@@ -37,6 +37,8 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	static final String SWEEP_TYPE = "sweepType";
 	static final String REF_DIV = "refDiv";
 
+	private String mStrCommand;
+	private int mInputCommand;
 	public String mCaptureTime;
 	public String mBandwidth;
 	public int mRampTime;
@@ -53,14 +55,16 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	// Dialog display
 	private TextView mDialogDisplay;
 
-	public RadarCommand myCommand = new RadarCommand();
+	private RadarCommand myCommand = new RadarCommand();
 
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
 		
-		mDialogDisplay = (TextView) findViewById(R.id.textView);
+		mDialogDisplay = (TextView) findViewById(R.id.value_input);
 
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -74,13 +78,13 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	    if (savedInstanceState != null) {
 	        // Restore value of members from saved state
 	    	mRampTime = savedInstanceState.getInt(RAMP_TIME);
-//	        mCurrentLevel = savedInstanceState.getInt(STATE_LEVEL);
 	    } else {
 	        // Probably initialize members with default values for a new instance
 	    	mRampTime = 0;
 	    }
 		
 		updateDisplay();
+		updateTextView();
 	}
 
 	@Override
@@ -204,9 +208,14 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	 */
 	public void doPositiveClick(EditText input) {
 	    Log.i("FragmentAlertDialog", "OK! User-input accepted"); // Logs 'OK' button click
-	    Editable value = input.getText();
-	    mRampTime = Integer.parseInt(value.toString()); // converts input to integer type
-	    updateDisplay();	// updates the TextView to display user input
+	    try {
+	    	Editable value = input.getText();
+	    	mRampTime = Integer.parseInt(value.toString()); // converts input to integer type
+	    	updateDisplay();	// updates the TextView to display user input
+	    }
+	    catch (NumberFormatException e) {
+	    	Log.e("AlertDialog-OK", "No input to format text");
+	    }
 	}
 
 	/**
@@ -218,7 +227,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	}
 	
 	/**
-	 * To update the textview display with the current parameters to be set
+	 * To update the textview display with the current parameter value to be set
 	 */
 	private void updateDisplay() {
 		mDialogDisplay.setText(new StringBuilder().append(mRampTime));
@@ -260,87 +269,129 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	}
 
 
-
-// EVANS CODE - not sure what it's supposed to due
+	/**
+	 * Updates the textView with the current parameter settings of the radar kit
+	 */
 	public void updateTextView() {
-		final TextView defaults = (TextView)findViewById(R.id.textView);
-		defaults.setText(new StringBuilder().append(MainActivity.currentParameters));
+		if (MainActivity.currentParameters != null) {
+			final TextView defaults = (TextView)findViewById(R.id.parameters);
+			defaults.setText(new StringBuilder().append(MainActivity.currentParameters[0] +
+					" " + MainActivity.currentParameters[1] + " " + MainActivity.currentParameters[2] + 
+					" " + MainActivity.currentParameters[3] + " " + MainActivity.currentParameters[4]));	// + "/n"
+//			defaults.setText(new StringBuilder().append(MainActivity.currentParameters[1]));
+//			defaults.setText(new StringBuilder().append(MainActivity.currentParameters[2]));
+//			defaults.setText(new StringBuilder().append(MainActivity.currentParameters[3]));
+//			defaults.setText(new StringBuilder().append(MainActivity.currentParameters[4]));
+		}
 	}
 	
 	
 	/**
-	 * Parameters
-	 * @param view
+	 * sends user input of the respective radar command back to the main activtity,
+	 * mesage sent via {@link sendMessage()} using Bluetooth communcation
+	 * @param view	 button to send command
 	 */
-	public void getRampTime(View view) {
-		//			String currentValues = myCommand.getCurrentCaptureTime();
-		Log.i(TAG, "Pressed 'Ramp Time' button");
-		String rampTime = "FREQ:SWEEP:RAMPTIME?$";
-//		mHandler.sendMessage(rampTime);
-		Intent intent2 = new Intent();
-		intent2.putExtra(EXTRA_RADAR_COMMAND, rampTime);
-		setResult(Activity.RESULT_OK, intent2);
-//		startMainActivity(intent2);
-//		finish();
-	}
-	
 	public void send(View view) {
 		Intent intent = new Intent();
 		intent.putExtra(EXTRA_RADAR_COMMAND, myCommand.setRampTime(mRampTime));
 		setResult(Activity.RESULT_OK, intent);
 		finish();
+//		if(mStrCommand != null) {
+//			intent.putExtra(EXTRA_RADAR_COMMAND, mStrCommand);
+//			setResult(Activity.RESULT_OK, intent);
+//			finish();
+//		}
 	}
-
-	public void getSweepType(View view) {
-		Log.i(TAG, "Pressed sweep type button");
-		String sweepType = "FREQ:SWEEP:TYPE?$";
-		Intent intent = new Intent();
-		intent.putExtra(EXTRA_RADAR_COMMAND, sweepType);
-		setResult(Activity.RESULT_OK, intent);
+	
+	/** Query radar kit ramp time */
+	public void getRampTime(View view) {
+		Log.i(TAG, "Pressed 'Ramp Time' button");	
+//		MainActivity.sendMessage(rampTime);
+		
+		Intent intent2 = new Intent();
+//		String rampTime = "FREQ:SWEEP:RAMPTIME?$";
+//		intent2.putExtra(EXTRA_RADAR_COMMAND, rampTime);
+		
+		intent2.putExtra(EXTRA_RADAR_COMMAND, myCommand.getRampTime());
+		setResult(Activity.RESULT_OK, intent2);
 		finish();
 	}
 
-	public void getStopFreq(View view) {
-		Log.i(TAG, "Pressed sweep type button");
-		String stop = "FREQ:SWEEP:STOP?$";
-		Intent intent = new Intent();
-		intent.putExtra(EXTRA_RADAR_COMMAND, stop);
-		setResult(Activity.RESULT_OK, intent);
-		finish();
-	}
-
+	/** Query radar kit start freq */
 	public void getStartFreq(View view) {
 		Log.i(TAG, "Pressed sweep type button");
-		String start = "FREQ:SWEEP:START?$";
+//		String start = "FREQ:SWEEP:START?$";
 		Intent intent = new Intent();
-		intent.putExtra(EXTRA_RADAR_COMMAND, start);
+//		intent.putExtra(EXTRA_RADAR_COMMAND, start);
+
+		intent.putExtra(EXTRA_RADAR_COMMAND, myCommand.getStartFreq());
+		setResult(Activity.RESULT_OK, intent);
+		finish();
+	}
+	
+	/** Query radar kit stop freq */
+	public void getStopFreq(View view) {
+		Log.i(TAG, "Pressed sweep type button");
+//		String stop = "FREQ:SWEEP:STOP?$";
+		Intent intent = new Intent();
+//		intent.putExtra(EXTRA_RADAR_COMMAND, stop);
+		intent.putExtra(EXTRA_RADAR_COMMAND, myCommand.getStopFreq());
 		setResult(Activity.RESULT_OK, intent);
 		finish();
 	}
 
+	/** Query radar kit sweep type */
+	public void getSweepType(View view) {
+		Log.i(TAG, "Pressed sweep type button");
+//		String sweepType = "FREQ:SWEEP:TYPE?$";
+		Intent intent = new Intent();
+//		intent.putExtra(EXTRA_RADAR_COMMAND, sweepType);
+		intent.putExtra(EXTRA_RADAR_COMMAND, myCommand.getSweepType());
+		setResult(Activity.RESULT_OK, intent);
+		finish();
+	}
+	
+	/** Query radar kit ref. div. */
 	public void getRefDiv(View view) {
 		Log.i(TAG, "Pressed sweep type button");
-		String ref = "FREQ:REF:DIV?$";
+//		String ref = "FREQ:REF:DIV?$";
 		Intent intent = new Intent();
-		intent.putExtra(EXTRA_RADAR_COMMAND, ref);
+//		intent.putExtra(EXTRA_RADAR_COMMAND, ref);
+		
+		intent.putExtra(EXTRA_RADAR_COMMAND, myCommand.getRefDiv());
 		setResult(Activity.RESULT_OK, intent);
 		finish();
 	}
 
-
-
-    public void startMainActivity(Intent todo) {
-        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
-        startActivity(intent);
-    }
-
-
-
-	/**
-	 * Prompt for user input for radar kit settings
-	 * @param view	button clicked
-	 */
+	
+	/** Promopt user to set radar kit ramp time */
 	public void setRampTime(View view) {
+		userInput = new MyAlertDialogFragment();
+		showDialog();
+//		mStrCommand = myCommand.setRampTime(mRampTime);
+//		mInputCommand = mRampTime;
+	}
+	
+	/** Promopt user to set radar kit start frequency */
+	public void setStartFreq(View view) {
+		userInput = new MyAlertDialogFragment();
+		showDialog();
+	}
+	
+	/** Promopt user to set radar kit stop frequency */
+	public void setStopFreq(View view) {
+		userInput = new MyAlertDialogFragment();
+		showDialog();
+	}
+	
+	/** Promopt user to set radar kit sweep type */
+	public void setSweepType(View view) {
+		userInput = new MyAlertDialogFragment();
+		showDialog();
+	}
+	
+	/** Promopt user to set radar kit ref div */
+	public void setRefDiv(View view) {
 		userInput = new MyAlertDialogFragment();
 		showDialog();
 	}

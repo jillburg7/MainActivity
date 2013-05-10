@@ -14,6 +14,7 @@ public class FileInfo {// extends File {
 	protected Date dateCreated;
 	protected String created;
 	private Date lastOpened;
+	String[] parameters;
 	//	private static String somethingNeededHere;
 
 	public enum Kind{ RAW, RANGE };
@@ -62,7 +63,7 @@ public class FileInfo {// extends File {
 		int mDay = c.get(Calendar.DAY_OF_MONTH);
 		int mHour = c.get(Calendar.HOUR_OF_DAY);
 		int mMinute = c.get(Calendar.MINUTE);
-		
+		fileName = mYear + mMonth + mDay + "_" + "test";
 		
 //		StringBuilder string = new StringBuilder().append();
 		return fileName;
@@ -82,9 +83,9 @@ public class FileInfo {// extends File {
 	 * 
 	 * @return
 	 */
-	public String getKind() {
-		return "" + dataKind;
-	}
+//	public String getKind() {
+//		return "" + dataKind;
+//	}
 
 	/**
 	 * 
@@ -98,11 +99,20 @@ public class FileInfo {// extends File {
 		dataKindStr = someKind;
 	}
 	
+	public String getKind() {
+		return dataKindStr;
+	}
+	
+	public String[] getParameters() {
+		return parameters;
+	}
 	/**
-	 * File header - first few lines of file will be parameter
+	 * File header - first few lines of file will be parameters
 	 */
-	public void fileHeader() {
-		
+	public void fileHeader(String[] parameters) {
+		this.parameters = parameters;
+//		for(int i = 0; i < parameters.length; i++)
+			
 	}
 
 }

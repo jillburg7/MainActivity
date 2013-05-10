@@ -18,7 +18,7 @@
     <string name="plot_FFT">Plot Range</string>
     <string name="statistics_log">Statistics</string>
     <string name="collect_save">Collect/Save</string>
-    <string name="stop_collecting">Stop Collecting</string>
+    <string name="get_parameters">Parameters</string>
     <string name="load_new">Load</string>
 
     <!-- Used on unexecutable layout-large & layout-normal XML files -->
@@ -51,14 +51,21 @@
     <string name="currentRampTime">Ramp Time</string>
     <string name="currentCaptureTime"></string>
     <string name="currentBandwidth"></string>
-    <string name="rampTime">Get Ramp Time</string>
-    <string name="sweepType">Get Sweep Type</string>
     <string name="changeCaptureTime">Change Capture Time</string>
     <string name="changeBandwidth">Change Bandwidth</string>
     <string name="changeRampTime">Change Ramp Time</string>
-    <string name="setRampTime">Set Ramp Time</string>
     <string name="seekbar_from_touch">from touch</string>
-   
+    <string name="ramp_time">Get Ramp Time</string>
+    <string name="sweep_type">Get Sweep Type</string>
+    <string name="start_freq">Get Start Frequency</string>
+    <string name="stop_freq">Get Stop Frequency</string>
+    <string name="ref_div">Get Ref. Div.</string>
+    
+    <string name="set_ramp_time">Set Ramp Time</string>
+    <string name="set_sweep_type">Set Sweep Type</string>
+    <string name="set_start_freq">Set Start Freq.</string>
+    <string name="set_stop_freq">Set Stop Freq.</string>
+    <string name="set_ref_div">Set Ref. Div.</string>
     
     
     <!-- Dialogs -->

@@ -16,59 +16,69 @@ public final class R {
         public static final int ramp=0x7f020002;
     }
     public static final class id {
-        public static final int LinearLayout=0x7f080010;
-        public static final int binary_file=0x7f080032;
-        public static final int bt_settings=0x7f080027;
+        public static final int LinearLayout=0x7f08001a;
+        public static final int binary_file=0x7f08003c;
+        public static final int bt_settings=0x7f080031;
         public static final int button_delete=0x7f08000a;
-        public static final int button_group=0x7f08001a;
-        public static final int button_load=0x7f08001e;
+        public static final int button_group=0x7f080024;
+        public static final int button_load=0x7f080028;
         public static final int button_open=0x7f080009;
-        public static final int button_save=0x7f080023;
-        public static final int button_scan=0x7f080019;
-        public static final int captureTimeOptions=0x7f080011;
-        public static final int captureTimeSetting=0x7f080012;
-        public static final int chart=0x7f08001f;
-        public static final int collect_save=0x7f08001d;
-        public static final int compressed_file=0x7f080033;
-        public static final int connect_scan=0x7f080029;
-        public static final int discoverable=0x7f080028;
-        public static final int doppler_plot=0x7f08002d;
-        public static final int fft_plot=0x7f08002e;
+        public static final int button_save=0x7f08002d;
+        public static final int button_scan=0x7f080023;
+        public static final int captureTimeOptions=0x7f08001b;
+        public static final int captureTimeSetting=0x7f08001c;
+        public static final int chart=0x7f080029;
+        public static final int collect_save=0x7f080027;
+        public static final int commands=0x7f080012;
+        public static final int compressed_file=0x7f08003d;
+        public static final int connect_scan=0x7f080033;
+        public static final int discoverable=0x7f080032;
+        public static final int doppler_plot=0x7f080037;
+        public static final int fft_plot=0x7f080038;
         public static final int file_info=0x7f080003;
-        public static final int getRampTime=0x7f08000b;
+        public static final int getParameters=0x7f080025;
         public static final int information=0x7f080002;
         public static final int list1=0x7f080000;
         public static final int list2=0x7f080001;
-        public static final int matlab_file=0x7f080034;
-        public static final int menu_settings=0x7f080025;
-        public static final int new_devices=0x7f080018;
-        public static final int paired_devices=0x7f080016;
+        public static final int matlab_file=0x7f08003e;
+        public static final int menu_settings=0x7f08002f;
+        public static final int new_devices=0x7f080022;
+        public static final int paired_devices=0x7f080020;
         public static final int paramDetails=0x7f080008;
         public static final int paramLabels=0x7f080007;
-        public static final int plotButtonGroup=0x7f080020;
-        public static final int plotFFT_button=0x7f080022;
-        public static final int plot_button=0x7f080021;
-        public static final int plotting_menu=0x7f08002a;
-        public static final int progress=0x7f080014;
+        public static final int parameters=0x7f080011;
+        public static final int plotButtonGroup=0x7f08002a;
+        public static final int plotFFT_button=0x7f08002c;
+        public static final int plot_button=0x7f08002b;
+        public static final int plotting_menu=0x7f080034;
+        public static final int progress=0x7f08001e;
+        public static final int query_commands=0x7f08000b;
         public static final int radar_params=0x7f080006;
-        public static final int range_plot=0x7f08002c;
-        public static final int raw_plot=0x7f08002b;
-        public static final int sar_plot=0x7f08002f;
-        public static final int saving_menu=0x7f080030;
-        public static final int search=0x7f080026;
-        public static final int seekBar1=0x7f080013;
-        public static final int send=0x7f08000f;
-        public static final int setRampTime=0x7f08000d;
-        public static final int start=0x7f08001b;
-        public static final int stop=0x7f08001c;
-        public static final int sweepType=0x7f08000c;
-        public static final int textView=0x7f08000e;
-        public static final int textView1=0x7f080024;
+        public static final int ramp_time=0x7f08000c;
+        public static final int range_plot=0x7f080036;
+        public static final int raw_plot=0x7f080035;
+        public static final int ref_div=0x7f080010;
+        public static final int sar_plot=0x7f080039;
+        public static final int saving_menu=0x7f08003a;
+        public static final int search=0x7f080030;
+        public static final int seekBar1=0x7f08001d;
+        public static final int send=0x7f080019;
+        public static final int set_ramp_time=0x7f080013;
+        public static final int set_ref_div=0x7f080017;
+        public static final int set_start_freq=0x7f080014;
+        public static final int set_stop_freq=0x7f080015;
+        public static final int set_sweep_type=0x7f080016;
+        public static final int start=0x7f080026;
+        public static final int start_freq=0x7f08000d;
+        public static final int stop_freq=0x7f08000e;
+        public static final int sweep_type=0x7f08000f;
+        public static final int textView1=0x7f08002e;
         public static final int textView2=0x7f080004;
         public static final int textView3=0x7f080005;
-        public static final int text_file=0x7f080031;
-        public static final int title_new_devices=0x7f080017;
-        public static final int title_paired_devices=0x7f080015;
+        public static final int text_file=0x7f08003b;
+        public static final int title_new_devices=0x7f080021;
+        public static final int title_paired_devices=0x7f08001f;
+        public static final int value_input=0x7f080018;
     }
     public static final class layout {
         public static final int activity_display_archive=0x7f030000;
@@ -90,11 +100,11 @@ public final class R {
         public static final int saving_menu=0x7f070006;
     }
     public static final class string {
-        public static final int alert_dialog_cancel=0x7f05004a;
+        public static final int alert_dialog_cancel=0x7f050051;
         /**  Dialogs 
          */
-        public static final int alert_dialog_ok=0x7f050049;
-        public static final int alert_dialog_two_buttons_title=0x7f05004b;
+        public static final int alert_dialog_ok=0x7f050050;
+        public static final int alert_dialog_two_buttons_title=0x7f050052;
         public static final int app_name=0x7f050018;
         public static final int bandwidthSetting=0x7f05003e;
         public static final int binary_file=0x7f050015;
@@ -106,9 +116,9 @@ public final class R {
         public static final int button_open=0x7f050037;
         public static final int button_scan=0x7f05000c;
         public static final int captureTime=0x7f05003c;
-        public static final int changeBandwidth=0x7f050045;
-        public static final int changeCaptureTime=0x7f050044;
-        public static final int changeRampTime=0x7f050046;
+        public static final int changeBandwidth=0x7f050043;
+        public static final int changeCaptureTime=0x7f050042;
+        public static final int changeRampTime=0x7f050044;
         public static final int choose_file=0x7f050035;
         public static final int collect_data=0x7f050021;
         public static final int collect_save=0x7f050028;
@@ -128,6 +138,7 @@ public final class R {
         public static final int fft_plot=0x7f050012;
         public static final int file_info=0x7f050036;
         public static final int freq_settings=0x7f05001c;
+        public static final int get_parameters=0x7f050029;
         public static final int hello_world=0x7f050030;
         public static final int load_data=0x7f050022;
         public static final int load_new=0x7f05002a;
@@ -138,9 +149,10 @@ public final class R {
         public static final int not_connected=0x7f050001;
         public static final int plot_FFT=0x7f050026;
         public static final int plot_data=0x7f050025;
-        public static final int rampTime=0x7f050042;
+        public static final int ramp_time=0x7f050046;
         public static final int range_plot=0x7f050010;
         public static final int raw_plot=0x7f05000f;
+        public static final int ref_div=0x7f05004a;
         public static final int sar_plot=0x7f050013;
         public static final int save_data=0x7f050023;
         /**   DeviceListActivity 
@@ -148,22 +160,27 @@ public final class R {
         public static final int scanning=0x7f050006;
         public static final int search_hint=0x7f050033;
         public static final int search_title=0x7f050032;
-        public static final int seekbar_from_touch=0x7f050048;
+        public static final int seekbar_from_touch=0x7f050045;
         public static final int select_device=0x7f050007;
         /**   BluetoothChat 
          */
         public static final int send=0x7f050000;
-        public static final int send2=0x7f05004c;
+        public static final int send2=0x7f050053;
         public static final int send_to=0x7f05001b;
-        public static final int setRampTime=0x7f050047;
+        public static final int set_ramp_time=0x7f05004b;
+        public static final int set_ref_div=0x7f05004f;
+        public static final int set_start_freq=0x7f05004d;
+        public static final int set_stop_freq=0x7f05004e;
+        public static final int set_sweep_type=0x7f05004c;
         public static final int share_data=0x7f050024;
         /**  Used on unexecutable layout-large & layout-normal XML files 
          */
         public static final int start=0x7f05002b;
+        public static final int start_freq=0x7f050048;
         public static final int statistics_log=0x7f050027;
         public static final int stop=0x7f05002c;
-        public static final int stop_collecting=0x7f050029;
-        public static final int sweepType=0x7f050043;
+        public static final int stop_freq=0x7f050049;
+        public static final int sweep_type=0x7f050047;
         public static final int text_file=0x7f050014;
         /**  Device List Layout Strings 
          */

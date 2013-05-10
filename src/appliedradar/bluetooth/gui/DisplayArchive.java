@@ -99,15 +99,12 @@ public class DisplayArchive extends Activity {
 			TextView paramLabels = (TextView) findViewById(R.id.paramLabels);
 			TextView paramDetails = (TextView) findViewById(R.id.paramDetails);
 			
-//			String absolutePath = file.getAbsolutePath();
-//	        "AbsolutePath:    " + AbsolutePath + "\n"
-//			String path = file.getPath();
 			filePath = file.getPath();
 			String parent = file.getParent();
-//			String name = file.getName();
-//			String date = file.lastModified();
 			String size = "" + file.length();
 			FileInfo information = new FileInfo(filePath);
+			String[] parameters = new String[5];
+			parameters = information.getParameters();
 
 			infoLabels.setText("Parent Path:" + "\n" + "Name:" + "\n" + 
 								"Date Created:" + "\n" + "Size:" + "\n" + "Kind: ");
@@ -116,9 +113,14 @@ public class DisplayArchive extends Activity {
 							size + "\n" + 
 							information.getKind() + "\n");
 
-			paramLabels.setText("Parameter:");
-			paramDetails.setText("Important stuff goes here");
-			
+			paramLabels.setText("Parameters:");
+			try {
+				paramDetails.setText(parameters[0]); 	// + "/n" + parameters[1] + "/n" + 
+//						parameters[2] + "/n" + parameters[3] + "/n" + parameters[4] +
+//						"/n" + parameters[5]);
+			} catch (Exception e) {
+				Log.e("ParameterDisplay", "null?");
+			}
 			findViewById(R.id.button_open).setVisibility(View.VISIBLE);
 			findViewById(R.id.button_delete).setVisibility(View.VISIBLE);
 			findViewById(R.id.information).setVisibility(View.VISIBLE);

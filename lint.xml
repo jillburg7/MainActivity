@@ -4,6 +4,7 @@
         <ignore path="res/layout-large/main.xml" />
         <ignore path="res/layout-normal/main.xml" />
         <ignore path="res/layout-xlarge/main.xml" />
+        <ignore path="res/layout/activity_settings.xml" />
         <ignore path="res/layout/main.xml" />
     </issue>
     <issue id="HardcodedText">

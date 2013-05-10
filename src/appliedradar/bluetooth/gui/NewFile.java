@@ -14,12 +14,15 @@ public class NewFile extends FileInfo {
 	private String name;
 //	private Kind fileKind;
 	private String fileKind;
+	public String[] radarParameters;
+	private File file;
 	
 	public NewFile() {
 		root = Environment.getExternalStorageDirectory().toString(); 
 		myDir = new File(root + "/FMCW File Archive");	// name of directory
-		name = getFileName();
-		fileKind = dataKindStr;
+		name = setfileName();
+		file = new File (myDir, name);
+		fileKind = getKind();
 	}
 	
 
@@ -30,10 +33,11 @@ public class NewFile extends FileInfo {
 //	}
 	
 	public void dataParameters(String[] parameters){
+		fileHeader(parameters);
+		radarParameters = parameters;
 		// add parameters to first few lines to file. 
 		// include in file information in the FileInfo text view in the file archive
 	}
-	
 	
 	/**
 	 * 
@@ -42,10 +46,9 @@ public class NewFile extends FileInfo {
 	 * @throws IOException
 	 */
 	public void createFile(Context c, String string) throws IOException{
-		
 //		String fname = created + "_" + fileKind;	// name of file 
 //		File file = new File (myDir, fname);
-		File file = new File (myDir, name);
+		
 		if (file.exists ()){
 			file.delete (); 
 		}
