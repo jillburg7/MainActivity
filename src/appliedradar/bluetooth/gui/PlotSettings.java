@@ -11,13 +11,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.graphics.Color;
 
-public class PlotSettings {// extends GraphicalView {
-
-
-//	public PlotSettings(Context context, AbstractChart chart) {
-////		super(context, chart);
-//		// TODO Auto-generated constructor stub
-//	}
+public class PlotSettings {
 
 	/** The zoom buttons rectangle. */
 //	private RectF mZoomR = new RectF();
@@ -57,7 +51,6 @@ public class PlotSettings {// extends GraphicalView {
 		// Linearly-spaced x-axis values for data points, increment must be constant
 		double increment = (endValue)/(fftData.length/2);	// half of sampling freq/length of data
 		for(int i =0; i < (fftData.length/2); i++) {
-//			xAxis.get(0)[i] = i * increment;
 			xAxis.get(0)[i] = (3.28084*((3e8*((i*increment)))/(2*(196000000/.016))))-3.6;	//********
 			values.get(0)[i] = fftData[i];
 		}
@@ -93,7 +86,7 @@ public class PlotSettings {// extends GraphicalView {
 	}
 
 
-
+// I THINK MODIFYING THIS CODE WILL CHANGE THE SIZE OF THE ZOOM PANEL...
 /*	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
@@ -236,6 +229,10 @@ public class PlotSettings {// extends GraphicalView {
 
 		// Minimum & Max values to view plot area
 		myRenderer.setXAxisMin(0);
+		myRenderer.setXAxisMax(50);
+
+		myRenderer.setYAxisMin(20);
+		myRenderer.setYAxisMax(90);
 
 		return myRenderer;
 	}

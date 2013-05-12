@@ -24,7 +24,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,8 +62,6 @@ public class MainActivity extends Activity {
 	private BluetoothAdapter mBluetoothAdapter = null;
 	/** Member object for the chat services */
 	private BluetoothChatService mChatService = null;
-	// Array adapter for the conversation thread
-	private ArrayAdapter<String> mConversationArrayAdapter;
 	//END OF BT INITIALIZERS
 
 	/** Type of data to save */
@@ -76,22 +73,17 @@ public class MainActivity extends Activity {
 	XYMultipleSeriesRenderer mRenderer;
 	
 	/**	Class to set data, rendering, and plot axis settings - uses aChartEngine content */
-	PlotSettings plot = new PlotSettings();
+	private PlotSettings plot = new PlotSettings();
 
 	/** RadarCommand Class object that controls the context of commands sent to the kit */
-	public RadarCommand myCommand = new RadarCommand();
-
-	// List of data collected from Radar kit
-	private ArrayList<Double> dataCollected;
-
-
-	/** Raw data to using for plotting Raw */
-	private double[] dataToPlot;
-	/** FFT data to use for plotting Range  */
-	private double[] fftData;
+	private RadarCommand myCommand = new RadarCommand();
 	
 	/** Array of type short (16-bit signed integer) for incoming radar kit data */
 	private short[] raw;
+	/** FFT data to use for plotting Range  */
+	private double[] fftData;
+	
+
 
 	/** Whether application is receiving data or parameters settings (upon request) */
 	private boolean commandInfo = false;
@@ -111,6 +103,13 @@ public class MainActivity extends Activity {
 	/**
 	 * String array to hold the 5 default/current parameter settings of the radar kit that
 	 * this application/device has setup a Bluetooth connection with.
+	 * 
+	 * Respective data for the indices:
+	 *  	[0] Ramptime
+	 * 		[1] Start Freq
+	 *  	[2] Stop Freq
+	 * 		[3] Sweep Type
+	 * 		[4] Ref Div
 	 */
 	public static String[] currentParameters;
 
@@ -470,12 +469,7 @@ public class MainActivity extends Activity {
 		}
 	}
 
-//	currentParameters String array; respective data for the indices:
-	// [0] Ramptime
-	// [1] Start Freq
-	// [2] Stop Freq
-	// [3] Sweep Type
-	// [4] Ref Div
+
 	
 	/** Adds a delay in between commands sent consecutively after each. */
 	public void pause() {
@@ -532,25 +526,30 @@ public class MainActivity extends Activity {
 	 * @param fileName Name of the file to open and load data into chart
 	 */
 	public void loadData(String fileName) {
-		ArrayList<Short> shortA = new ArrayList<Short>();
+		ArrayList<Short> shortList = new ArrayList<Short>();
+		
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
 			String line;
 
 			while ((line = br.readLine()) != null) {
 					short value = Short.parseShort(line);
-					shortA.add(value);
+					shortList.add(value);
 //				}
 			}
 			br.close();
 		} 
 		catch (IOException e) {
 			Log.e("loadData()", "Reading data out of file");		// You'll need to add proper error handling here
-
 		}	
-		toShortArray(shortA);
+		toShortArray(shortList);
+		
+		// adds the name of file opened to the TextView
+		int index = fileName.indexOf("FMCW File Archive/");
+		String name = fileName.substring(index+18);		// removes file path of file open
 		TextView fileOpened = (TextView)findViewById(R.id.file_name);
-		fileOpened.setText(new StringBuilder().append(fileName));
+		fileOpened.setText(new StringBuilder().append("File Name: " + name));
+		
 		plotData();
 	}
 	

@@ -48,9 +48,8 @@ public class DisplayArchive extends Activity {
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		File fileDir = new File(Environment.getExternalStorageDirectory().getPath());
-//		File fileDir = new File("/mnt/sdcard/FMCW File Archive");
-		if (fileDir.exists() && fileDir.isDirectory()) {	//STUFF I CHANGED Here
+		File fileDir = new File(Environment.getExternalStorageDirectory().getPath() + "/FMCW File Archive");
+		if (fileDir.exists() && fileDir.isDirectory()) {
 			mFileList = fileDir.listFiles();
 			mFiles = fileDir.list();
 		} else {
@@ -61,9 +60,8 @@ public class DisplayArchive extends Activity {
 				Uri.parse("file://" + Environment.getExternalStorageDirectory()))); 
 		
 		// sorts the file order with respect to thier file names
-		Arrays.sort(mFileList, new Comparator<File>(){
-		    public int compare(File f1, File f2)
-		    {
+		Arrays.sort(mFileList, new Comparator<File>() {
+		    public int compare(File f1, File f2) {
 		        return (f1.getName()).compareTo(f2.getName());
 		    } });	
 		
