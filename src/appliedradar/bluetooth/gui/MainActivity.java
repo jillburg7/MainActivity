@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -548,6 +549,8 @@ public class MainActivity extends Activity {
 
 		}	
 		toShortArray(shortA);
+		TextView fileOpened = (TextView)findViewById(R.id.file_name);
+		fileOpened.setText(new StringBuilder().append(fileName));
 		plotData();
 	}
 	
@@ -581,7 +584,7 @@ public class MainActivity extends Activity {
 	 */
 	public void plotData() {
 		mDataset = new XYMultipleSeriesDataset();
-		XYSeries dataSeries = new XYSeries("Tablet Data");
+		XYSeries dataSeries = new XYSeries("Raw Data");
 //
 //		for (int i=0; i<dataToPlot.length; i++)		// hence, double[] fileContent SHOULD be initialized at this point	
 //			dataSeries.add(i, dataToPlot[i]);
@@ -669,31 +672,24 @@ public class MainActivity extends Activity {
 		String stringToSave = new String();
 
 		try{
-			Log.e("SaveFile()", "saved your file.....this time");
-			//			Kind kind = Kind.RAW;
-			String kind = "";
 			if (saveFFT == false){
 				for (int i = 0; i<raw.length; i++) 
 					stringToSave += raw[i] + "\n";
-				kind = "RAW";
 			}
-			else{	// saveFFT = true
+			else{	// otherwise, saveFFT = true
 				for (int i = 0; i<fftData.length; i++) 
-					stringToSave += fftData[i] + "\n";
-				kind = "RANGE";
-//				saveFFT = false;
+					stringToSave += (float)fftData[i] + "\n";
 			}
+			
 			// Creates a new file
 			NewFile save = new NewFile();
 			
-			// not implemented yet.
-			save.dataParameters(currentParameters);
-			
-			save.setKind(kind);	// to specify if data is RAW or FFT data
 			save.createFile(this, stringToSave);
+
+			Log.e("SaveFile()", "file saved to " + save.name);
 			
 			// to notify user that their data was saved successfully in archive
-			Toast.makeText(this, "File Saved!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "File Saved! File Name: " + save.name, Toast.LENGTH_LONG).show();
 		} catch(Exception e) {
 			Log.e("SaveFile()", "File Not Saved");
 		}
@@ -715,20 +711,15 @@ public class MainActivity extends Activity {
 		}
 	}
 
-
-	/**
-	 * Signals to start collecting data from Radar kit. 
-	 * The raw data will be saved automatically.
-	 * @param butt2 button pressed
-	 */
 	
 	/**
 	 * This button is currently implemented to get the five default/current parameters
-	 *  when clicked and stores them into the string array called currentParameters.
+	 *  
 	 * @param butt2 Button clicked
 	 */
 	public void collectSave(View butt2) {
 		commandInfo = false;
+		saveFFT = false;
 		try {
 			sendMessage(myCommand.startCollect());
 			Log.d(TAG, "start collecting data...");
@@ -747,7 +738,7 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Queries the radar kit's current parameter settings via Bluetooth connection
-	 * @param button
+	 * @param button 	when clicked and stores them into the string array called currentParameters.
 	 */
 	public void getParameters(View button) {
 		getDefaultParameters();

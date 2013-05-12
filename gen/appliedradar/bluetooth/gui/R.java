@@ -36,6 +36,7 @@ public final class R {
         public static final int doppler_plot=0x7f080037;
         public static final int fft_plot=0x7f080038;
         public static final int file_info=0x7f080003;
+        public static final int file_name=0x7f08002e;
         public static final int getParameters=0x7f080025;
         public static final int information=0x7f080002;
         public static final int list1=0x7f080000;
@@ -72,7 +73,6 @@ public final class R {
         public static final int start_freq=0x7f08000d;
         public static final int stop_freq=0x7f08000e;
         public static final int sweep_type=0x7f08000f;
-        public static final int textView1=0x7f08002e;
         public static final int textView2=0x7f080004;
         public static final int textView3=0x7f080005;
         public static final int text_file=0x7f08003b;

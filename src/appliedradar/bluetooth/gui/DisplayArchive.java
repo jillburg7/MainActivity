@@ -1,6 +1,8 @@
 package appliedradar.bluetooth.gui;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -26,7 +28,6 @@ public class DisplayArchive extends Activity {
 
 	// Debugging
 	private static final String TAG = "DisplayArchiveActivity";
-	private static final boolean D = true;
 
 	private File[] mFileList;
 	private String[] mFiles;
@@ -47,8 +48,8 @@ public class DisplayArchive extends Activity {
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-		File fileDir = new File("/mnt/sdcard/FMCW File Archive");
+		File fileDir = new File(Environment.getExternalStorageDirectory().getPath());
+//		File fileDir = new File("/mnt/sdcard/FMCW File Archive");
 		if (fileDir.exists() && fileDir.isDirectory()) {	//STUFF I CHANGED Here
 			mFileList = fileDir.listFiles();
 			mFiles = fileDir.list();
@@ -58,31 +59,29 @@ public class DisplayArchive extends Activity {
 		//MAKES FILES VIEWABLE to Here
 		sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
 				Uri.parse("file://" + Environment.getExternalStorageDirectory()))); 
-
-
+		
+		// sorts the file order with respect to thier file names
+		Arrays.sort(mFileList, new Comparator<File>(){
+		    public int compare(File f1, File f2)
+		    {
+		        return (f1.getName()).compareTo(f2.getName());
+		    } });	
+		
+		
+		// View to display files in directory
 		ListView list1 = (ListView) findViewById(R.id.list1);
 
 		ArrayAdapter<String> fileNames = new ArrayAdapter<String>(this, R.layout.file_name, mFiles);
 		
-//		ArrayAdapter<File> fileAdapter = new ArrayAdapter<File>(this, R.layout.file_name, mFileList);
+		// sorts the Strings of the file names that are displayed
+		fileNames.sort(new Comparator<String>() {
+			public int compare(String f1, String f2)
+		    {
+		        return (f1).compareTo(f2);
+		    }});
+		
 		list1.setAdapter(fileNames);
 		list1.setOnItemClickListener(mFileClickListener);
-		
-		
-//		list1.setOnItemSelectedListener(mFileSelectedListener);
-
-		//		// returns number of bytes in this file
-		//		String fileSize = "" + fileDir.length();
-		//
-		//		// Find and set up the ListView for FMCW files
-		//		ListView fileListView = (ListView) findViewById(R.id.files_archived);
-		//		fileListView.setAdapter(fileAdapter);
-		//		fileListView.setOnItemClickListener(mFileClickListener);
-
-		// If there are files in directory, add each one to the ArrayAdapter
-		//		if (mFileList.length > 0) 
-		//			findViewById(R.id.title_file_list).setVisibility(View.VISIBLE);
-
 	}
 
 
@@ -90,37 +89,36 @@ public class DisplayArchive extends Activity {
 	private OnItemClickListener mFileClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parentPath, View view, int position, long id) {
-//			filePath = ((TextView) view).getText().toString();
+
 			fileName = ((TextView) view).getText().toString();
 			File file = mFileList[position];
 			
 			TextView infoLabels = (TextView) findViewById(R.id.textView2);
 			TextView info = (TextView) findViewById(R.id.textView3);
-			TextView paramLabels = (TextView) findViewById(R.id.paramLabels);
-			TextView paramDetails = (TextView) findViewById(R.id.paramDetails);
+//			TextView paramLabels = (TextView) findViewById(R.id.paramLabels);
+//			TextView paramDetails = (TextView) findViewById(R.id.paramDetails);
 			
 			filePath = file.getPath();
 			String parent = file.getParent();
 			String size = "" + file.length();
 			FileInfo information = new FileInfo(filePath);
-			String[] parameters = new String[5];
-			parameters = information.getParameters();
 
 			infoLabels.setText("Parent Path:" + "\n" + "Name:" + "\n" + 
-								"Date Created:" + "\n" + "Size:" + "\n" + "Kind: ");
+								"Date Created:" + "\n" + "Size:");
 			info.setText(	parent + "\n" + fileName + "\n" + 
 							information.created + "\n" + 
-							size + "\n" + 
-							information.getKind() + "\n");
-
-			paramLabels.setText("Parameters:");
-			try {
-				paramDetails.setText(parameters[0]); 	// + "/n" + parameters[1] + "/n" + 
-//						parameters[2] + "/n" + parameters[3] + "/n" + parameters[4] +
-//						"/n" + parameters[5]);
-			} catch (Exception e) {
-				Log.e("ParameterDisplay", "null?");
-			}
+							size + "\n");
+			
+//			String[] parameters = new String[5];
+//			parameters = information.parameters;
+//			paramLabels.setText("Parameters:");
+//			
+//			try {
+//				paramDetails.setText(parameters[0]);
+//			} catch (Exception e) {
+//				Log.e("ParameterDisplay", "nothing");
+//			}
+			
 			findViewById(R.id.button_open).setVisibility(View.VISIBLE);
 			findViewById(R.id.button_delete).setVisibility(View.VISIBLE);
 			findViewById(R.id.information).setVisibility(View.VISIBLE);
@@ -158,7 +156,7 @@ public class DisplayArchive extends Activity {
 		File file = new File(Environment.getExternalStorageDirectory() + path);
 		if (!file.exists()) {
 			if (!file.mkdirs()) {
-				Log.e("TravellerLog :: ", "Problem creating Image folder");
+				Log.e(TAG, "Problem creating Image folder");
 				ret = false;
 			}
 		}

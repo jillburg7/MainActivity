@@ -91,12 +91,13 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/file_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:textSize= "12sp"
-        android:text="Norm_Layout" />
+        android:textIsSelectable="true" />
+        <!-- android:text="Norm_Layout" /> -->
 
 </RelativeLayout>

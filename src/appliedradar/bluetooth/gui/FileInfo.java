@@ -7,22 +7,19 @@ import java.util.Date;
 
 
 public class FileInfo {// extends File {
-
+	
+	protected static int FILE_NUMBER = 0;
+	
 	protected String fileName;
-	protected Kind dataKind;
-	protected String dataKindStr;
 	protected Date dateCreated;
 	protected String created;
-	private Date lastOpened;
 	String[] parameters;
-	//	private static String somethingNeededHere;
 
 	public enum Kind{ RAW, RANGE };
 
 	public FileInfo() {
 		dateCreated();
 		created = getDateCreated();
-//		created = getFileDate();
 	}
 
 	/**
@@ -43,29 +40,25 @@ public class FileInfo {// extends File {
 		return myDate;
 	}
 	
-	public String getFileName() {
-//		int date = DateFormat.YEAR_FIELD + DateFormat.MONTH_FIELD + DateFormat.DATE_FIELD;
-		String date = DateFormat.getDateInstance(DateFormat.MEDIUM).format(dateCreated);
-		String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(dateCreated);
-		return (date + "_" + time + "_" + dataKindStr);
-	}
 
 	private void dateCreated() {
 		dateCreated = getTimeStamp();
 	}
 
 
-	public String setfileName() {
+	public String setFileName() {
 	    // date and time
 		final Calendar c = Calendar.getInstance();
 		int mYear = c.get(Calendar.YEAR);
-		int mMonth = c.get(Calendar.MONTH);
+		int mMonth = c.get(Calendar.MONTH) + 1;
 		int mDay = c.get(Calendar.DAY_OF_MONTH);
 		int mHour = c.get(Calendar.HOUR_OF_DAY);
 		int mMinute = c.get(Calendar.MINUTE);
-		fileName = mYear + mMonth + mDay + "_" + "test";
 		
-//		StringBuilder string = new StringBuilder().append();
+		if (FILE_NUMBER > 0)
+			fileName = mYear + "" + mMonth + "" + mDay + "_" + "test" + FILE_NUMBER;
+		else if (FILE_NUMBER == 0)
+			fileName = mYear + "" + mMonth + "" + mDay + "_" + "test";
 		return fileName;
 	}
 	
@@ -80,39 +73,10 @@ public class FileInfo {// extends File {
 	}
 
 	/**
-	 * 
-	 * @return
-	 */
-//	public String getKind() {
-//		return "" + dataKind;
-//	}
-
-	/**
-	 * 
-	 * @param someKind the Kind of data being Saved
-	 */
-	public void setKind(Kind someKind) {
-		dataKind = someKind;
-	}
-	
-	public void setKind(String someKind) {
-		dataKindStr = someKind;
-	}
-	
-	public String getKind() {
-		return dataKindStr;
-	}
-	
-	public String[] getParameters() {
-		return parameters;
-	}
-	/**
 	 * File header - first few lines of file will be parameters
 	 */
 	public void fileHeader(String[] parameters) {
 		this.parameters = parameters;
-//		for(int i = 0; i < parameters.length; i++)
-			
 	}
 
 }

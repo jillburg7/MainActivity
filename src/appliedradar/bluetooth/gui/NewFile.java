@@ -7,36 +7,36 @@ import java.io.IOException;
 import android.content.Context;
 import android.os.Environment;
 
+/**
+ * 
+ * 
+ *	@author jillburg
+ */
 public class NewFile extends FileInfo {
+
 
 	private String root;
 	private File myDir;
-	private String name;
-//	private Kind fileKind;
-	private String fileKind;
+	protected String name;
+	protected String fileKind;
 	public String[] radarParameters;
 	private File file;
 	
 	public NewFile() {
 		root = Environment.getExternalStorageDirectory().toString(); 
 		myDir = new File(root + "/FMCW File Archive");	// name of directory
-		name = setfileName();
+		name = setFileName();
 		file = new File (myDir, name);
-		fileKind = getKind();
+		dataParameters();
 	}
-	
 
-//	private void fileName(){
-//		Date date = dateCreated;
-////		name = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date) + "_" + dataKind;
-//		name = getFileDate();
-//	}
-	
-	public void dataParameters(String[] parameters){
-		fileHeader(parameters);
-		radarParameters = parameters;
-		// add parameters to first few lines to file. 
-		// include in file information in the FileInfo text view in the file archive
+	/**
+	 * add parameters to first few lines to file
+	 * include in file information in the FileInfo text view in the file archive
+	 */
+	public void dataParameters(){
+		radarParameters = MainActivity.currentParameters;
+		fileHeader(radarParameters);
 	}
 	
 	/**
@@ -46,12 +46,12 @@ public class NewFile extends FileInfo {
 	 * @throws IOException
 	 */
 	public void createFile(Context c, String string) throws IOException{
-//		String fname = created + "_" + fileKind;	// name of file 
-//		File file = new File (myDir, fname);
-		
 		if (file.exists ()){
-			file.delete (); 
+			FILE_NUMBER++;
+			name = setFileName();
 		}
+		else
+			FILE_NUMBER = 0;
 		try {
 			FileOutputStream out = new FileOutputStream(file);
 			out.write(string.getBytes());

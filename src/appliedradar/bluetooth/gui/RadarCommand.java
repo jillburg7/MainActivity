@@ -7,51 +7,6 @@ package appliedradar.bluetooth.gui;
  * an ArrayList with type Double values.
  */
 public class RadarCommand {
-	// for debugging
-	private static final String TAG = "RadarCommand";
-
-//	private ArrayList<Double> arrayValues;
-
-	// default radar settings
-//	public static String CAPTURE_TIME;
-//	public static String BANDWIDTH;
-//	public static String RAMP_TIME;
-//	public static int CURRENT_STATE;
-
-
-/*	*//** Used for testing ... doesn't do anything fun *//*
-	public String readCommand(String returnCommand) {
-		return returnCommand;
-	}
-
-	*//**
-	 * The string of collected data recieved by the device from the radar kit
-	 * @param toParse	The string of data to parse into an ArrayList of type Double
-	 * @return arrayValues	Array of doubles with each element representing one sample of data
-	 *//*
-	public ArrayList<Double> parseCommand (String toParse) {
-		try {
-			List<String> data = Arrays.asList(toParse.split("\\s*,\\s*"));
-			convertToDouble(data);
-		} catch (RuntimeException e) {
-			Log.e(TAG, "error in CSV syntax");
-		}
-		return arrayValues;
-	}
-
-	*//**
-	 * more converting... probably very redundant process - will fix soon :)
-	 *//*
-	private void convertToDouble (List<String> stringList) {
-		arrayValues = new ArrayList<Double>();
-		double value;
-		int elements = stringList.size();
-		for (int i = 0; i < elements; i++) {
-			value = Double.parseDouble(stringList.get(i));
-			arrayValues.add(value);
-		}
-	}*/
-
 
 	/** Command to get current starting freq */
 	public String getStartFreq() {

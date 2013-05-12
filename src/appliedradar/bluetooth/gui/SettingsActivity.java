@@ -274,7 +274,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	 */
 	public void updateTextView() {
 		if (MainActivity.currentParameters != null) {
-			final TextView defaults = (TextView)findViewById(R.id.parameters);
+			TextView defaults = (TextView)findViewById(R.id.parameters);
 			defaults.setText(new StringBuilder().append(MainActivity.currentParameters[0] +
 					" " + MainActivity.currentParameters[1] + " " + MainActivity.currentParameters[2] + 
 					" " + MainActivity.currentParameters[3] + " " + MainActivity.currentParameters[4]));	// + "/n"

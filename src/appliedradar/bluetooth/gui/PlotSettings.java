@@ -10,8 +10,6 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.graphics.Color;
-import android.graphics.RectF;
-import android.util.Log;
 
 public class PlotSettings {// extends GraphicalView {
 
@@ -22,40 +20,48 @@ public class PlotSettings {// extends GraphicalView {
 //	}
 
 	/** The zoom buttons rectangle. */
-	private RectF mZoomR = new RectF();
+//	private RectF mZoomR = new RectF();
 
 
 	/**
 	 * sampling frequency in Hz
 	 */
-	private final int fs = 22050; // 44100;	// put in settings so user can change
+	private final int fs = 22164;	// 22050; // 44100;
 
 	/**
 	 * last x-value, (starting x-value = 0)
 	 */
 	private final int endValue = fs/2;
 
+	/**
+	 *  feet = 3.28084.*((3e8.*(freq-92))./(2.*(196000000./.016)));
+	 */
 
+	/**
+	 * Calculates thes frequency axis for the FFT calculation
+	 * 
+	 * @param fftData
+	 * @return
+	 */
 	public XYMultipleSeriesDataset getFrequencyAxis(double[] fftData) {
 		XYMultipleSeriesDataset rangeData = new  XYMultipleSeriesDataset();
 
-		String[] titles  = new String[] { "FFT data" }; 	// titles of data
+		String[] titles  = new String[] { "Range data" }; 	// titles of data
 		List<double[]> xAxis = new ArrayList<double[]>(1);	// x-axis values
 		List<double[]> values = new ArrayList<double[]>(1);	// y-axis values
 
 		// Need to have just as many x values as y values
 		xAxis.add(new double[fftData.length/2]);	
 		values.add(new double[fftData.length/2]);
-
-		// Linearly-spaced x-axis values for data points, increment must be constant 
-		double increment = (endValue)/fftData.length;	// half of sampling freq/length of data
+		
+		// Linearly-spaced x-axis values for data points, increment must be constant
+		double increment = (endValue)/(fftData.length/2);	// half of sampling freq/length of data
 		for(int i =0; i < (fftData.length/2); i++) {
-			xAxis.get(0)[i] = i * increment;
+//			xAxis.get(0)[i] = i * increment;
+			xAxis.get(0)[i] = (3.28084*((3e8*((i*increment)))/(2*(196000000/.016))))-3.6;	//********
 			values.get(0)[i] = fftData[i];
 		}
 
-		Log.i("PlotSettings", "length of dataB4 = " + fftData.length);
-		Log.i("PlotSettings", "length of dataFFT = " + values.get(0).length);
 		// for the buildDataset method call:
 		rangeData = dataBuilder(titles, xAxis, values);
 		return rangeData;
@@ -180,7 +186,7 @@ public class PlotSettings {// extends GraphicalView {
 	}
 
 	/**
-	 * 
+	 * FFT Plot Renderer for GUI
 	 * @return renderer
 	 */
 	public XYMultipleSeriesRenderer getFFTRenderer() {
@@ -209,8 +215,8 @@ public class PlotSettings {// extends GraphicalView {
 		myRenderer.setYLabelsColor(0, Color.BLACK);
 		myRenderer.setShowAxes(true);
 		myRenderer.setLabelsColor(Color.BLACK);
-
-		myRenderer.setXTitle("Range (meters)");
+		
+		myRenderer.setXTitle("Range (feet)");
 		myRenderer.setYTitle("Power (dB)");
 		myRenderer.setAxisTitleTextSize(20);
 
@@ -230,7 +236,6 @@ public class PlotSettings {// extends GraphicalView {
 
 		// Minimum & Max values to view plot area
 		myRenderer.setXAxisMin(0);
-		//myRenderer.setYAxisMin(0);
 
 		return myRenderer;
 	}

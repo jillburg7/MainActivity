@@ -54,17 +54,17 @@ public class RangeCalc {
 	 * Finds the maximum value in the FFT data array.
 	 * The index of the array holding the max value is stored in the indexMaxValue variable.
 	 */
-	private void searchMax() {
-		double max = 0;
-		for(double d : fftData) {
-			if(d > max) 
-				max = d;
-			for(int x = 0; x < fftData.length; x++) {
-				if(fftData[x] == max)
-					indexMaxValue = x;
-			}
-		}
-	}
+//	private void searchMax() {
+//		double max = 0;
+//		for(double d : fftData) {
+//			if(d > max) 
+//				max = d;
+//			for(int x = 0; x < fftData.length; x++) {
+//				if(fftData[x] == max)
+//					indexMaxValue = x;
+//			}
+//		}
+//	}
 	
 	/**
 	 * sampleNumber -> hertz:

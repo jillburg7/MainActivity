@@ -92,11 +92,12 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/file_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Large_Layout" />
+        android:textIsSelectable="true" />
+        <!-- android:text="Large_Layout" /> -->
 
 </RelativeLayout>
