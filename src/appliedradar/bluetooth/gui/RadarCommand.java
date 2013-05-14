@@ -1,10 +1,8 @@
 package appliedradar.bluetooth.gui;
 
-
-
 /**
- * Use to get and set radar parameters in Settings Activity and to parse string values to
- * an ArrayList with type Double values.
+ * Queries and commands to get and set radar parameters in Settings Activity. Other 
+ * commands include starting and stopping the collection of data from the kit.
  */
 public class RadarCommand {
 

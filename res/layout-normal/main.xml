@@ -11,8 +11,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal" >
-      <!-- android:attr = ?android:attr/buttonBarStyle -->    
-
         <Button
             android:id="@+id/getParameters"
             android:layout_width="wrap_content"
@@ -20,8 +18,7 @@
             android:onClick="getParameters"
             android:text="@string/get_parameters"
             android:textSize="12sp" />
-        
-	 <Button
+		<Button
             android:id="@+id/start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,7 +26,6 @@
             android:text="@string/collect_data"
             android:textSize="12sp"
             android:visibility="visible" />
-   
         <Button
             android:id="@+id/collect_save"
             android:layout_width="wrap_content"
@@ -37,7 +33,6 @@
             android:onClick="collectSave"
             android:text="@string/collect_save"
             android:textSize="12sp" />
-
         <Button
             android:id="@+id/button_load"
             android:layout_width="wrap_content"
@@ -45,10 +40,9 @@
             android:onClick="openArchive"
             android:text="@string/load_data"
             android:textSize="12sp" />
-
     </LinearLayout>
-    <!-- aChartEngine -->
-
+    
+    <!-- aChartEngine Plot -->
     <RelativeLayout
         android:id="@+id/chart"
         android:layout_width="match_parent"
@@ -64,7 +58,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal" >
-
         <Button
             android:id="@+id/plot_button"
             android:layout_width="wrap_content"
@@ -72,15 +65,13 @@
             android:onClick="plotButton"
             android:text="@string/plot_data"
             android:textSize="12sp" />
-
         <Button
             android:id="@+id/plotFFT_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="plotFFT"
+            android:onClick="plotFFTButton"
             android:text="@string/plot_FFT"
             android:textSize="12sp" />
-
         <Button
             android:id="@+id/button_save"
             android:layout_width="wrap_content"
@@ -90,6 +81,7 @@
             android:textSize="12sp" />
     </LinearLayout>
 
+    <!-- File name of the file opened/data plotted -->
     <TextView
         android:id="@+id/file_name"
         android:layout_width="wrap_content"

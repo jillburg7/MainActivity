@@ -1,6 +1,5 @@
 package appliedradar.bluetooth.gui;
 
-import android.util.Log;
 
 /**
  * Algorithm to calculate the FFT of an input data array of type double[].
@@ -9,26 +8,8 @@ import android.util.Log;
  * Postcondition: Returns a type double[] array of calculated FFT data that has a
  * 					length that is equal to a power of two (if it didn't before).
  */
-public class CalcFFT {
+public class CalculateFFT {
 
-//	/**
-//	 * The array of FFT data
-//	 */
-//	protected double[] fftData;
-
-
-	public double[] fft(short[] shortInput) {
-		try {
-			double[] array = fft(shortInput);
-			return array;
-		}
-		catch (Exception e) {
-			Log.e("CalcFFT.java", "I don't know how to function properly, grrrr...");
-			return null;
-		}
-	}
-	
-	
 	/**
 	 * Calculates the FFT of an array
 	 * @param inputArray	Input array
@@ -66,9 +47,9 @@ public class CalcFFT {
 		int n2 = (n / 2);
 		int nu1 = nu - 1;
 		double tReal, tImag, p, arg, c, s;
-		
-		// Here I check if I'm going to do the direct transform or the inverse
-		// transform.
+
+		// Here I check if I'm going to do the direct transform (-2) or the inverse
+		// transform (2).
 		double constant = -2 * Math.PI;
 
 		// First phase - calculation:

@@ -39,7 +39,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name="appliedradar.bluetooth.gui.DeviceListActivty"
+            android:name="appliedradar.bluetooth.gui.DeviceListActivity"
             android:label="@string/title_activity_device_list_activty"
             android:parentActivityName="appliedradar.bluetooth.gui.MainActivity" >
             <meta-data

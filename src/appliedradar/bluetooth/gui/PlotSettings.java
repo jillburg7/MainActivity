@@ -138,7 +138,7 @@ public class PlotSettings {
 		XYSeriesRenderer r1 = new XYSeriesRenderer();
 		r1.setColor(Color.BLUE);
 		r1.setLineWidth(2);
-		r1.setPointStyle(PointStyle.SQUARE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
+		r1.setPointStyle(PointStyle.CIRCLE); // CIRCLE, DIAMOND , POINT, TRIANGLE, X									
 		r1.setFillPoints(true); // not for point or x don't know how to set point size or point color
 
 		XYMultipleSeriesRenderer myRenderer = new XYMultipleSeriesRenderer();
@@ -187,7 +187,8 @@ public class PlotSettings {
 		XYSeriesRenderer r2 = new XYSeriesRenderer();
 		r2.setColor(Color.RED);
 		r2.setLineWidth(2);
-		r2.setPointStyle(PointStyle.SQUARE);
+		r2.setPointStyle(PointStyle.CIRCLE);
+		r2.setFillPoints(true);
 
 		XYMultipleSeriesRenderer myRenderer = new XYMultipleSeriesRenderer();
 		myRenderer.addSeriesRenderer(r2);
@@ -231,8 +232,8 @@ public class PlotSettings {
 		myRenderer.setXAxisMin(0);
 		myRenderer.setXAxisMax(50);
 
-		myRenderer.setYAxisMin(20);
-		myRenderer.setYAxisMax(90);
+		myRenderer.setYAxisMin(35);
+		myRenderer.setYAxisMax(100);
 
 		return myRenderer;
 	}

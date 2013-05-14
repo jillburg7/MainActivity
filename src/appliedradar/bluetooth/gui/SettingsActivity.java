@@ -37,8 +37,8 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	static final String SWEEP_TYPE = "sweepType";
 	static final String REF_DIV = "refDiv";
 
-	private String mStrCommand;
-	private int mInputCommand;
+//	private String mStrCommand;
+//	private int mInputCommand;
 	public String mCaptureTime;
 	public String mBandwidth;
 	public int mRampTime;

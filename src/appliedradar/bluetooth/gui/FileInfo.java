@@ -52,8 +52,8 @@ public class FileInfo {// extends File {
 		int mYear = c.get(Calendar.YEAR);
 		int mMonth = c.get(Calendar.MONTH) + 1;
 		int mDay = c.get(Calendar.DAY_OF_MONTH);
-		int mHour = c.get(Calendar.HOUR_OF_DAY);
-		int mMinute = c.get(Calendar.MINUTE);
+//		int mHour = c.get(Calendar.HOUR_OF_DAY);
+//		int mMinute = c.get(Calendar.MINUTE);
 		
 		if (FILE_NUMBER > 0)
 			fileName = mYear + "" + mMonth + "" + mDay + "_" + "test" + FILE_NUMBER;

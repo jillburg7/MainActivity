@@ -202,8 +202,6 @@ public class MainActivity extends Activity {
 		// Logs that communication between devices is being intialized
 		Log.d(TAG, "setupChat()");
 
-//		mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
-
 		// Initialize the BluetoothChatService to perform bluetooth connections
 		mChatService = new BluetoothChatService(this, mHandler);
 
@@ -279,7 +277,6 @@ public class MainActivity extends Activity {
 	private final void setStatus(CharSequence subTitle) {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle(subTitle);
-//		getDefaultParameters();
 	}
 
 
@@ -294,7 +291,6 @@ public class MainActivity extends Activity {
 				case BluetoothChatService.STATE_CONNECTED:
 					// updates Bluetooth connection status with the connected device name
 					setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-//					mConversationArrayAdapter.clear();
 					break;
 				case BluetoothChatService.STATE_CONNECTING:
 					setStatus(R.string.title_connecting);	// updates status in ActionBar
@@ -396,7 +392,7 @@ public class MainActivity extends Activity {
 			return true;
 		case R.id.connect_scan:
 			// Launch the DeviceListActivity to see devices and do scan
-			serverIntent = new Intent(this, DeviceListActivty.class);
+			serverIntent = new Intent(this, DeviceListActivity.class);
 			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
 			return true;
 		case R.id.discoverable:
@@ -413,7 +409,7 @@ public class MainActivity extends Activity {
 	 */
 	private void connectDevice(Intent data) {
 		// Get the device MAC address
-		String address = data.getExtras().getString(DeviceListActivty.EXTRA_DEVICE_ADDRESS);
+		String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
 		// Get the BluetoothDevice object
 		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
 		// Attempt to connect to the device
@@ -421,20 +417,17 @@ public class MainActivity extends Activity {
 	}
 
 
-	
-
 	/**
 	 * Handles the incoming data via the Bluetooth connection (from the
 	 * {@link BluetoothChatService} class). If the data is value which correspond to 
 	 * parameter settings, then the boolean commandInfo will be true and data will be 
 	 * handled accordingly. If commandInfo is false, then the incoming data value correspond
 	 * to data that was just collected by the radar, in which this device is connected too.
-	 * @param msg
+	 * @param msg byte array of received data or parameter values
 	 */
 	private void handleMsg(byte[] msg) {
 		int n = 0; 	// size of new byte array corresponding to 2-bytes of data per value 
 		// using bit-manipulation :
-
 		raw = new short[msg.length/2];
 		for(int i = 0; i < (msg.length - 1); i+=2) {
 			raw[n] = (short)((msg[i] << 8) + (msg[i+1] & 0xff));	// bit-manipulation
@@ -469,8 +462,6 @@ public class MainActivity extends Activity {
 		}
 	}
 
-
-	
 	/** Adds a delay in between commands sent consecutively after each. */
 	public void pause() {
 		try {
@@ -499,9 +490,6 @@ public class MainActivity extends Activity {
 		pause();
 		sendMessage(myCommand.getRefDiv());
 	}
-
-
-	
 	
 	/**
 	 * 'Load Data' onClick event starts a new activity, 'DisplayArchive.java'
@@ -519,6 +507,7 @@ public class MainActivity extends Activity {
 	public void loadFile(Intent data) {
 		String fileInfo =  data.getExtras().getString(DisplayArchive.EXTRA_FILE_INFO);
 		loadData(fileInfo);
+		fileName(fileInfo);
 	}
 
 	/**
@@ -535,7 +524,6 @@ public class MainActivity extends Activity {
 			while ((line = br.readLine()) != null) {
 					short value = Short.parseShort(line);
 					shortList.add(value);
-//				}
 			}
 			br.close();
 		} 
@@ -543,18 +531,22 @@ public class MainActivity extends Activity {
 			Log.e("loadData()", "Reading data out of file");		// You'll need to add proper error handling here
 		}	
 		toShortArray(shortList);
-		
-		// adds the name of file opened to the TextView
+		plotData();	// plots the data in GUI
+	}
+	
+	/**
+	 * Adds the name of file opened to the TextView
+	 * @param fileName file path of the file opened from the Archive
+	 */
+	public void fileName(String fileName) {
 		int index = fileName.indexOf("FMCW File Archive/");
 		String name = fileName.substring(index+18);		// removes file path of file open
 		TextView fileOpened = (TextView)findViewById(R.id.file_name);
 		fileOpened.setText(new StringBuilder().append("File Name: " + name));
-		
-		plotData();
 	}
 	
 	/**
-	 * ArrayList is be copied into an array of type short to use forplotting & processing
+	 * ArrayList is be copied into an array of type short to use for plotting & processing
 	 * @param fileData	ArrayList to copy
 	 */
 	public void toShortArray(ArrayList<Short> fileData) {
@@ -564,12 +556,22 @@ public class MainActivity extends Activity {
 			raw[i] = fileData.get(i);
 	}
 
-
+	/**
+	 * NOT BEING USED  - yet, but could be used to plot FFT data that is saved.
+	 * @param fileData
+	 */
+	public void toDoubleArray(ArrayList<Double> fileData) {
+		int size = fileData.size();
+		double[] rawDoub = new double[size];
+		for(int i = 0; i < size; i++)
+			rawDoub[i] = fileData.get(i);
+	}
+	
 	/**
 	 * Plots raw data on chart.
-	 * @param view button clicked
+	 * @param button button clicked
 	 */
-	public void plotButton(View view) {
+	public void plotButton(View button) {
 		try {
 			plotData();
 			saveFFT = false;
@@ -605,14 +607,13 @@ public class MainActivity extends Activity {
 		}
 	}
 
-
 	/**
 	 * Plot FFT Button
-	 * @param view	button clicked
+	 * @param button	button clicked
 	 */
-	public void plotFFT(View view) {	
+	public void plotFFTButton(View button) {
 		try {
-			fftPlot();
+			plotFFT();
 			saveFFT = true;
 		} 
 		catch(NullPointerException e) {
@@ -620,41 +621,35 @@ public class MainActivity extends Activity {
 		}	
 	}
 
-
 	/**
 	 * Calculates FFT data
 	 */
-	public void fftPlot() {
-		CalcFFT calculate = new CalcFFT();
-//		fftData = calculate.fft(dataToPlot);	// to plot data that is an array of type double[]
+	public void plotFFT() {
+		CalculateFFT calculator = new CalculateFFT();	// new CalculateFFT object
 
 		double [] rawDoub = new double[raw.length];
-		for(int i = 0; i < raw.length; i ++) {
+		for(int i = 0; i < raw.length; i ++)
 			rawDoub[i] = raw[i];
-		}
 
-		fftData = calculate.fft(rawDoub);
-
-		mRenderer = plot.getFFTRenderer();
+		fftData = calculator.fft(rawDoub);	// to calculate FFT data
+		mRenderer = plot.getFFTRenderer();	// to use the renderering setup for FFT data
 
 		if (mChartView != null) {
 			RelativeLayout layout = (RelativeLayout) findViewById(R.id.chart);
 			mChartView = ChartFactory.getLineChartView(this, plot.getFrequencyAxis(fftData),
 					mRenderer);
-			layout.removeAllViews();
+			layout.removeAllViews();	// removes any previous datasets
 			layout.addView(mChartView);
 		} else {
 			mChartView.repaint();
 		}
-		//		ActivityManager.getMyMemoryState(null);
 	}
 
-
 	/**
-	 *  Save button
-	 * @param display	Button view
+	 * Save button
+	 * @param button
 	 */
-	public void saveFile(View display) {
+	public void saveFile(View button) {
 		try {
 			saveFile();
 		}
@@ -664,10 +659,10 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Saves data collected
-	 * @param data	Data to save in File Archive
+	 * Saves data collected on request (collect/collectSave button press) in the device's
+	 * internal storage in the directory specified in the {@link NewFile} class.
 	 */	
-	public void saveFile() {	
+	public void saveFile() {
 		String stringToSave = new String();
 
 		try{
@@ -675,73 +670,68 @@ public class MainActivity extends Activity {
 				for (int i = 0; i<raw.length; i++) 
 					stringToSave += raw[i] + "\n";
 			}
-			else{	// otherwise, saveFFT = true
-				for (int i = 0; i<fftData.length; i++) 
-					stringToSave += (float)fftData[i] + "\n";
-			}
+			// to save FFT data- commented out b/c handling type double values isn't setup
+//			else{	// otherwise, saveFFT = true
+//				for (int i = 0; i<fftData.length; i++) 
+//					stringToSave += (float)fftData[i] + "\n";
+//			}
 			
 			// Creates a new file
 			NewFile save = new NewFile();
-			
 			save.createFile(this, stringToSave);
-
-			Log.e("SaveFile()", "file saved to " + save.name);
+			Log.i("FileSavedAs...", save.name);	// Logs the name of the file saved
 			
 			// to notify user that their data was saved successfully in archive
 			Toast.makeText(this, "File Saved! File Name: " + save.name, Toast.LENGTH_LONG).show();
 		} catch(Exception e) {
-			Log.e("SaveFile()", "File Not Saved");
+			Log.w("SaveFile()", "File Not Saved");
 		}
 	}
 
-
 	/**
-	 * Signals to start collecting data from Radar kit.
-	 * @param butt1		Should only save this data temporarily (up to user if they want to saved perminentally)					
+	 * Transmits command to start collecting data to the radar kit.
+	 * @param button Sends command to radar
 	 */
-	public void startCollect(View butt1) {
+	public void startCollect(View button) {
 		commandInfo = false;
 		try {
 			sendMessage(myCommand.startCollect());
-			Log.d(TAG, "start collecting data...");
 		}
 		catch (Exception e) {
-			Log.e("startCollect Button", "nothing to collect :(");
+			Log.w("startCollect", "nothing to collect");
 		}
 	}
-
 	
 	/**
-	 * This button is currently implemented to get the five default/current parameters
-	 *  
-	 * @param butt2 Button clicked
+	 * Transmits command to start collecting data to the radar kit. Once received, the 
+	 * data will be automatially saved in the device's internal storage in the directory
+	 * specified in the {@link NewFile} class.
+	 * @param button Sends command to radar and saves data received
 	 */
-	public void collectSave(View butt2) {
+	public void collectSave(View button) {
 		commandInfo = false;
 		saveFFT = false;
 		try {
 			sendMessage(myCommand.startCollect());
-			Log.d(TAG, "start collecting data...");
 		}
 		catch (Exception e) {
-			Log.e("startCollect Button", "nothing to collect :(");
+			Log.w("collectSave", "nothing to collect");
 		}
 		// try to save collected data
 		try {
 			saveFile();
 		}
 		catch(NullPointerException e) {
-			Log.e("SaveButton", "failed to save collected data");
+			Log.w("SaveButton", "failed to save collected data");
 		}
 	}	
 
 	/**
 	 * Queries the radar kit's current parameter settings via Bluetooth connection
-	 * @param button 	when clicked and stores them into the string array called currentParameters.
+	 * @param button Sends query commands to radar
 	 */
 	public void getParameters(View button) {
 		getDefaultParameters();
 	}
-
 
 } //END OF MAINACTIVITY CODE!

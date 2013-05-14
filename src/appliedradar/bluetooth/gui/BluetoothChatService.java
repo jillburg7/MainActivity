@@ -30,25 +30,17 @@ public class BluetoothChatService {
 
 	// Name for the SDP record when creating server socket
 	private static final String NAME = "BluetoothChat";
-	//	private static final String NAME_SPP = "BluetoothChatSecure";
-	//	private static final String NAME_TABLET = "BluetoothChatInsecure";
 
 	// Unique UUID for this application
 	private static final UUID MY_UUID = 
 			UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");		// SPP : use with Radar Kit 
-	//			UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");	// INSECURE : use with mobile devices
-	//			UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");	// SECURE : similar to insecure, but don't recommend using
-	//	private static final UUID MY_UUID = 
-	//			UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");
-
-	
+//			UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");	// INSECURE : use with mobile devices
+//			UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");	// SECURE : similar to insecure, but don't recommend using
 
 	// Member fields
 	private final BluetoothAdapter mAdapter;
 	private final Handler mHandler;
 	private AcceptThread mAcceptThread;
-	//	private AcceptThread mSecureAcceptThread;
-	//	private AcceptThread mInsecureAcceptThread;
 	private ConnectThread mConnectThread;
 	private ConnectedThread mConnectedThread;
 	private int mState;
@@ -83,7 +75,8 @@ public class BluetoothChatService {
 	}
 
 	/**
-	 * Return the current connection state. */
+	 * Return the current connection state. 
+	 */
 	public synchronized int getState() {
 		return mState;
 	}
@@ -151,14 +144,6 @@ public class BluetoothChatService {
 			mAcceptThread.cancel();
 			mAcceptThread = null;
 		}
-		//		if (mSecureAcceptThread != null) {
-		//			mSecureAcceptThread.cancel();
-		//			mSecureAcceptThread = null;
-		//		}
-		//		if (mInsecureAcceptThread != null) {
-		//			mInsecureAcceptThread.cancel();
-		//			mInsecureAcceptThread = null;
-		//		}
 
 		// Start the thread to manage the connection and perform transmissions
 		mConnectedThread = new ConnectedThread(socket, socketType);

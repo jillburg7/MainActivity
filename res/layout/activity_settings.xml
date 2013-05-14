@@ -12,35 +12,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 	    android:orientation="horizontal" >
-	    
 	    <Button
 	        android:id="@+id/ramp_time"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:onClick="getRampTime"
 	        android:text="@string/ramp_time" />
-	    
 	    <Button
 	        android:id="@+id/start_freq"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:onClick="getStartFreq"
 	        android:text="@string/start_freq" />
-	    
    	    <Button
 	        android:id="@+id/stop_freq"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:onClick="getStopFreq"
 	        android:text="@string/stop_freq" />
-   	    	
 	    <Button
 	        android:id="@+id/sweep_type"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:onClick="getSweepType"
 	        android:text="@string/sweep_type" />
-	    
    	    <Button
 	        android:id="@+id/ref_div"
 	        android:layout_width="wrap_content"
@@ -57,42 +52,36 @@
 		android:saveEnabled="true"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:textIsSelectable="true" />
-	
     <LinearLayout
         android:id="@+id/commands"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@+id/parameters" >
-
         <Button
             android:id="@+id/set_ramp_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="setRampTime"
             android:text="@string/set_ramp_time" />
-        
 		<Button
             android:id="@+id/set_start_freq"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="setStartFreq"
             android:text="@string/set_start_freq" />
-		
         <Button
             android:id="@+id/set_stop_freq"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="setStopFreq"
             android:text="@string/set_stop_freq" />
-        
 		<Button
 			android:id="@+id/set_sweep_type"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:onClick="setSweepType"
 			android:text="@string/set_sweep_type" />
-        
        <Button
             android:id="@+id/set_ref_div"
             android:layout_width="wrap_content"
@@ -106,7 +95,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_below="@+id/commands" >
-        
     <TextView
             android:id="@+id/value_input"
             android:layout_width="wrap_content"
@@ -114,7 +102,6 @@
         	android:saveEnabled="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textIsSelectable="true" />
-
         <Button
             android:id="@+id/send"
             android:layout_width="wrap_content"
@@ -122,7 +109,6 @@
             android:layout_marginTop="72dp"
             android:onClick="send"
             android:text="@string/send2" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -132,28 +118,24 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
         android:visibility="gone" >
-
         <TextView
             android:id="@+id/captureTimeOptions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/captureTime"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
         <TextView
             android:id="@+id/captureTimeSetting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/currentSetting"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
         <SeekBar
             android:id="@+id/seekBar1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="10000"
             android:progress="5000" />
-
         <TextView
             android:id="@+id/progress"
             android:layout_width="match_parent"
@@ -161,5 +143,4 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="visible" />
     </LinearLayout>
-    
 </RelativeLayout>
